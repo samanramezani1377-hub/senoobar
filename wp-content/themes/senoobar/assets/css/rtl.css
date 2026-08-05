@@ -1,0 +1,48 @@
+/* =============================================
+   Senoobar - RTL Specific Styles
+   ============================================= */
+
+/* RTL overrides for Swiper/carousels */
+.swiper-rtl .swiper-slide { direction: rtl; }
+
+/* Product cards */
+.product-card {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Form elements RTL */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="search"],
+input[type="number"],
+textarea,
+select {
+    text-align: right;
+}
+
+/* Quantity input */
+.quantity .qty {
+    text-align: center;
+}
+
+/* Breadcrumb */
+.woocommerce-breadcrumb {
+    direction: rtl;
+}
+
+/* Pagination */
+.woocommerce-pagination {
+    direction: ltr;
+}
+
+/* Rating stars RTL flip */
+.star-rating {
+    direction: ltr;
+}
+
+/* Sale badge */
+.senoobar-onsale {
+    font-family: var(--font-main);
+}
