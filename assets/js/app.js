@@ -1,0 +1,7 @@
+document.addEventListener('DOMContentLoaded',function(){const menuToggle=document.getElementById('menuToggle');const mobileMenu=document.getElementById('mobileMenu');const menuClose=document.getElementById('menuClose');const searchToggle=document.getElementById('searchToggle');const searchOverlay=document.getElementById('searchOverlay');
+if(menuToggle&&mobileMenu){menuToggle.addEventListener('click',()=>mobileMenu.classList.toggle('active'));}
+if(menuClose&&mobileMenu){menuClose.addEventListener('click',()=>mobileMenu.classList.remove('active'));}
+if(searchToggle&&searchOverlay){searchToggle.addEventListener('click',()=>searchOverlay.classList.toggle('active'));searchOverlay.addEventListener('click',function(e){if(e.target===searchOverlay)searchOverlay.classList.remove('active');});}
+document.addEventListener('click',function(e){if(mobileMenu&&!mobileMenu.contains(e.target)&&e.target!==menuToggle&&!menuToggle?.contains(e.target))mobileMenu.classList.remove('active');});
+const header=document.querySelector('.site-header');let lastScroll=0;window.addEventListener('scroll',function(){const current=window.pageYOffset;if(current>100){if(current>lastScroll){header.style.transform='translateY(-100%)'}else{header.style.transform='translateY(0)'}lastScroll=current}else{header.style.transform='translateY(0)'}},{passive:true});
+});

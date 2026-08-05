@@ -1,0 +1,6 @@
+/* RTL Overrides */
+body{direction:rtl}
+.mobile-menu{right:-100%;left:auto}
+.mobile-menu.active{right:0}
+.main-menu a::after{right:0;left:auto}
+.header-actions{margin-right:auto;margin-left:0}

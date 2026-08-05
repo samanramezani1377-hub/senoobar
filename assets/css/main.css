@@ -1,0 +1,19 @@
+/* Senoobar Main Stylesheet */
+.section{padding:48px 0}
+.section__header{text-align:center;margin-bottom:32px}
+.section__title{font-size:1.5rem;font-weight:900;color:var(--color-primary-dark);margin-bottom:8px}
+.section__desc{color:var(--color-text-light);font-size:.9rem}
+.products-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.section__footer{text-align:center;margin-top:32px}
+.categories-section{background:var(--color-off-white)}
+.categories-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.category-card{display:block;background:var(--color-white);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm);transition:var(--transition)}
+.category-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.category-card__image{aspect-ratio:1;overflow:hidden;background:var(--color-gray-100);display:flex;align-items:center;justify-content:center}
+.category-card__image img{width:100%;height:100%;object-fit:cover}
+.category-card__info{padding:12px 16px;text-align:center}
+.category-card__title{font-size:.95rem;font-weight:700;margin-bottom:4px}
+.category-card__count{font-size:.75rem;color:var(--color-text-light)}
+@media(min-width:640px){.products-grid{grid-template-columns:repeat(3,1fr);gap:16px}.categories-grid{grid-template-columns:repeat(3,1fr);gap:16px}}
+@media(min-width:768px){.section{padding:64px 0}.section__title{font-size:2rem}}
+@media(min-width:992px){.products-grid{grid-template-columns:repeat(4,1fr);gap:20px}.categories-grid{grid-template-columns:repeat(3,1fr);gap:20px}}

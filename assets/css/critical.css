@@ -1,0 +1,34 @@
+/* Senoobar Critical CSS */
+:root{--color-primary:#d4a574;--color-primary-dark:#1a1a2e;--color-white:#fff;--color-off-white:#f8f5f2;--color-text:#2d3436;--color-text-light:#6b6560;--color-gray-100:#f1f1f1;--color-gray-600:#888;--radius-md:12px;--shadow-sm:0 2px 8px rgba(0,0,0,.06);--shadow-lg:0 8px 32px rgba(0,0,0,.12);--transition:.3s ease;--container-pad:16px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:system-ui,-apple-system,sans-serif;color:var(--color-text);line-height:1.8;background:var(--color-white);direction:rtl;overflow-x:hidden}
+.container{max-width:1280px;margin:0 auto;padding:0 var(--container-pad)}
+.screen-reader-text{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(1px,1px,1px,1px)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;font-weight:700;text-decoration:none;cursor:pointer;transition:var(--transition);border:none;font-size:.9rem}
+.btn--primary{background:var(--color-primary);color:var(--color-white)}
+.btn--primary:hover{background:#c49665;transform:translateY(-2px)}
+.btn--outline{border:2px solid var(--color-primary);color:var(--color-primary)}
+.btn--outline:hover{background:var(--color-primary);color:var(--color-white)}
+.btn--lg{padding:16px 36px;font-size:1.05rem}
+img{max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+.top-bar{background:var(--color-primary-dark);color:var(--color-white);font-size:.75rem;padding:6px 0}
+.top-bar .container{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.site-header{position:sticky;top:0;z-index:100;background:var(--color-white);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:8px 0;gap:16px}
+.site-branding .logo-text{font-size:1.5rem;font-weight:900;color:var(--color-primary-dark)}
+.site-branding .logo-sub{display:block;font-size:.65rem;color:var(--color-text-light);margin-top:-2px}
+.main-menu{display:none;list-style:none;gap:24px}
+.main-menu a{font-size:.85rem;font-weight:600;padding:8px 0;position:relative}
+.main-menu a::after{content:'';position:absolute;bottom:0;right:0;width:0;height:2px;background:var(--color-primary);transition:var(--transition)}
+.main-menu a:hover::after{width:100%}
+.header-actions{display:flex;align-items:center;gap:12px}
+.cart-icon{position:relative;display:flex;align-items:center;color:var(--color-primary-dark)}
+.cart-count{position:absolute;top:-8px;right:-8px;background:var(--color-primary);color:#fff;font-size:.65rem;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.site-footer{background:var(--color-primary-dark);color:var(--color-white);padding:40px 0 0;margin-top:48px}
+.footer-grid{display:grid;grid-template-columns:1fr;gap:32px;padding-bottom:32px}
+.footer-title{font-size:1.1rem;font-weight:900;margin-bottom:16px}
+.footer-contact p{margin-bottom:8px;font-size:.85rem;opacity:.9}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding:16px 0;text-align:center;font-size:.75rem;opacity:.7}
+@media(min-width:768px){.container{padding:0 24px}.main-menu{display:flex}.footer-grid{grid-template-columns:2fr 1fr 1fr}}
