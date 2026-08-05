@@ -3,7 +3,7 @@
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0a0a0f">
+    <meta name="theme-color" content="#e8f0fe">
     <link rel="manifest" href="<?php echo SENOOBAR_URI; ?>/manifest.json">
     <link rel="apple-touch-icon" href="<?php echo SENOOBAR_URI; ?>/assets/icons/icon-192.png">
     <link rel="preload" href="<?php echo SENOOBAR_URI; ?>/assets/css/critical.css" as="style">
@@ -31,7 +31,7 @@
         </button>
 
         <div class="site-branding">
-            <a href="<?php echo esc_url(home_url('/')); ?>" class="brand-link" rel="home">
+            <a href="<?php echo esc_url(home_url('/')); ?>" rel="home">
                 <span class="brand-name">صنوبر</span>
                 <span class="brand-tagline">تشک · طبی · فنری · کالای خواب</span>
             </a>
