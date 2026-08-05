@@ -1,40 +1,26 @@
-    <!-- === Footer === -->
     <footer id="colophon" class="site-footer" role="contentinfo">
         <div class="container footer-grid">
 
-            <!-- Col 1: About -->
             <div class="footer-col">
                 <h4 class="footer-col__title">فروشگاه صنوبر</h4>
-                <p class="footer-col__desc">
-                    عرضه‌کننده تخصصی انواع تشک طبی، طبی فنری و کالای خواب.
-                    کیفیت بالا، قیمت رقابتی، ارسال سریع.
-                </p>
+                <p class="footer-col__desc">عرضه‌کننده تخصصی انواع تشک طبی، فنری و کالای خواب. کیفیت بالا، قیمت رقابتی.</p>
                 <ul class="footer-contact">
                     <li>📞 ۰۹۱۳۰۲۰۵۸۹۸</li>
                     <li>📞 ۰۹۰۱۰۸۹۱۸۶۱</li>
                     <li>📍 اصفهان، میدان لاله</li>
-                    <li>🕐 شنبه تا پنج‌شنبه ۱۰ صبح الی ۹ شب</li>
+                    <li>🕐 ۱۰ صبح تا ۹ شب</li>
                 </ul>
             </div>
 
-            <!-- Col 2: Quick Links -->
             <div class="footer-col">
                 <h4 class="footer-col__title">دسترسی سریع</h4>
-                <?php
-                wp_nav_menu([
-                    'theme_location' => 'footer',
-                    'menu_class'     => 'footer-menu',
-                    'container'      => false,
-                    'fallback_cb'    => '__return_false',
-                ]);
-                ?>
+                <?php wp_nav_menu(['theme_location'=>'footer','menu_class'=>'footer-menu','container'=>false,'fallback_cb'=>'__return_false']); ?>
             </div>
 
-            <!-- Col 3: Trust Badges -->
             <div class="footer-col">
                 <h4 class="footer-col__title">نماد اعتماد</h4>
                 <div class="footer-trust">
-                    <a referrerpolicy="origin" target="_blank" href="https://trustseal.enamad.ir/?id=XXXXX&Code=XXXXX">
+                    <a referrerpolicy="origin" target="_blank" href="https://trustseal.enamad.ir/?id=XXXXX">
                         <img src="<?php echo SENOOBAR_URI; ?>/assets/images/enamad.svg" alt="اینماد" width="80" height="80" loading="lazy">
                     </a>
                 </div>
@@ -43,12 +29,11 @@
 
         <div class="footer-bottom">
             <div class="container">
-                <p>© <?php echo date('Y'); ?> تمامی حقوق برای فروشگاه صنوبر محفوظ است.</p>
+                <p>© <?php echo date('Y'); ?> صنوبر — تمامی حقوق محفوظ است.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Push Subscribe Float Button -->
     <button id="js-push-subscribe" class="push-float-btn" style="display:none" aria-label="عضویت در اطلاع‌رسانی">
         🔔 اطلاع از تخفیف‌ها
     </button>
