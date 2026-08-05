@@ -25,8 +25,8 @@
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="container">
-            <span class="top-bar__phone">📞 ۰۲۱-۱۲۳۴۵۶۷۸</span>
-            <span class="top-bar__shipping">🚚 ارسال رایگان سفارش‌های بالای ۵ میلیون تومان</span>
+            <span class="top-bar__phone">📞 ۰۹۱۳۰۲۰۵۸۹۸</span>
+            <span class="top-bar__shipping">🚚 ارسال به تمام نقاط ایران</span>
         </div>
     </div>
     
@@ -40,7 +40,7 @@
             <div class="site-branding">
                 <a href="<?php echo esc_url(home_url('/')); ?>" class="custom-logo-link">
                     <span class="logo-text">صنوبر</span>
-                    <span class="logo-sub">مبلمان، سرویس خواب و تشک</span>
+                    <span class="logo-sub">تشک طبی، فنری و کالای خواب</span>
                 </a>
             </div>
             

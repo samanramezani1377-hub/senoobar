@@ -25,7 +25,7 @@ if (!$featured->have_posts()) return;
     <div class="container">
         <div class="section__header">
             <h2 class="section__title">محصولات ویژه</h2>
-            <p class="section__desc">منتخبی از بهترین محصولات صنوبر با تخفیف‌های استثنایی</p>
+            <p class="section__desc">منتخبی از پرفروش‌ترین تشک‌ها و کالای خواب صنوبر با تخفیف‌های استثنایی</p>
         </div>
         
         <div class="products-grid">

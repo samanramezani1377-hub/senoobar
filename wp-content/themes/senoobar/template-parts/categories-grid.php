@@ -18,7 +18,7 @@ if (empty($categories) || is_wp_error($categories)) return;
     <div class="container">
         <div class="section__header">
             <h2 class="section__title">دسته‌بندی محصولات</h2>
-            <p class="section__desc">محصولات ما را بر اساس نیازتان مرور کنید</p>
+            <p class="section__desc">تشک و کالای خواب خود را بر اساس نیازتان انتخاب کنید</p>
         </div>
         
         <div class="categories-grid">

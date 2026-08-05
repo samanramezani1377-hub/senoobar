@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>آفلاین - صنوبر</title>
+    <title>آفلاین | صنوبر - تشک طبی و کالای خواب</title>
     <style>
         @font-face {
             font-family: 'IRANSansWeb';
