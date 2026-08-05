@@ -2,7 +2,7 @@
         <div class="container footer-grid">
             <div class="footer-col">
                 <h4 class="footer-col__title">فروشگاه صنوبر</h4>
-                <p class="footer-col__desc">عرضه‌کننده تخصصی انواع تشک طبی، فنری و کالای خواب. کیفیت بالا، قیمت رقابتی، ارسال رایگان.</p>
+                <p class="footer-col__desc">عرضه‌کننده تخصصی انواع تشک طبی، فنری و کالای خواب. کیفیت بالا، قیمت رقابتی، ارسال رایگان به سراسر ایران.</p>
                 <ul class="footer-contact">
                     <li>📞 ۰۹۱۳۰۲۰۵۸۹۸</li><li>📞 ۰۹۰۱۰۸۹۱۸۶۱</li>
                     <li>📍 اصفهان، میدان لاله</li><li>🕐 ۱۰ صبح تا ۹ شب</li>
@@ -23,7 +23,8 @@
         </div>
         <div class="footer-bottom"><div class="container">© <?php echo date('Y'); ?> صنوبر — تمامی حقوق محفوظ است.</div></div>
     </footer>
-    <button id="js-push-subscribe" class="push-float-btn" style="display:none">🔔 اطلاع از تخفیف‌ها</button>
+
+    <button class="totop-btn" id="js-totop" aria-label="بازگشت به بالا">↑</button>
     <?php wp_footer(); ?>
 </body>
 </html>
