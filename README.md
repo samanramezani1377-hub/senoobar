@@ -1,43 +1,65 @@
-# صنوبر - قالب فروشگاهی وردپرس
+# صنوبر (Senoobar)
 
-قالب فروشگاهی تخصصی **تشک طبی، فنری و کالای خواب** - PWA Ready، Mobile First، Ultra Fast
+قالب فروشگاهی وردپرس تخصصی تشک طبی، فنری و کالای خواب
 
-## 🚀 نصب (فقط ۳۰ ثانیه)
+## ویژگی‌ها
 
-۱. از دکمه سبز **Code → Download ZIP** در گیت‌هاب استفاده کنید
-۲. در پنل وردپرس: **نمایش → پوسته‌ها → افزودن → بارگذاری پوسته**
-۳. فایل ZIP دانلود شده را انتخاب و نصب کنید
-۴. **فعال‌سازی** کنید ✅
+- 🎨 **Glassmorphism Dark Design** — طراحی شیشه‌ای مینیمال با پس‌زمینه تیره
+- 📱 **Mobile First & Fully Responsive** — بهینه برای تمام دستگاه‌ها
+- 🛒 **WooCommerce Ready** — پشتیبانی کامل از ووکامرس
+- 🚀 **Performance Optimized** — حذف jQuery Migrate، دیفر JS، لود تنبل تصاویر
+- 📳 **PWA Support** — قابلیت نصب به عنوان اپلیکیشن و Push Notification
+- 🔍 **SEO Friendly** — سازگار با Yoast SEO
+- 🌐 **RTL Support** — کاملاً راست‌چین و فارسی
 
-> 💡 نکته: ساختار این ریپو طوری طراحی شده که فایل ZIP دانلودی مستقیم در وردپرس قابل نصب است.
+## نصب
 
-## 📦 پیش‌نیازها
-- وردپرس ۶.۰+
-- PHP ۸.۰+
-- WooCommerce (برای فروشگاه)
+۱. فایل ZIP قالب را دانلود کنید
+۲. در پیشخوان وردپرس به **نمایش → پوسته‌ها → افزودن پوسته → بارگذاری پوسته** بروید
+۳. فایل ZIP را آپلود و فعال کنید
+۴. افزونه‌های پیشنهادی: WooCommerce, Yoast SEO, Loco Translate
 
-## 📊 ایمپورت محصولات
-پس از نصب ووکامرس:
-۱. **محصولات → همه محصولات → وردکردن (Import)**
-۲. فایل `data/products-part1.csv` را import کنید
-۳. فایل `data/products-part2.csv` را import کنید
-۴. **۹۹ محصول واقعی** آماده است!
+## ساختار فایل‌ها
 
-## ✨ ویژگی‌ها
-- ✅ کاملاً فارسی و راست‌چین (RTL)
-- ✅ PWA - قابلیت نصب روی موبایل
-- ✅ Push Notification
-- ✅ Service Worker با Cache پیشرفته
-- ✅ Mobile First - کاملاً واکنش‌گرا
-- ✅ تنظیمات کش و امنیت (.htaccess)
-- ✅ صفحه آفلاین سفارشی
-- ✅ AJAX Cart ووکامرس
+```
+└── senoobar/
+    ├── style.css              # Header اطلاعات قالب
+    ├── functions.php          # Bootstrap
+    ├── header.php             # هدر + منوی موبایل
+    ├── footer.php             # فوتر
+    ├── index.php              # قالب اصلی
+    ├── sw.js                  # Service Worker
+    ├── manifest.json          # PWA manifest
+    ├── inc/
+    │   ├── class-senoobar-theme.php   # کلاس اصلی
+    │   ├── woocommerce-setup.php      # تنظیمات ووکامرس
+    │   └── push-handlers.php          # AJAX push notification
+    ├── template-parts/
+    │   ├── hero.php                   # بخش اصلی صفحه اول
+    │   ├── categories-grid.php        # دسته‌بندی محصولات
+    │   ├── featured-products.php      # محصولات ویژه
+    │   ├── cta-banner.php             # بنر دعوت به خرید
+    │   ├── content-single.php         # قالب نوشته
+    │   ├── content-page.php           # قالب برگه
+    │   ├── content-archive.php        # قالب آرشیو
+    │   └── content-none.php           # قالب بدون محتوا
+    ├── assets/
+    │   ├── css/
+    │   │   ├── critical.css           # استایل بحرانی
+    │   │   ├── main.css               # استایل اصلی + ووکامرس
+    │   │   └── rtl.css                # تنظیمات راست‌چین
+    │   ├── js/
+    │   │   ├── app.js                 # اپ فرانت‌اند
+    │   │   └── push.js                # منطق Push Notification
+    │   ├── icons/                     # آیکن‌های PWA
+    │   └── images/                    # تصاویر
+    └── data/
+        ├── products-part1.csv         # ۵۰ محصول اول
+        └── products-part2.csv         # ۴۹ محصول دوم
+```
 
-## 🏢 اطلاعات فروشگاه
-- **آدرس:** اصفهان، میدان لاله
-- **تلفن:** ۰۹۱۳۰۲۰۵۸۹۸ | ۰۹۰۱۰۸۹۱۸۶۱
-- **ساعت کاری:** شنبه تا پنج‌شنبه ۱۰ صبح الی ۹ شب
+## توسعه‌دهنده
 
----
-
-ساخته شده با ❤️ برای فروشگاه صنوبر
+- **توسعه‌دهنده:** Saman Ramezani
+- **وب‌سایت:** [senoobar.ir](https://senoobar.ir)
+- **گیت‌هاب:** [samanramezani1377-hub/senoobar.ir](https://github.com/samanramezani1377-hub/senoobar.ir)
