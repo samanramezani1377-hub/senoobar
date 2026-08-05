@@ -1,27 +1,42 @@
 <?php
 /**
- * Senoobar Theme - Main Template
- * فروشگاه اینترنتی تخصصی تشک طبی، فنری و کالای خواب صنوبر
+ * Main Template
  */
-get_header(); ?>
+get_header();
+?>
 
-<main id="primary" class="site-main">
-    <?php if (is_front_page() && is_home()) : ?>
-        <?php get_template_part('template-parts/hero'); ?>
-        <?php get_template_part('template-parts/categories-grid'); ?>
-        <?php get_template_part('template-parts/featured-products'); ?>
-        <?php get_template_part('template-parts/cta-banner'); ?>
-    <?php elseif (is_shop() || is_product_category()) : ?>
+<div id="primary" class="site-content">
+
+    <?php if (is_front_page()) : ?>
+        <?php
+        // Homepage sections — safe even without WooCommerce
+        get_template_part('template-parts/hero');
+
+        if (class_exists('WooCommerce')) {
+            get_template_part('template-parts/categories-grid');
+            get_template_part('template-parts/featured-products');
+        }
+
+        get_template_part('template-parts/cta-banner');
+        ?>
+
+    <?php elseif (is_shop() || is_product_category() || is_product_tag()) : ?>
         <?php woocommerce_content(); ?>
+
     <?php elseif (is_single()) : ?>
         <?php get_template_part('template-parts/content', 'single'); ?>
+
     <?php elseif (is_page()) : ?>
         <?php get_template_part('template-parts/content', 'page'); ?>
-    <?php elseif (is_archive()) : ?>
+
+    <?php elseif (is_archive() || is_search()) : ?>
         <?php get_template_part('template-parts/content', 'archive'); ?>
+
     <?php else : ?>
         <?php get_template_part('template-parts/content', 'none'); ?>
     <?php endif; ?>
-</main>
 
-<?php get_footer(); ?>
+</div><!-- #primary -->
+
+<?php
+get_footer();
