@@ -1,79 +1,120 @@
 /**
- * Senoobar — Frontend Application
+ * Senoobar Dark Luxe — Frontend JS
+ * Fullscreen hero slider, mobile nav, search overlay, cart count, scroll-to-top
  */
-document.addEventListener('DOMContentLoaded', function () {
+(function(){
+    'use strict';
+    const doc = document;
 
-    // ---- DOM refs ----
-    const hamburger   = document.getElementById('js-hamburger');
-    const drawer      = document.getElementById('js-mobile-drawer');
-    const drawerClose = document.getElementById('js-drawer-close');
-    const overlay     = document.getElementById('js-drawer-overlay');
-    const searchTgl   = document.getElementById('js-search-toggle');
-    const searchOver  = document.getElementById('js-search-overlay');
+    /* ===== HERO SLIDER ===== */
+    function initSlider(){
+        const slides   = doc.querySelectorAll('.hero-slide');
+        const dots     = doc.querySelectorAll('.slider-dot');
+        const prevBtn  = doc.querySelector('.slider-arrow--prev');
+        const nextBtn  = doc.querySelector('.slider-arrow--next');
+        if(!slides.length) return;
 
-    // ---- Mobile Drawer ----
-    const openDrawer  = () => { drawer.classList.add('open'); overlay.classList.add('visible'); };
-    const closeDrawer = () => { drawer.classList.remove('open'); overlay.classList.remove('visible'); };
+        let current = 0;
+        let interval;
+        const total = slides.length;
 
-    hamburger?.addEventListener('click', openDrawer);
-    drawerClose?.addEventListener('click', closeDrawer);
-    overlay?.addEventListener('click', closeDrawer);
-
-    // Close drawer on Escape
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeDrawer();
-    });
-
-    // ---- Search Overlay ----
-    searchTgl?.addEventListener('click', function () {
-        searchOver.classList.toggle('active');
-    });
-    searchOver?.addEventListener('click', function (e) {
-        if (e.target === searchOver) searchOver.classList.remove('active');
-    });
-
-    // ---- Sticky Header Hide/Show on scroll ----
-    const header   = document.querySelector('.site-header');
-    let lastScroll = 0;
-
-    window.addEventListener('scroll', function () {
-        const y = window.pageYOffset;
-        if (y > 120) {
-            header.style.transform = y > lastScroll ? 'translateY(-100%)' : 'translateY(0)';
-            lastScroll = y;
-        } else {
-            header.style.transform = 'translateY(0)';
-        }
-    }, { passive: true });
-
-    // ---- Push Subscribe Button ----
-    const pushBtn = document.getElementById('js-push-subscribe');
-
-    if (pushBtn && 'Notification' in window) {
-        if (Notification.permission === 'default') {
-            pushBtn.style.display = 'block';
+        function goTo(idx){
+            slides[current].classList.remove('active');
+            dots[current] && dots[current].classList.remove('active');
+            current = (idx + total) % total;
+            slides[current].classList.add('active');
+            dots[current] && dots[current].classList.add('active');
         }
 
-        pushBtn.addEventListener('click', function () {
-            Notification.requestPermission().then(function (perm) {
-                if (perm === 'granted') {
-                    pushBtn.style.display = 'none';
-                }
+        function next(){ goTo(current + 1); }
+        function prev(){ goTo(current - 1); }
+
+        function startAuto(){ interval = setInterval(next, 5000); }
+        function stopAuto(){ clearInterval(interval); }
+
+        if(prevBtn) prevBtn.addEventListener('click', function(e){ e.preventDefault(); prev(); stopAuto(); startAuto(); });
+        if(nextBtn) nextBtn.addEventListener('click', function(e){ e.preventDefault(); next(); stopAuto(); startAuto(); });
+
+        dots.forEach(function(dot,i){
+            dot.addEventListener('click',function(){ goTo(i); stopAuto(); startAuto(); });
+        });
+
+        // Touch swipe
+        let touchStartX = 0;
+        const sliderEl = doc.querySelector('.hero-slider');
+        if(sliderEl){
+            sliderEl.addEventListener('touchstart',function(e){ touchStartX = e.touches[0].clientX; });
+            sliderEl.addEventListener('touchend',function(e){
+                const diff = touchStartX - e.changedTouches[0].clientX;
+                if(Math.abs(diff) > 50){ diff > 0 ? next() : prev(); stopAuto(); startAuto(); }
             });
+        }
+
+        // Init
+        slides[0].classList.add('active');
+        if(dots[0]) dots[0].classList.add('active');
+        startAuto();
+    }
+
+    /* ===== MOBILE DRAWER ===== */
+    function initDrawer(){
+        const hamburger = doc.getElementById('js-hamburger');
+        const drawer    = doc.getElementById('js-mobile-drawer');
+        const overlay   = doc.getElementById('js-drawer-overlay');
+        const closeBtn  = doc.getElementById('js-drawer-close');
+
+        if(!hamburger || !drawer) return;
+
+        function open(){ drawer.classList.add('open'); overlay && overlay.classList.add('visible'); doc.body.style.overflow='hidden'; }
+        function close(){ drawer.classList.remove('open'); overlay && overlay.classList.remove('visible'); doc.body.style.overflow=''; }
+
+        hamburger.addEventListener('click', open);
+        closeBtn && closeBtn.addEventListener('click', close);
+        overlay && overlay.addEventListener('click', close);
+    }
+
+    /* ===== SEARCH OVERLAY ===== */
+    function initSearch(){
+        const toggle  = doc.getElementById('js-search-toggle');
+        const overlay = doc.getElementById('js-search-overlay');
+        if(!toggle || !overlay) return;
+        toggle.addEventListener('click',function(){ overlay.classList.toggle('active'); });
+        overlay.addEventListener('click',function(e){ if(e.target === overlay) overlay.classList.remove('active'); });
+    }
+
+    /* ===== SCROLL TO TOP ===== */
+    function initScrollTop(){
+        const btn = doc.getElementById('js-totop');
+        if(!btn) return;
+        window.addEventListener('scroll',function(){
+            btn.classList.toggle('visible', window.scrollY > 400);
+        });
+        btn.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+    }
+
+    /* ===== HEADER SCROLL HIDE ===== */
+    function initHeaderScroll(){
+        const header = doc.querySelector('.site-header');
+        if(!header) return;
+        let lastScroll = 0;
+        window.addEventListener('scroll',function(){
+            const y = window.scrollY;
+            if(y > 100 && y > lastScroll){ header.style.transform = 'translateY(-120px)'; }
+            else{ header.style.transform = 'translateY(0)'; }
+            lastScroll = y;
         });
     }
 
-    // ---- WooCommerce AJAX Cart Count Update ----
-    const cartCount = document.querySelector('.cart-count');
-
-    if (cartCount) {
-        document.body.addEventListener('added_to_cart', function () {
-            setTimeout(function () {
-                const current = parseInt(cartCount.getAttribute('data-cart-count'), 10) || 0;
-                cartCount.textContent = current + 1;
-                cartCount.setAttribute('data-cart-count', current + 1);
-            }, 300);
-        });
-    }
-
-});
+    // Init all
+    doc.addEventListener('DOMContentLoaded',function(){
+        initSlider();
+        initDrawer();
+        initSearch();
+        initScrollTop();
+        initHeaderScroll();
+        // Update cart count if WooCommerce
+        if(typeof wc_cart_fragments_params !== 'undefined'){
+            doc.body.addEventListener('added_to_cart',function(){ window.location.reload(); });
+        }
+    });
+})();
