@@ -1,5 +1,4 @@
-/* RTL Light Blue tweaks */
 html[dir="rtl"] .header-actions{margin-right:auto;margin-left:0}
-html[dir="rtl"] .cart-count{right:auto;left:0;transform:translate(-25%,-25%)}
+html[dir="rtl"] .cart-count{right:auto;left:2px}
 html[dir="rtl"] .onsale{right:auto;left:12px}
 html[dir="rtl"] .woocommerce .price del{margin-left:0;margin-right:6px}

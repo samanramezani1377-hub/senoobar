@@ -1,22 +1,17 @@
-    <footer id="colophon" class="site-footer" role="contentinfo">
+    <footer id="colophon" class="site-footer">
         <div class="container footer-grid">
-
             <div class="footer-col">
                 <h4 class="footer-col__title">فروشگاه صنوبر</h4>
-                <p class="footer-col__desc">عرضه‌کننده تخصصی انواع تشک طبی، فنری و کالای خواب. کیفیت بالا، قیمت رقابتی.</p>
+                <p class="footer-col__desc">عرضه‌کننده تخصصی انواع تشک طبی، فنری و کالای خواب. کیفیت بالا، قیمت رقابتی، ارسال رایگان.</p>
                 <ul class="footer-contact">
-                    <li>📞 ۰۹۱۳۰۲۰۵۸۹۸</li>
-                    <li>📞 ۰۹۰۱۰۸۹۱۸۶۱</li>
-                    <li>📍 اصفهان، میدان لاله</li>
-                    <li>🕐 ۱۰ صبح تا ۹ شب</li>
+                    <li>📞 ۰۹۱۳۰۲۰۵۸۹۸</li><li>📞 ۰۹۰۱۰۸۹۱۸۶۱</li>
+                    <li>📍 اصفهان، میدان لاله</li><li>🕐 ۱۰ صبح تا ۹ شب</li>
                 </ul>
             </div>
-
             <div class="footer-col">
                 <h4 class="footer-col__title">دسترسی سریع</h4>
                 <?php wp_nav_menu(['theme_location'=>'footer','menu_class'=>'footer-menu','container'=>false,'fallback_cb'=>'__return_false']); ?>
             </div>
-
             <div class="footer-col">
                 <h4 class="footer-col__title">نماد اعتماد</h4>
                 <div class="footer-trust">
@@ -26,18 +21,9 @@
                 </div>
             </div>
         </div>
-
-        <div class="footer-bottom">
-            <div class="container">
-                <p>© <?php echo date('Y'); ?> صنوبر — تمامی حقوق محفوظ است.</p>
-            </div>
-        </div>
+        <div class="footer-bottom"><div class="container">© <?php echo date('Y'); ?> صنوبر — تمامی حقوق محفوظ است.</div></div>
     </footer>
-
-    <button id="js-push-subscribe" class="push-float-btn" style="display:none" aria-label="عضویت در اطلاع‌رسانی">
-        🔔 اطلاع از تخفیف‌ها
-    </button>
-
+    <button id="js-push-subscribe" class="push-float-btn" style="display:none">🔔 اطلاع از تخفیف‌ها</button>
     <?php wp_footer(); ?>
 </body>
 </html>
