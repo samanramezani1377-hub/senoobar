@@ -1,18 +1,24 @@
 <?php
 /**
- * Senoobar Theme Functions
- * قالب فروشگاهی صنوبر - توابع اصلی
+ * Senoobar Theme — Bootstrap
  */
 
-define('SENOOBAR_VERSION', '1.0.0');
+define('SENOOBAR_VERSION', '2.0.0');
 define('SENOOBAR_DIR', get_template_directory());
 define('SENOOBAR_URI', get_template_directory_uri());
 
-// Autoload
+// Load core class
 require_once SENOOBAR_DIR . '/inc/class-senoobar-theme.php';
 
-function senoobar_init() {
-    $theme = Senoobar_Theme::get_instance();
-    $theme->init();
-}
-add_action('after_setup_theme', 'senoobar_init');
+// Load WooCommerce integration (hooks fire on `after_setup_theme`)
+require_once SENOOBAR_DIR . '/inc/woocommerce-setup.php';
+
+// Load push notification AJAX handlers
+require_once SENOOBAR_DIR . '/inc/push-handlers.php';
+
+/**
+ * Boot theme on after_setup_theme
+ */
+add_action('after_setup_theme', function () {
+    Senoobar_Theme::get_instance()->init();
+});

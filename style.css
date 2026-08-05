@@ -1,12 +1,15 @@
 /*
-Theme Name: Senoobar
+Theme Name: صنوبر (Senoobar)
 Theme URI: https://senoobar.ir
-Author: Senoobar
-Author URI: https://senoobar.ir
-Description: قالب فروشگاهی اختصاصی صنوبر - تشک طبی، فنری و کالای خواب | PWA Ready, Mobile First, Ultra Fast
-Version: 1.0.0
+Author: Saman Ramezani
+Author URI: https://github.com/samanramezani1377-hub
+Description: قالب فروشگاهی تخصصی تشک طبی، فنری و کالای خواب — PWA Ready, Mobile First, بهینه برای سرعت
+Version: 2.0.0
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 8.0
 License: Proprietary
 Text Domain: senoobar
 Domain Path: /languages
-Requires PHP: 8.0
+Tags: rtl-language-support, woocommerce, pwa, mobile-first, right-to-left
 */
