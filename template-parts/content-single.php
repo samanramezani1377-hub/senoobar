@@ -1,11 +1,1 @@
-<?php
-while (have_posts()): the_post(); ?>
-<article id="post-<?php the_ID(); ?>" <?php post_class('single-post'); ?>>
-    <header class="entry-header">
-        <h1 class="entry-title"><?php the_title(); ?></h1>
-    </header>
-    <div class="entry-content">
-        <?php the_content(); ?>
-    </div>
-</article>
-<?php endwhile; ?>
+<?php ?><article id="post-<?php the_ID();?>" <?php post_class();?>><header class="mb-4"><?php the_title('<h1 class="section__title" style="text-align:right;font-size:1.8rem;">','</h1>');?><div class="blog-card__meta" style="margin-top:8px;"><span><?php echo get_the_date();?></span><span>·</span><span><?php the_author();?></span></div></header><?php if(has_post_thumbnail()):?><div style="border-radius:var(--radius-2xl);overflow:hidden;margin-bottom:24px;"><?php the_post_thumbnail('large',['class'=>'w-100']);?></div><?php endif;?><div class="entry-content" style="line-height:2.2;font-size:0.95rem;"><?php the_content();?></div></article>

@@ -1,12 +1,1 @@
-<?php if (is_search()): ?>
-<section class="no-content">
-    <h2>نتیجه‌ای یافت نشد</h2>
-    <p>متاسفانه چیزی با این عبارت پیدا نشد. لطفاً دوباره جستجو کنید.</p>
-    <?php get_search_form(); ?>
-</section>
-<?php else: ?>
-<section class="no-content">
-    <h2>محتوایی یافت نشد</h2>
-    <p>به نظر می‌رسد محتوایی برای نمایش وجود ندارد.</p>
-</section>
-<?php endif; ?>
+<?php ?><section style="text-align:center;padding:80px 0;"><h2 style="font-size:1.5rem;font-weight:700;color:var(--color-text);margin-bottom:16px;">مطلبی یافت نشد</h2><p style="color:var(--color-text-light);font-size:0.9rem;">متأسفانه موردی برای نمایش وجود ندارد.</p><a href="<?php echo home_url('/');?>" class="btn btn--primary mt-3">بازگشت به صفحه اصلی</a></section>
