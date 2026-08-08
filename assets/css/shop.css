@@ -350,42 +350,45 @@ body .shop-main ul.products li.product .woocommerce-loop-product__title {
 /* Price */
 body .shop-main ul.products li.product .price {
   padding: 3px 12px 8px !important;
-  font-size: 1rem !important;
-  font-weight: 700 !important;
-  color: var(--color-primary, #1e3a2f) !important;
   direction: rtl !important;
   text-align: right !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
-  gap: 3px !important;
+  gap: 2px !important;
   margin: 0 !important;
+}
+/* Flatten all children so order works */
+body .shop-main ul.products li.product .price > *,
+body .shop-main ul.products li.product .price > * > * {
+  display: inline !important;
 }
 /* Single price (no sale) */
 body .shop-main ul.products li.product .price:not(:has(del)) {
   flex-direction: row !important;
   font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: #1e3a2f !important;
 }
 body .shop-main ul.products li.product .price .woocommerce-Price-amount {
-  font-weight: 700 !important;
+  font-weight: inherit !important;
   font-size: inherit !important;
 }
+/* Original price — BELOW, crossed, gray */
 body .shop-main ul.products li.product .price del {
   order: 2 !important;
-  font-size: 0.75rem !important;
+  font-size: 0.8rem !important;
   font-weight: 400 !important;
   color: #9ca3af !important;
   text-decoration: line-through !important;
 }
+/* Sale price — ABOVE, bold, green */
 body .shop-main ul.products li.product .price ins {
   order: 1 !important;
   text-decoration: none !important;
   font-weight: 700 !important;
-  font-size: 1rem !important;
-  color: var(--color-primary, #1e3a2f) !important;
-}
-body .shop-main ul.products li.product .price ins .woocommerce-Price-amount {
-  font-weight: 700 !important;
+  font-size: 1.05rem !important;
+  color: #1e3a2f !important;
 }
 
 /* ── Add to Cart Button (minimal round icon) ── */
@@ -551,7 +554,8 @@ body .shop-main.list-view ul.products li.product .price {
   padding: 8px 0 0 !important;
   font-size: 1rem !important;
   flex-direction: row !important;
-  gap: 8px !important;
+  gap: 10px !important;
+  align-items: center !important;
 }
 
 /* List-view button — full text, not round */
