@@ -1,8 +1,4 @@
 <?php
-/**
- * Senoobar Theme — Main Class (v2)
- * Deep Green Palette + Vazirmatn
- */
 final class Senoobar_Theme {
     private static $instance = null;
     public static function get_instance() { if(null===self::$instance) self::$instance=new self(); return self::$instance; }
@@ -33,7 +29,7 @@ final class Senoobar_Theme {
     }
     private function customizer() {
         add_action('customize_register',function($c){
-            $c->add_setting('senoobar_announcement',['default'=>'ارسال رایگان برای سفارش‌های بالای ۳۰ میلیون تومان']);
+            $c->add_setting('senoobar_announcement',['default'=>'ارسال رایگان برای سفارش‌های بالای ۳۰ جنتیون تومان']);
             $c->add_control('senoobar_announcement',['label'=>'متن اعلان','section'=>'title_tagline','type'=>'text']);
             $c->add_section('senoobar_hero',['title'=>'هیرو','priority'=>30]);
             $c->add_setting('senoobar_hero_title',['default'=>'میلمان خانه‌ای درخور شما']); $c->add_control('senoobar_hero_title',['label'=>'عنوان','section'=>'senoobar_hero','type'=>'text']);
