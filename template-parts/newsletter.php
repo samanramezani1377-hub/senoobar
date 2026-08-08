@@ -1,0 +1,2 @@
+<?php?>
+<section class="newsletter-section section"><div class="container"><div class="newsletter__wrap"><h2>در خبرنامه صنوبر عضو شوید</h2><p>جدیدترین محصولات و تخفیف‌ها را دریافت کنید.</p><form class="newsletter-form" method="post"><input type="email" placeholder="ایمیل خود را وارد کنید" required><button type="submit">اشتراک</button></form></div></div></section>
