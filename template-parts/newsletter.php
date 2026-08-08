@@ -1,3 +1,1 @@
-<?php
-?>
-<section class="newsletter-section section"><div class="container"><div class="newsletter__wrap"><h2>در خبرنامه عضو شوید</h2><p>جدیدترین محصولات و تخفیف‌ها را دریافت کنید.</p><form class="newsletter-form" method="post"><input type="email" placeholder="ایمیل خود را وارد کنید" required><button type="submit">اشتراک</button></form></div></div></section>
+<?php $title=get_theme_mod('senoobar_section_newsletter_title','در خبرنامه صنوبر عضو شوید!');$desc=get_theme_mod('senoobar_section_newsletter_desc','از تخفیف‌ها و جدیدترین محصولات باخبر شوید.');?><section class="newsletter-section"><div class="container"><div class="newsletter__wrap"><h2><?php echo esc_html($title);?></h2><p><?php echo esc_html($desc);?></p><form class="newsletter-form" method="post" action="#"><input type="email" name="email" placeholder="ایمیل خود را وارد کنید..." required><button type="submit">عضویت</button></form></div></div></section>
