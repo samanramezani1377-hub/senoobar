@@ -49,7 +49,7 @@ add_filter('loop_shop_per_page', function () {
 
 // ─── 6. Products per row ────────────────────
 add_filter('loop_shop_columns', function () {
-    return 4;
+    return 3;
 });
 
 // ─── 7. Sale badge ──────────────────────────
