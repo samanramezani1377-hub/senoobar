@@ -345,22 +345,22 @@ main.shop-page .products-grid.grid-view ul.products {
 
 @media (min-width: 768px) {
   main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
   }
 }
 
 @media (min-width: 992px) {
   main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 24px !important;
   }
 }
 
 @media (min-width: 1400px) {
   main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 24px !important;
   }
 }
 
@@ -393,7 +393,7 @@ main.shop-page .products-grid.grid-view ul.products {
 /* Product image */
   main.shop-page .products-grid.grid-view ul.products li.product a.woocommerce-LoopProduct-link img {
   width: 100% !important;
-  aspect-ratio: 4 / 3 !important;
+  aspect-ratio: 1 / 1 !important;
   object-fit: cover !important;
   display: block !important;
   margin: 0 !important;
@@ -402,20 +402,20 @@ main.shop-page .products-grid.grid-view ul.products {
 
 /* Product title */
   main.shop-page .products-grid.grid-view ul.products li.product .woocommerce-loop-product__title {
-  font-size: 0.95rem !important;
-  font-weight: 600 !important;
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
   color: #1f2937 !important;
-  padding: 14px 14px 4px !important;
+  padding: 16px 16px 6px !important;
   margin: 0 !important;
-  line-height: 1.5 !important;
+  line-height: 1.6 !important;
   flex: 1 !important;
-  min-height: 2.8em !important;
+  min-height: 3em !important;
 }
 
 /* Price */
   main.shop-page .products-grid.grid-view ul.products li.product .price {
-  padding: 6px 14px 10px !important;
-  font-size: 1rem !important;
+  padding: 6px 16px 12px !important;
+  font-size: 1.1rem !important;
   font-weight: 800 !important;
   color: var(--color-primary, #1e3a2f) !important;
   direction: rtl !important;
@@ -426,7 +426,7 @@ main.shop-page .products-grid.grid-view ul.products {
   margin: 0 !important;
 }
   main.shop-page .products-grid.grid-view ul.products li.product .price .woocommerce-Price-amount { font-weight: 800 !important; }
-  main.shop-page .products-grid.grid-view ul.products li.product .price del { font-size: 0.8rem !important; font-weight: 400 !important; color: #9ca3af !important; }
+  main.shop-page .products-grid.grid-view ul.products li.product .price del { font-size: 0.85rem !important; font-weight: 400 !important; color: #9ca3af !important; }
   main.shop-page .products-grid.grid-view ul.products li.product .price ins { text-decoration: none !important; }
 
 /* Add to Cart Button */
@@ -434,13 +434,13 @@ main.shop-page .products-grid.grid-view ul.products {
   main.shop-page .products-grid.grid-view ul.products li.product .button,
   main.shop-page .products-grid.grid-view ul.products li.product a.button {
   display: block !important;
-  margin: 0 14px 14px !important;
-  padding: 11px 16px !important;
+  margin: 0 16px 16px !important;
+  padding: 13px 16px !important;
   text-align: center !important;
   background: var(--color-primary, #1e3a2f) !important;
   color: #fff !important;
-  border-radius: 10px !important;
-  font-size: 0.9rem !important;
+  border-radius: 12px !important;
+  font-size: 0.95rem !important;
   font-weight: 600 !important;
   text-decoration: none !important;
   transition: all 0.2s !important;
