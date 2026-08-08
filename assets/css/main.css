@@ -1380,11 +1380,14 @@ body .shop-main.list-view ul.products li.product {
   border: 1px solid #e5e7eb !important;
 }
 
-/* ── Mobile — 2 cols, 10px gap ── */
+/* ── Mobile — 1 col, 12px gap ── */
 @media (max-width: 767px) {
+  .shop-layout { display: block; }
+  .shop-sidebar { width: 100%; }
+  .shop-main { width: 100%; margin-top: 16px; }
   body .shop-main ul.products {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
   }
 }
 

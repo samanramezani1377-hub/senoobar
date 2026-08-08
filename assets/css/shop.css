@@ -309,9 +309,9 @@ body .shop-main ul.products li.product {
 }
 
 body .shop-main ul.products li.product:hover {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06) !important;
-  transform: translateY(-1px) !important;
-  border-color: #e5e7eb !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12) !important;
+  transform: translateY(-3px) !important;
+  border-color: #d1d5db !important;
 }
 
 /* Product link wrapper */
@@ -472,28 +472,18 @@ body .shop-main ul.products li.product .add_to_cart_button.loading::after {
   body .shop-main ul.products li.product a.button {
     opacity: 1 !important;
     transform: translateY(0) !important;
-    width: 32px !important;
-    height: 32px !important;
-    bottom: 10px !important;
-    left: 10px !important;
   }
 }
 
-/* Even smaller on mobile */
-@media (max-width: 767px) {
+/* Tablet button size */
+@media (min-width: 768px) and (max-width: 1199px) {
   body .shop-main ul.products li.product .add_to_cart_button,
   body .shop-main ul.products li.product .button,
   body .shop-main ul.products li.product a.button {
-    width: 30px !important;
-    height: 30px !important;
-    bottom: 8px !important;
-    left: 8px !important;
-  }
-  body .shop-main ul.products li.product .add_to_cart_button::after,
-  body .shop-main ul.products li.product .button::after,
-  body .shop-main ul.products li.product a.button::after {
-    width: 14px;
-    height: 14px;
+    width: 34px !important;
+    height: 34px !important;
+    bottom: 10px !important;
+    left: 10px !important;
   }
 }
 
@@ -591,19 +581,22 @@ body .shop-main.list-view ul.products li.product:hover {
 
 /* ── Grid-view card responsive ── */
 @media (max-width: 991px) {
+  body .shop-main ul.products li.product a.woocommerce-LoopProduct-link img {
+    aspect-ratio: 16 / 9 !important;
+  }
   body .shop-main ul.products li.product .woocommerce-loop-product__title {
-    font-size: 0.82rem !important;
-    padding: 10px 10px 3px !important;
+    font-size: 0.85rem !important;
+    padding: 10px 12px 3px !important;
   }
   body .shop-main ul.products li.product .price {
-    font-size: 0.9rem !important;
-    padding: 3px 10px 8px !important;
+    font-size: 0.95rem !important;
+    padding: 3px 12px 10px !important;
   }
   body .shop-main ul.products li.product .price del {
-    font-size: 0.7rem !important;
+    font-size: 0.75rem !important;
   }
   body .shop-main ul.products li.product .price ins {
-    font-size: 0.9rem !important;
+    font-size: 0.95rem !important;
   }
 }
 
@@ -611,26 +604,44 @@ body .shop-main.list-view ul.products li.product:hover {
   body .shop-main ul.products li.product {
     border-radius: 10px !important;
   }
+  /* Wider, shorter image on single-column mobile */
+  body .shop-main ul.products li.product a.woocommerce-LoopProduct-link img {
+    aspect-ratio: 16 / 9 !important;
+  }
   body .shop-main ul.products li.product .woocommerce-loop-product__title {
-    font-size: 0.78rem !important;
-    padding: 8px 8px 2px !important;
+    font-size: 0.85rem !important;
+    padding: 10px 12px 3px !important;
     line-height: 1.5 !important;
   }
   body .shop-main ul.products li.product .price {
-    font-size: 0.85rem !important;
-    padding: 2px 8px 8px !important;
+    font-size: 0.95rem !important;
+    padding: 3px 12px 10px !important;
   }
   body .shop-main ul.products li.product .price del {
-    font-size: 0.68rem !important;
+    font-size: 0.75rem !important;
   }
   body .shop-main ul.products li.product .price ins {
-    font-size: 0.85rem !important;
+    font-size: 0.95rem !important;
+  }
+  body .shop-main ul.products li.product .add_to_cart_button,
+  body .shop-main ul.products li.product .button,
+  body .shop-main ul.products li.product a.button {
+    width: 36px !important;
+    height: 36px !important;
+    bottom: 12px !important;
+    left: 12px !important;
+  }
+  body .shop-main ul.products li.product .add_to_cart_button::after,
+  body .shop-main ul.products li.product .button::after,
+  body .shop-main ul.products li.product a.button::after {
+    width: 16px;
+    height: 16px;
   }
   .onsale-badge {
-    font-size: 0.65rem !important;
-    padding: 2px 6px !important;
-    top: 6px !important;
-    right: 6px !important;
+    font-size: 0.7rem !important;
+    padding: 3px 8px !important;
+    top: 8px !important;
+    right: 8px !important;
   }
 }
 
