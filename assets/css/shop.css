@@ -362,13 +362,14 @@ body .shop-main ul.products li.product .price {
 body .shop-main ul.products li.product .price > *,
 body .shop-main ul.products li.product .price > * > * {
   display: inline !important;
+  color: #111827 !important;
 }
 /* Single price (no sale) */
 body .shop-main ul.products li.product .price:not(:has(del)) {
   flex-direction: row !important;
   font-size: 1rem !important;
   font-weight: 700 !important;
-  color: #1e3a2f !important;
+  color: #111827 !important;
 }
 body .shop-main ul.products li.product .price .woocommerce-Price-amount {
   font-weight: inherit !important;
@@ -382,13 +383,13 @@ body .shop-main ul.products li.product .price del {
   color: #9ca3af !important;
   text-decoration: line-through !important;
 }
-/* Sale price — ABOVE, bold, green */
+/* Sale price — ABOVE, bold, dark */
 body .shop-main ul.products li.product .price ins {
   order: 1 !important;
   text-decoration: none !important;
   font-weight: 700 !important;
   font-size: 1.05rem !important;
-  color: #1e3a2f !important;
+  color: #111827 !important;
 }
 
 /* ── Add to Cart Button (minimal round icon) ── */
@@ -556,6 +557,7 @@ body .shop-main.list-view ul.products li.product .price {
   flex-direction: row !important;
   gap: 10px !important;
   align-items: center !important;
+  color: #111827 !important;
 }
 
 /* List-view button — full text, not round */
@@ -595,12 +597,14 @@ body .shop-main.list-view ul.products li.product:hover {
   body .shop-main ul.products li.product .price {
     font-size: 0.95rem !important;
     padding: 3px 12px 10px !important;
+    color: #111827 !important;
   }
   body .shop-main ul.products li.product .price del {
     font-size: 0.75rem !important;
   }
   body .shop-main ul.products li.product .price ins {
     font-size: 0.95rem !important;
+    color: #111827 !important;
   }
 }
 
@@ -620,12 +624,14 @@ body .shop-main.list-view ul.products li.product:hover {
   body .shop-main ul.products li.product .price {
     font-size: 0.95rem !important;
     padding: 3px 12px 10px !important;
+    color: #111827 !important;
   }
   body .shop-main ul.products li.product .price del {
     font-size: 0.75rem !important;
   }
   body .shop-main ul.products li.product .price ins {
     font-size: 0.95rem !important;
+    color: #111827 !important;
   }
   body .shop-main ul.products li.product .add_to_cart_button,
   body .shop-main ul.products li.product .button,
