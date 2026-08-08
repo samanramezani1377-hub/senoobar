@@ -1,2 +1,15 @@
-<?php?>
-<section class="hero"><div class="container hero__grid"><div class="hero__text"><h1 class="hero__title"><?php echo esc_html(get_theme_mod('senoobar_hero_title','زیبایی در سادگی، کیفیت در جزئیات'));?></h1><p class="hero__subtitle"><?php echo esc_html(get_theme_mod('senoobar_hero_subtitle','مبلمان خانه‌ای درخور شما'));?></p><div class="hero__actions"><a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop')));?>" class="btn btn--primary btn--lg">مشاهده مجموعه‌ها</a><a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop')));?>" class="btn btn--outline btn--lg">مشاهده محصولات</a></div></div><div class="hero__images"><div class="hero__img"><?php $img1=get_theme_mod('senoobar_hero_img1');if($img1)echo wp_get_attachment_image($img1,'large',false,['loading'=>'eager']);?></div><div class="hero__img"><?php $img2=get_theme_mod('senoobar_hero_img2');if($img2)echo wp_get_attachment_image($img2,'large',false,['loading'=>'eager']);?></div></div></div></section>
+<?php
+$hero_title = get_theme_mod('senoobar_hero_title','زیبایی در سادگی، کیفیت در جزئیات');
+$hero_sub = get_theme_mod('senoobar_hero_subtitle','مبلمان خانه‌ای درخور شما');
+?>
+<section class="hero"><div class="container hero__grid"><div class="hero__text">
+<h1 class="hero__title"><?php echo esc_html($hero_title); ?></h1>
+<p class="hero__subtitle"><?php echo esc_html($hero_sub); ?></p>
+<div class="hero__actions">
+<a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop'))); ?>" class="btn btn--primary btn--lg">مشاهده مجموعه‌ها</a>
+<a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop'))); ?>" class="btn btn--outline btn--lg">مشاهده محصولات</a>
+</div></div>
+<div class="hero__images">
+<div class="hero__img"><?php $img1=get_theme_mod('senoobar_hero_img1'); if($img1) echo wp_get_attachment_image($img1,'large',false,['loading'=>'eager']); ?></div>
+<div class="hero__img"><?php $img2=get_theme_mod('senoobar_hero_img2'); if($img2) echo wp_get_attachment_image($img2,'large',false,['loading'=>'eager']); ?></div>
+</div></div></section>
