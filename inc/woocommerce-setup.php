@@ -134,11 +134,6 @@ add_filter('woocommerce_out_of_stock_message', function () {
     return 'ناموجود';
 });
 
-// Sale badge text
-add_filter('woocommerce_sale_flash', function ($html) {
-    return '<span class="onsale-badge">حراج</span>';
-});
-
 // Add to cart
 add_filter('woocommerce_product_add_to_cart_text', function () {
     return 'افزودن به سبد خرید';
