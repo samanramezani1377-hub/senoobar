@@ -349,14 +349,15 @@
           // Build query
           let queryString;
           if (cat === 'all') {
-            queryString = this.buildQuery({});
-            const params = new URLSearchParams(queryString);
-            params.delete('product_cat');
+            // Go to base shop URL with NO filters
+            queryString = '';
+          } else {
+            // Keep current sort/price but switch category
+            const params = new URLSearchParams(window.location.search);
             params.delete('min_price');
             params.delete('max_price');
+            params.set('product_cat', cat);
             queryString = params.toString();
-          } else {
-            queryString = this.buildQuery({ product_cat: cat });
           }
 
           // Close mobile filter
