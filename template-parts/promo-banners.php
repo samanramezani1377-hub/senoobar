@@ -1,0 +1,5 @@
+<?php?>
+<section class="section"><div class="container"><div class="promo-grid">
+<div class="promo-card"><div class="promo-card__bg"><?php $p1=get_theme_mod('senoobar_promo_img1');if($p1)echo wp_get_attachment_image($p1,'large',false,['loading'=>'lazy']);?></div><div class="promo-card__overlay"></div><div class="promo-card__content"><h3 class="promo-card__title">اتاق خواب رویایی</h3><p class="promo-card__desc">با طراحی‌های خاص صنوبر</p><a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop')));?>" class="btn btn--white btn--sm">مشاهده مجموعه</a></div></div>
+<div class="promo-card"><div class="promo-card__bg"><?php $p2=get_theme_mod('senoobar_promo_img2');if($p2)echo wp_get_attachment_image($p2,'large',false,['loading'=>'lazy']);?></div><div class="promo-card__overlay"></div><div class="promo-card__content"><h3 class="promo-card__title">مبلمان مدرن</h3><p class="promo-card__desc">برای خانه‌های امروزی</p><a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop')));?>" class="btn btn--white btn--sm">مشاهده مجموعه</a></div></div>
+</div></div></section>
