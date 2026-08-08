@@ -48,8 +48,27 @@ add_filter('loop_shop_per_page', function () {
 });
 
 // ─── 6. Products per row ────────────────────
+// CSS Grid handles columns; let WooCommerce know we have 3
 add_filter('loop_shop_columns', function () {
     return 3;
+});
+
+// Override WooCommerce body class columns
+add_filter('body_class', function ($classes) {
+    if (is_shop() || is_product_category() || is_product_tag()) {
+        $classes = array_diff($classes, ['columns-4', 'columns-3', 'columns-2']);
+        $classes[] = 'columns-3';
+    }
+    return $classes;
+});
+
+// Remove WooCommerce columns class from ul.products
+add_filter('post_class', function ($classes) {
+    if (function_exists('is_shop') && (is_shop() || is_product_category() || is_product_tag())) {
+        $classes = array_diff($classes, ['columns-4', 'columns-3', 'columns-2']);
+        $classes[] = 'columns-3';
+    }
+    return $classes;
 });
 
 // ─── 7. Sale badge ──────────────────────────
