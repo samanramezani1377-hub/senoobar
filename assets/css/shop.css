@@ -38,13 +38,14 @@
 .shop-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 20px;
   align-items: start;
 }
 
 @media (min-width: 992px) {
   .shop-layout {
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 250px 1fr;
+    gap: 20px;
   }
 }
 
@@ -52,7 +53,7 @@
 .shop-sidebar {
   background: var(--color-white, #fff);
   border-radius: 16px;
-  padding: 20px;
+  padding: 16px;
   border: 1px solid #e5e7eb;
 }
 
@@ -334,23 +335,33 @@ main.shop-page .products-grid.grid-view ul.products {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
   gap: 12px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
 }
 
 @media (min-width: 600px) {
   main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
   }
 }
 
 @media (min-width: 768px) {
   main.shop-page .products-grid.grid-view ul.products {
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 16px !important;
+    gap: 14px !important;
   }
 }
 
 @media (min-width: 992px) {
+  main.shop-page .products-grid.grid-view ul.products {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
+  }
+}
+
+@media (min-width: 1200px) {
   main.shop-page .products-grid.grid-view ul.products {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 20px !important;
@@ -557,15 +568,15 @@ main.shop-page .products-grid.grid-view ul.products {
   .sort-select { min-width: 140px; }
 
   main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
   }
 
   main.shop-page .products-grid.list-view ul.products li.product {
-    grid-template-columns: 120px 1fr;
-    gap: 12px;
+    grid-template-columns: 120px 1fr !important;
+    gap: 12px !important;
   }
-  main.shop-page .products-grid.list-view ul.products li.product img { height: 120px; }
+  main.shop-page .products-grid.list-view ul.products li.product img { height: 120px !important; }
   .shop-toolbar { gap: 8px; padding: 10px 12px; }
 }
 
