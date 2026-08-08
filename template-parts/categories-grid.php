@@ -1,12 +1,5 @@
 <?php
-$cats=get_terms(['taxonomy'=>'product_cat','hide_empty'=>true,'number'=>6,'parent'=>0]);
-if(empty($cats)||is_wp_error($cats))return;
-?>
-<section class="cats-section section section--off-white"><div class="container"><div class="section__header"><h2 class="section__title section__title--lined">دسته‌بندی محصولات</h2></div><div class="cats-grid">
-<?php foreach($cats as $cat):$thumb_id=get_term_meta($cat->term_id,'thumbnail_id',true);$img=wp_get_attachment_url($thumb_id);?>
-<a href="<?php echo esc_url(get_term_link($cat));?>" class="cat-item"><div class="cat-item__thumb">
-<?php if($img):?><img src="<?php echo esc_url($img);?>" alt="<?php echo esc_attr($cat->name);?>" loading="lazy">
-<?php else:?><div class="placeholder">🪑</div><?php endif;?>
-</div><span class="cat-item__title"><?php echo esc_html($cat->name);?></span></a>
-<?php endforeach;?>
-</div></div></section>
+$cats=[['name'=>'مبل','img'=>'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=120&h=90&fit=crop&auto=format'],['name'=>'سرویس خواب','img'=>'https://images.unsplash.com/photo-1562438668-bcf0ca6578f0?w=120&h=90&fit=crop&auto=format'],['name'=>'میز ناهارخوری','img'=>'https://images.unsplash.com/photo-1656403002413-2ac6137237d6?w=120&h=90&fit=crop&auto=format'],['name'=>'میز تلویزیون','img'=>'https://images.unsplash.com/photo-1547062200-f195b1c77e30?w=120&h=90&fit=crop&auto=format'],['name'=>'میز جلو مبلی','img'=>'https://images.unsplash.com/photo-1628744876497-eb30460be9f6?w=120&h=90&fit=crop&auto=format'],['name'=>'کمد و باخاخت','img'=>'https://images.unsplash.com/photo-1642541070065-3912f347e7c6?w=120&h=90&fit=crop&auto=format']];
+$wc=[];if(class_exists('WooCommerce')){$terms=get_terms(['taxonomy'=>'product_cat','hide_empty'=>false,'number'=>6]);if(!is_wp_error($terms)&&!empty($terms)){foreach($terms as $t){$tid=get_term_meta($t->term_id,'thumbnail_id',true);$wc[]=['name'=>$t->name,'link'=>get_term_link($t),'img'=>$tid?wp_get_attachment_url($tid):''];}}}
+$display=!empty($wc)?$wc:$cats;
+?><section class="cats-section"><div class="container"><div class="cats-grid"><?php foreach($display as $c): ?><a href="<?php echo isset($c['link'])?esc_url($c['link']):'#'; ?>" class="cat-item"><div class="cat-item__thumb"><?php if(!empty($c['img'])): ?><img src="<?php echo esc_url($c['img']); ?>" alt="<?php echo esc_attr($c['name']); ?>" loading="lazy"><?php else: ?><div class="placeholder">🛋️</div><?php endif; ?></div><span class="cat-item__title"><?php echo esc_html($c['name']); ?></span></a><?php endforeach; ?></div></div></section>
