@@ -328,7 +328,7 @@ body .shop-main ul.products li.product a.woocommerce-LoopProduct-link {
 /* Product image */
   body .shop-main ul.products li.product a.woocommerce-LoopProduct-link img {
   width: 100% !important;
-  aspect-ratio: 1 / 1 !important;
+  aspect-ratio: 4 / 3 !important;
   object-fit: cover !important;
   display: block !important;
   margin: 0 !important;
@@ -340,16 +340,16 @@ body .shop-main ul.products li.product .woocommerce-loop-product__title {
   font-size: 0.9rem !important;
   font-weight: 600 !important;
   color: #374151 !important;
-  padding: 12px 12px 4px !important;
+  padding: 10px 12px 3px !important;
   margin: 0 !important;
-  line-height: 1.7 !important;
-  flex: 1 !important;
-  min-height: 2.5em !important;
+  line-height: 1.5 !important;
+  flex: 0 !important;
+  min-height: auto !important;
 }
 
 /* Price */
 body .shop-main ul.products li.product .price {
-  padding: 4px 12px 10px !important;
+  padding: 3px 12px 8px !important;
   font-size: 1rem !important;
   font-weight: 700 !important;
   color: var(--color-primary, #1e3a2f) !important;
@@ -393,10 +393,10 @@ body .shop-main ul.products li.product .add_to_cart_button,
 body .shop-main ul.products li.product .button,
 body .shop-main ul.products li.product a.button {
   position: absolute !important;
-  bottom: 12px !important;
-  left: 12px !important;
-  width: 36px !important;
-  height: 36px !important;
+  bottom: 14px !important;
+  left: 14px !important;
+  width: 42px !important;
+  height: 42px !important;
   padding: 0 !important;
   border-radius: 50% !important;
   background: var(--color-primary, #1e3a2f) !important;
@@ -425,8 +425,8 @@ body .shop-main ul.products li.product .button::after,
 body .shop-main ul.products li.product a.button::after {
   content: '';
   display: block;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   background: currentColor;
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Ccircle cx='9' cy='21' r='1'/%3E%3Ccircle cx='20' cy='21' r='1'/%3E%3Cpath d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'/%3E%3C/svg%3E");
   mask-size: contain;

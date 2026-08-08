@@ -1428,7 +1428,7 @@ body .shop-main.list-view ul.products li.product {
   }
 }
 
-/* ── Desktop 1200+ — 4 cols, 24px gap ── */
+/* ── Desktop 1200+ — 3 cols, wider cards, 24px gap ── */
 @media (min-width: 1200px) {
   .shop-layout {
     display: grid;
@@ -1438,7 +1438,7 @@ body .shop-main.list-view ul.products li.product {
   }
   .shop-main { margin-top: 0; }
   body .shop-main ul.products {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     gap: 24px !important;
   }
   body .shop-main.list-view ul.products li.product {

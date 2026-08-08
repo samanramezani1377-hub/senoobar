@@ -189,7 +189,7 @@ $current_cat_slug = is_product_category() ? get_queried_object()->slug : '';
         <!-- ─── Products Grid ────────────────────── -->
         <div class="products-wrapper" id="productsWrapper">
           <?php
-          wc_set_loop_prop('columns', 4);
+          wc_set_loop_prop('columns', 3);
 
           if (woocommerce_product_loop()) {
             woocommerce_product_loop_start();
