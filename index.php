@@ -1,5 +1,6 @@
 <?php
-get_header(); ?>
+get_header();
+?>
 <main id="primary" class="site-main">
 <?php if (is_front_page() && is_home()) : ?>
     <?php get_template_part('template-parts/hero'); ?>
@@ -16,13 +17,14 @@ get_header(); ?>
 <?php elseif (is_shop() || is_product_category()) : ?>
     <div class="container page-content"><?php woocommerce_content(); ?></div>
 <?php elseif (is_single()) : ?>
-    <div class="container page-content"><?php get_template_part('template-parts/content','single'); ?></div>
+    <div class="container page-content"><?php get_template_part('template-parts/content', 'single'); ?></div>
 <?php elseif (is_page()) : ?>
-    <div class="container page-content"><?php get_template_part('template-parts/content','page'); ?></div>
+    <div class="container page-content"><?php get_template_part('template-parts/content', 'page'); ?></div>
 <?php elseif (is_archive()) : ?>
-    <div class="container page-content"><?php get_template_part('template-parts/content','archive'); ?></div>
+    <div class="container page-content"><?php get_template_part('template-parts/content', 'archive'); ?></div>
 <?php else : ?>
-    <div class="container page-content"><?php get_template_part('template-parts/content','none'); ?></div>
+    <div class="container page-content"><?php get_template_part('template-parts/content', 'none'); ?></div>
 <?php endif; ?>
 </main>
-<?php get_footer();
+<?php
+get_footer();
