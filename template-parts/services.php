@@ -1,8 +1,1 @@
-<?php
-?>
-<section class="section section--gray"><div class="container"><div class="services-grid">
-<div class="service-card"><span class="service-card__icon">🛡️</span><h3 class="service-card__title">گارانتی معتبر</h3><p class="service-card__desc">تضمین کیفیت و اصالت کالا</p></div>
-<div class="service-card"><span class="service-card__icon">🚚</span><h3 class="service-card__title">ارسال سریع و رایگان</h3><p class="service-card__desc">برای خریدهای بالای ۵ میلیون تومان</p></div>
-<div class="service-card"><span class="service-card__icon">⭐</span><h3 class="service-card__title">جنس با کیفیت</h3><p class="service-card__desc">بهترین متریال</p></div>
-<div class="service-card"><span class="service-card__icon">💳</span><h3 class="service-card__title">خریدی مطمئن</h3><p class="service-card__desc">امکان خرید اقساطی</p></div>
-</div></div></section>
+<?php $svc=[];for($i=1;$i<=4;$i++){$svc[]=['icon'=>get_theme_mod("senoobar_service{$i}_icon",['🚚','🛡️','🔒','💬'][$i-1]),'title'=>get_theme_mod("senoobar_service{$i}_title",['ارسال سریع','ضمانت اصالت کالا','پرداخت امن','پشتیبانی ۲۴/۷'][$i-1]),'desc'=>get_theme_mod("senoobar_service{$i}_desc",['۲-۷ روز کاری','۷ روز ضمانت بازگشت','درگاه پرداخت مطمئن','پاسخگویی همیشه هستیم'][$i-1])];}?><section class="section section--white" style="border-top:1px solid var(--color-gray-100);border-bottom:1px solid var(--color-gray-100);"><div class="container"><div class="services-grid"><?php foreach($svc as $s):?><div class="service-card"><span class="service-card__icon"><?php echo esc_html($s['icon']);?></span><div><p class="service-card__title"><?php echo esc_html($s['title']);?></p><p class="service-card__desc"><?php echo esc_html($s['desc']);?></p></div></div><?php endforeach;?></div></div></section>
