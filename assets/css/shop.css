@@ -345,15 +345,15 @@ main.shop-page .products-grid.grid-view ul.products {
 
 @media (min-width: 768px) {
   main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 20px !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
   }
 }
 
 @media (min-width: 992px) {
   main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 24px !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px !important;
   }
 }
 
