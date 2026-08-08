@@ -26,7 +26,7 @@
     <div class="announcement-bar">
         <div class="container">
             <span class="announcement-bar__icon">🚚</span>
-            <span><?php echo esc_html(get_theme_mod('senoobar_announcement', 'ارسال رایگان برای سفارش‌های بالای ۲۰ میلیون تومان')); ?></span>
+            <span><?php echo esc_html(get_theme_mod('senoobar_announcement', 'ارسال رایگان برای سفارش‌های بالای ۵ میلیون تومان')); ?></span>
         </div>
     </div>
     
@@ -40,7 +40,7 @@
             <div class="site-branding">
                 <a href="<?php echo esc_url(home_url('/')); ?>" class="custom-logo-link">
                     <span class="logo-text">صنوبر</span>
-                    <span class="logo-sub">مبلمان خانگی شما</span>
+                    <span class="logo-sub">تشک طبی، فنری و کالای خواب</span>
                 </a>
             </div>
             
