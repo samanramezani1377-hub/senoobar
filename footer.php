@@ -1,48 +1,22 @@
 <footer class="site-footer">
     <div class="container footer-grid">
         <div class="footer-col">
-            <h4>فروشگاه صنوبر</h4>
-            <p>عرضه انواع تشک طبی، تشک فنری و کالای خواب با بهترین کیفیت و قیمت.</p>
-            <div class="footer-contact">
-                <div>📞 ۰۹۱۳۰۲۰۵۸۹۸</div>
-                <div>📞 ۰۹۰۱۰۸۹۱۸۶۱</div>
-                <div>📍 اصفهان، میدان لاله، کوچه برهانی</div>
-                <div>🕐 شنبه تا پنج‌شنبه ۱۰ صبح تا ۹ شب</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+                <div style="width:40px;height:40px;border-radius:var(--radius-xl);background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" style="color:var(--color-white);"><path d="M12 2L8 8H4l4 4-1.5 6L12 15l5.5 3L16 12l4-4h-4L12 2z"/></svg></div>
+                <div><div style="font-weight:700;font-size:1.1rem;"><?php bloginfo('name'); ?></div><div style="font-size:0.7rem;opacity:0.6;"><?php bloginfo('description'); ?></div></div>
+            </div>
+            <p style="opacity:0.6;font-size:0.85rem;line-height:2;"><?php echo esc_html(get_theme_mod('senoobar_footer_about','صنوبر با هدف ارائه بهترین زمینه دکوراسیون مبلمان، صمیمیت با کیفیت و طراحی مدرن، متعهد رفاه خانه شما را ارتقا کرده است.')); ?></p>
+            <div class="footer-social">
+                <?php foreach(['instagram'=>'I','telegram'=>'T','pinterest'=>'P','linkedin'=>'L'] as $k=>$l): ?>
+                <a href="<?php echo esc_url(get_theme_mod("senoobar_footer_{$k}",'#')); ?>" aria-label="<?php echo $k; ?>"><?php echo $l; ?></a>
+                <?php endforeach; ?>
             </div>
         </div>
-        <div class="footer-col">
-            <h4>خدمات مشتریان</h4>
-            <ul>
-                <li><a href="#">سوالات متداول</a></li>
-                <li><a href="#">شرایط و قوانین</a></li>
-                <li><a href="#">حریم خصوصی</a></li>
-                <li><a href="#">بازگشت کالا</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h4>دسترسی سریع</h4>
-            <ul>
-                <li><a href="#">درباره ما</a></li>
-                <li><a href="#">تماس با ما</a></li>
-                <li><a href="#">وبلاگ</a></li>
-                <li><a href="#">همکاری با ما</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h4>نماد اعتماد</h4>
-            <div class="enamad-badge">
-                <a referrerpolicy="origin" target="_blank" href="https://trustseal.enamad.ir/?id=XXXXX">
-                    <img src="<?php echo SENOOBAR_URI; ?>/assets/images/enamad.svg" alt="اینماد" width="80" height="80" loading="lazy">
-                </a>
-                <a href="#">
-                    <img src="<?php echo SENOOBAR_URI; ?>/assets/images/samandehi.svg" alt="ساماندهی" width="80" height="80" loading="lazy">
-                </a>
-            </div>
-        </div>
+        <div class="footer-col"><h4>دسته‌بندی محصولات</h4><ul><li><a href="#">اتاق خواب</a></li><li><a href="#">مبلمان</a></li><li><a href="#">ناهارخوری</a></li><li><a href="#">میز جلو مبلی</a></li><li><a href="#">اکسسوری</a></li><li><a href="#">خانه و آشپزخانه</a></li></ul></div>
+        <div class="footer-col"><h4>دسترسی سریع</h4><ul><li><a href="#">درباره ما</a></li><li><a href="#">تماس با ما</a></li><li><a href="#">سوالات متداول</a></li><li><a href="#">شرایط و قوانین</a></li><li><a href="#">حریم خصوصی</a></li></ul></div>
+        <div class="footer-col"><h4>اطلاعات تماس</h4><div class="footer-contact"><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone1','۰۲۱-۸۲۷۵۸۳۲')); ?></span></div><div><span>✉️</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_email','info@sanobar.com')); ?></span></div><div><span>📍</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_address','تهران، خیابان ۱۴۵۵')); ?></span></div></div></div>
     </div>
-    <div class="footer-bottom">
-        <div class="container">© <?php echo date('Y'); ?> صنوبر — تمامی حقوق محفوظ است.</div>
-    </div>
+    <div class="footer-bottom"><p>© <?php echo date('Y'); ?> <?php bloginfo('name'); ?> — کلیه حقوق این وب‌سایت متعلق به صنوبر است.</p><div class="footer-bottom__badges"><span>نماد اعتماد الکترونیکی</span><span>استفاده از مطالب با ذکر منبع</span></div></div>
 </footer>
 <button id="backToTop" class="back-to-top" aria-label="بازگشت به بالا">↑</button>
 <?php wp_footer(); ?>
