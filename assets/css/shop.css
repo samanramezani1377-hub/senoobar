@@ -38,26 +38,26 @@
 .shop-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 16px;
   align-items: start;
 }
 
 @media (min-width: 992px) {
   .shop-layout {
-    grid-template-columns: 250px 1fr;
-    gap: 20px;
+    grid-template-columns: 240px 1fr;
+    gap: 16px;
   }
   /* Wider container for shop pages */
   .shop-page .container {
-    max-width: 1320px;
+    max-width: 1340px;
   }
 }
 
 /* ─── Sidebar Filters ──────────────────────── */
 .shop-sidebar {
   background: var(--color-white, #fff);
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 14px;
+  padding: 14px;
   border: 1px solid #e5e7eb;
 }
 
@@ -354,28 +354,28 @@ main.shop-page .products-grid.grid-view ul.products {
 @media (min-width: 768px) {
   main.shop-page .products-grid.grid-view ul.products {
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 12px !important;
+    gap: 10px !important;
   }
 }
 
 @media (min-width: 992px) {
   main.shop-page .products-grid.grid-view ul.products {
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 14px !important;
+    gap: 12px !important;
   }
 }
 
 @media (min-width: 1200px) {
   main.shop-page .products-grid.grid-view ul.products {
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 16px !important;
+    gap: 14px !important;
   }
 }
 
 @media (min-width: 1400px) {
   main.shop-page .products-grid.grid-view ul.products {
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 20px !important;
+    gap: 16px !important;
   }
 }
 
