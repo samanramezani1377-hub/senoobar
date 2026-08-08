@@ -1,1 +1,77 @@
-LyogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiAgIFNlbm9vYmFyIC0gQ3JpdGljYWwgQ1NTIChJbmxpbmVkIGluIDxoZWFkPikKICAgTW9iaWxlLUZpcnN0IHwgUlRMIHwgUGVyZm9ybWFuY2UgT3B0aW1pemVkCiAgIERlc2lnbiBTeXN0ZW06IFdhcm0gV29vZCAmIEJlaWdlIFBhbGV0dGUKICAgSW5zcGlyZWQgYnkgV1BEUyBkZXNpZ24gdG9rZW4gcHJpbmNpcGxlcwogICA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gKi8KCi8qIOKUgOKUgOKUgCBEZXNpZ24gVG9rZW5zIOKUgOKUgOKUgCAqLwo6cm9vdCB7CiAgLyogUHJpbWFyeSBQYWxldHRlICovCiAgLS1jb2xvci1wcmltYXJ5OiAjM2QzODMzOwogIC0tY29sb3ItcHJpbWFyeS1kYXJrOiAjMmQyODI0OwogIC0tY29sb3ItYWNjZW50OiAjOEI3MzU1OwogIC0tY29sb3ItYWNjZW50LWRhcms6ICM2QjVCNDU7CiAgLS1jb2xvci1hY2NlbnQtbGlnaHQ6ICNGNUVERTM7CiAgLS1jb2xvci1hY2NlbnQtbGlnaHRlcjogI0ZBRjRFRTsKCiAgLyogTmV1dHJhbHMgKi8KICAtLWNvbG9yLXdoaXRlOiAjZmZmZmZmOwogIC0tY29sb3Itb2ZmLXdoaXRlOiAjRkFGOEY1OwogIC0tY29sb3ItY3JlYW06ICNGREY5RjQ7CiAgLS1jb2xvci1ncmF5LTUwOiAjZmFmOWY3OwogIC0tY29sb3ItZ3JheS0xMDA6ICNmN2Y1ZjI7CiAgLS1jb2xvci1ncmF5LTIwMDogI2U4ZTRkZjsKICAtLWNvbG9yLWdyYXktMzAwOiAjZDRjZmM5OwogIC0tY29sb3ItZ3JheS00MDA6ICNiOGIyYWI7CiAgLS1jb2xvci1ncmF5LTUwMDogIzllOTg5MDsKICAtLWNvbG9yLWdyYXktNjAwOiAjNmI2NTYwOwogIC0tY29sb3ItZ3JheS03MDA6ICM1MjRkNDg7CiAgLS1jb2xvci1ncmF5LTgwMDogIzNkMzgzMzsKCiAgLyogU2VtYW50aWMgKi8KICAtLWNvbG9yLXRleHQ6ICMzZDM4MzM7CiAgLS1jb2xvci10ZXh0LWxpZ2h0OiAjNmI2NTYwOwogIC0tY29sb3ItdGV4dC1tdXRlZDogIzllOTg5MDsKICAtLWNvbG9yLXN1Y2Nlc3M6ICM0YTljNWQ7CiAgLS1jb2xvci1lcnJvcjogI2MwMzkyYjsKICAtLWNvbG9yLXNhbGU6ICNjMDM5MmI7CgogIC8qIFNoYWRvd3MgKi8KICAtLXNoYWRvdy14czogMCAxcHggMnB4IHJnYmEoMCwwLDAsMC4wNCk7CiAgLS1zaGFkb3ctc206IDAgMXB4IDNweCByZ2JhKDAsMCwwLDAuMDYpOwogIC0tc2hhZG93LW1kOiAwIDRweCAxNnB4IHJnYmEoMCwwLDAsMC4wOCk7CiAgLS1zaGFkb3ctbGc6IDAgOHB4IDMycHggcmdiYSgwLDAsMCwwLjEpOwogIC0tc2hhZG93LXhsOiAwIDE2cHggNDhweCByZ2JhKDAsMCwwLDAuMTIpOwoKICAvKiBSYWRpaSAqLwogIC0tcmFkaXVzLXNtOiA4cHg7CiAgLS1yYWRpdXMtbWQ6IDEycHg7CiAgLS1yYWRpdXMtbGc6IDE2cHg7CiAgLS1yYWRpdXMteGw6IDIwcHg7CiAgLS1yYWRpdXMtZnVsbDogOTk5OXB4OwoKICAvKiBUeXBvZ3JhcGh5ICovCiAgLS1mb250LW1haW46ICdJUkFOU2Fuc1dlYicsIHN5c3RlbS11aSwgLWFwcGxlLXN5c3RlbSwgc2Fucy1zZXJpZjsKICAtLWZvbnQtaGVhZGluZzogJ0lSQU5TYW5zV2ViJywgc3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCBzYW5zLXNlcmlmOwoKICAvKiBTcGFjaW5nIHNjYWxlICovCiAgLS1zcGFjZS14czogNHB4OwogIC0tc3BhY2Utc206IDhweDsKICAtLXNwYWNlLW1kOiAxNnB4OwogIC0tc3BhY2UtbGc6IDI0cHg7CiAgLS1zcGFjZS14bDogMzJweDsKICAtLXNwYWNlLTJ4bDogNDhweDsKICAtLXNwYWNlLTN4bDogNjRweDsKCiAgLyogVHJhbnNpdGlvbnMgKi8KICAtLXRyYW5zaXRpb24tZmFzdDogMC4xNXMgY3ViaWMtYmV6aWVyKDAuNCwgMCwgMC4yLCAxKTsKICAtLXRyYW5zaXRpb246IDAuM3MgY3ViaWMtYmV6aWVyKDAuNCwgMCwgMC4yLCAxKTsKICAtLXRyYW5zaXRpb24tc2xvdzogMC41cyBjdWJpYy1iZXppZXIoMC40LCAwLCAwLjIsIDEpOwoKICAvKiBMYXlvdXQgKi8KICAtLWhlYWRlci1oZWlnaHQ6IDcycHg
+/* =============================================
+   Senoobar - Critical CSS (Inlined in <head>)
+   Mobile-First | RTL | Performance Optimized
+   Design System: Warm Wood & Beige Palette
+   Inspired by WPDS design token principles
+   ============================================= */
+
+/* ─── Design Tokens ─── */
+:root {
+  /* Primary Palette */
+  --color-primary: #3d3833;
+  --color-primary-dark: #2d2824;
+  --color-accent: #8B7355;
+  --color-accent-dark: #6B5B45;
+  --color-accent-light: #F5EDE3;
+  --color-accent-lighter: #FAF4EE;
+
+  /* Neutrals */
+  --color-white: #ffffff;
+  --color-off-white: #FAF8F5;
+  --color-cream: #FDF9F4;
+  --color-gray-50: #faf9f7;
+  --color-gray-100: #f7f5f2;
+  --color-gray-200: #e8e4df;
+  --color-gray-300: #d4cfc9;
+  --color-gray-400: #b8b2ab;
+  --color-gray-500: #9e9890;
+  --color-gray-600: #6b6560;
+  --color-gray-700: #524d48;
+  --color-gray-800: #3d3833;
+
+  /* Semantic */
+  --color-text: #3d3833;
+  --color-text-light: #6b6560;
+  --color-text-muted: #9e9890;
+  --color-success: #4a9c5d;
+  --color-error: #c0392b;
+  --color-sale: #c0392b;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.12);
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Typography */
+  --font-main: 'IRANSansWeb', system-ui, -apple-system, sans-serif;
+  --font-heading: 'IRANSansWeb', system-ui, -apple-system, sans-serif;
+
+  /* Spacing scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Layout */
+  --header-height: 72px;
+  --container-max: 1280px;
+}
+
+@media (min-width: 768px) {}</close({});
