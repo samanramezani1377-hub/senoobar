@@ -188,28 +188,25 @@ $current_cat_slug = is_product_category() ? get_queried_object()->slug : '';
 
         <!-- ─── Products Grid ────────────────────── -->
         <div class="products-wrapper" id="productsWrapper">
-          <div class="products-grid grid-view" id="productsGrid">
-            <?php
-            // Force 3 columns—CSS grid handles the rest
-            wc_set_loop_prop('columns', 3);
+          <?php
+          wc_set_loop_prop('columns', 3);
 
-            if (woocommerce_product_loop()) {
-              woocommerce_product_loop_start();
+          if (woocommerce_product_loop()) {
+            woocommerce_product_loop_start();
 
-              if (wc_get_loop_prop('total')) {
-                while (have_posts()) {
-                  the_post();
-                  do_action('woocommerce_shop_loop');
-                  wc_get_template_part('content', 'product');
-                }
+            if (wc_get_loop_prop('total')) {
+              while (have_posts()) {
+                the_post();
+                do_action('woocommerce_shop_loop');
+                wc_get_template_part('content', 'product');
               }
-
-              woocommerce_product_loop_end();
-            } else {
-              do_action('woocommerce_no_products_found');
             }
-            ?>
-          </div>
+
+            woocommerce_product_loop_end();
+          } else {
+            do_action('woocommerce_no_products_found');
+          }
+          ?>
         </div>
 
         <!-- ─── Pagination ───────────────────────── -->

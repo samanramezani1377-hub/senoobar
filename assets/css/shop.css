@@ -34,19 +34,11 @@
   .shop-desc { font-size: 1rem; }
 }
 
-/* ─── Shop Layout ──────────────────────────── */
-.shop-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-  align-items: start;
-}
+/* ─── Shop Layout — now handled by main.css ─── */
+/* (mobile-first overrides only) */
+.shop-layout { gap: 16px; }
 
 @media (min-width: 992px) {
-  .shop-layout {
-    grid-template-columns: 240px 1fr;
-    gap: 16px;
-  }
   /* Wider container for shop pages */
   .shop-page .container {
     max-width: 1340px;
@@ -292,95 +284,17 @@
 .view-btn.active { background: var(--color-primary, #1e3a2f); color: #fff; }
 
 /* ============================================
-   PRODUCT GRID — COMPLETE RESET + STYLING
+   PRODUCT GRID — STYLING (grid handled by main.css)
    ============================================ */
 
-/* ── Kill ALL WooCommerce defaults (scoped to shop-page) ── */
-main.shop-page ul.products,
-main.shop-page .woocommerce ul.products {
-  clear: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  list-style: none !important;
-}
-
-main.shop-page ul.products::before,
-main.shop-page ul.products::after,
-main.shop-page .woocommerce ul.products::before,
-main.shop-page .woocommerce ul.products::after {
+/* ── Kill ALL WooCommerce defaults ── */
+body .shop-main ul.products::before,
+body .shop-main ul.products::after {
   display: none !important;
   content: none !important;
 }
 
-main.shop-page ul.products li.product,
-main.shop-page .woocommerce ul.products li.product {
-  float: none !important;
-  clear: none !important;
-  width: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  position: relative;
-}
-
-main.shop-page ul.products li.product a img,
-main.shop-page .woocommerce ul.products li.product a img {
-  width: 100% !important;
-  height: auto !important;
-  display: block !important;
-  margin: 0 !important;
-  box-shadow: none !important;
-}
-
-/* ── Grid Container ── */
-main.shop-page .products-grid,
-.products-grid { transition: all 0.3s ease; }
-
-main.shop-page .products-grid.grid-view ul.products {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 12px !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  list-style: none !important;
-}
-
-@media (min-width: 600px) {
-  main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 16px !important;
-  }
-}
-
-@media (min-width: 768px) {
-  main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 10px !important;
-  }
-}
-
-@media (min-width: 992px) {
-  main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 12px !important;
-  }
-}
-
-@media (min-width: 1200px) {
-  main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 14px !important;
-  }
-}
-
-@media (min-width: 1400px) {
-  main.shop-page .products-grid.grid-view ul.products {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 16px !important;
-  }
-}
-
-/* ── Grid Product Card ── */
-  main.shop-page .products-grid.grid-view ul.products li.product {
+body .shop-main ul.products li.product {
   background: #fff !important;
   border-radius: 16px !important;
   border: 1px solid #e5e7eb !important;
@@ -391,13 +305,13 @@ main.shop-page .products-grid.grid-view ul.products {
   min-width: 0 !important;
 }
 
-  main.shop-page .products-grid.grid-view ul.products li.product:hover {
+  body .shop-main ul.products li.product:hover {
   box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
   transform: translateY(-2px) !important;
 }
 
 /* Product link wrapper */
-  main.shop-page .products-grid.grid-view ul.products li.product a.woocommerce-LoopProduct-link {
+  body .shop-main ul.products li.product a.woocommerce-LoopProduct-link {
   display: flex !important;
   flex-direction: column !important;
   flex: 1 !important;
@@ -406,7 +320,7 @@ main.shop-page .products-grid.grid-view ul.products {
 }
 
 /* Product image */
-  main.shop-page .products-grid.grid-view ul.products li.product a.woocommerce-LoopProduct-link img {
+  body .shop-main ul.products li.product a.woocommerce-LoopProduct-link img {
   width: 100% !important;
   aspect-ratio: 1 / 1 !important;
   object-fit: cover !important;
@@ -416,7 +330,7 @@ main.shop-page .products-grid.grid-view ul.products {
 }
 
 /* Product title */
-  main.shop-page .products-grid.grid-view ul.products li.product .woocommerce-loop-product__title {
+  body .shop-main ul.products li.product .woocommerce-loop-product__title {
   font-size: 1.05rem !important;
   font-weight: 700 !important;
   color: #1f2937 !important;
@@ -428,7 +342,7 @@ main.shop-page .products-grid.grid-view ul.products {
 }
 
 /* Price */
-  main.shop-page .products-grid.grid-view ul.products li.product .price {
+  body .shop-main ul.products li.product .price {
   padding: 6px 16px 12px !important;
   font-size: 1.1rem !important;
   font-weight: 800 !important;
@@ -440,14 +354,14 @@ main.shop-page .products-grid.grid-view ul.products {
   gap: 6px !important;
   margin: 0 !important;
 }
-  main.shop-page .products-grid.grid-view ul.products li.product .price .woocommerce-Price-amount { font-weight: 800 !important; }
-  main.shop-page .products-grid.grid-view ul.products li.product .price del { font-size: 0.85rem !important; font-weight: 400 !important; color: #9ca3af !important; }
-  main.shop-page .products-grid.grid-view ul.products li.product .price ins { text-decoration: none !important; }
+  body .shop-main ul.products li.product .price .woocommerce-Price-amount { font-weight: 800 !important; }
+  body .shop-main ul.products li.product .price del { font-size: 0.85rem !important; font-weight: 400 !important; color: #9ca3af !important; }
+  body .shop-main ul.products li.product .price ins { text-decoration: none !important; }
 
 /* Add to Cart Button */
-  main.shop-page .products-grid.grid-view ul.products li.product .add_to_cart_button,
-  main.shop-page .products-grid.grid-view ul.products li.product .button,
-  main.shop-page .products-grid.grid-view ul.products li.product a.button {
+  body .shop-main ul.products li.product .add_to_cart_button,
+  body .shop-main ul.products li.product .button,
+  body .shop-main ul.products li.product a.button {
   display: block !important;
   margin: 0 16px 16px !important;
   padding: 13px 16px !important;
@@ -465,22 +379,22 @@ main.shop-page .products-grid.grid-view ul.products {
   float: none !important;
   line-height: 1.5 !important;
 }
-  main.shop-page .products-grid.grid-view ul.products li.product .add_to_cart_button:hover,
-  main.shop-page .products-grid.grid-view ul.products li.product .button:hover {
+  body .shop-main ul.products li.product .add_to_cart_button:hover,
+  body .shop-main ul.products li.product .button:hover {
   background: #162e24 !important;
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 12px rgba(30,58,47,0.3) !important;
 }
 
 /* Loading state for button */
-  main.shop-page .products-grid.grid-view ul.products li.product .add_to_cart_button.loading {
+  body .shop-main ul.products li.product .add_to_cart_button.loading {
   opacity: 0.7 !important;
   pointer-events: none !important;
 }
 
 /* Sale badge */
-  main.shop-page .products-grid.grid-view ul.products li.product .onsale,
-  main.shop-page .products-grid.grid-view ul.products li.product span.onsale,
+  body .shop-main ul.products li.product .onsale,
+  body .shop-main ul.products li.product span.onsale,
 .onsale-badge {
   position: absolute !important;
   top: 12px !important;
@@ -500,13 +414,13 @@ main.shop-page .products-grid.grid-view ul.products {
 }
 
 /* ── List View ── */
-  main.shop-page .products-grid.list-view ul.products {
+  body .shop-main.list-view ul.products {
   display: flex !important;
   flex-direction: column !important;
   gap: 16px !important;
 }
 
-  main.shop-page .products-grid.list-view ul.products li.product {
+  body .shop-main.list-view ul.products li.product {
   display: grid !important;
   grid-template-columns: 200px 1fr !important;
   gap: 20px !important;
@@ -518,11 +432,11 @@ main.shop-page .products-grid.grid-view ul.products {
   transition: box-shadow 0.2s !important;
 }
 
-  main.shop-page .products-grid.list-view ul.products li.product:hover {
+  body .shop-main.list-view ul.products li.product:hover {
   box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
 }
 
-  main.shop-page .products-grid.list-view ul.products li.product img {
+  body .shop-main.list-view ul.products li.product img {
   width: 100% !important;
   height: 160px !important;
   object-fit: cover !important;
@@ -571,16 +485,16 @@ main.shop-page .products-grid.grid-view ul.products {
   .sort-label { display: none; }
   .sort-select { min-width: 140px; }
 
-  main.shop-page .products-grid.grid-view ul.products {
+  body .shop-main ul.products {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
   }
 
-  main.shop-page .products-grid.list-view ul.products li.product {
+  body .shop-main.list-view ul.products li.product {
     grid-template-columns: 120px 1fr !important;
     gap: 12px !important;
   }
-  main.shop-page .products-grid.list-view ul.products li.product img { height: 120px !important; }
+  body .shop-main.list-view ul.products li.product img { height: 120px !important; }
   .shop-toolbar { gap: 8px; padding: 10px 12px; }
 }
 

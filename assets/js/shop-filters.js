@@ -15,7 +15,7 @@
   let isLoading = false;
   let observer = null;
 
-  const grid = () => $('#productsGrid');
+  const grid = () => $('#productsWrapper');
   const ul = () => grid()?.querySelector('ul.products');
   const loader = () => $('#filterLoading');
   const trigger = () => $('#infiniteScrollTrigger');
@@ -209,13 +209,19 @@
       if (!res.ok) throw new Error('Fetch failed');
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, 'text/html');
-      const newGrid = $('#productsGrid', doc);
+      const newGrid = $('#productsWrapper', doc);
       const newPag = $('#shopPagination', doc);
       const newCnt = $('#resultsCount', doc);
 
       if (newGrid && g) {
-        g.innerHTML = newGrid.innerHTML;
-        g.className = 'products-grid ' + viewClass;
+        // Replace ul.products inside products-wrapper
+        const newUl = newGrid.querySelector('ul.products');
+        const oldUl = g.querySelector('ul.products');
+        if (newUl && oldUl) {
+          oldUl.replaceWith(newUl);
+        } else {
+          g.innerHTML = newGrid.innerHTML;
+        }
       }
       if (newPag) {
         const pagEl = $('#shopPagination');
@@ -251,7 +257,7 @@
       if (!res.ok) throw new Error('Fetch failed');
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, 'text/html');
-      const newGrid = $('#productsGrid', doc);
+      const newGrid = $('#productsWrapper', doc);
       const newPag = $('#shopPagination', doc);
       const productUl = ul();
 
