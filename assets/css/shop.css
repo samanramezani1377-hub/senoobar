@@ -465,6 +465,38 @@ body .shop-main ul.products li.product .add_to_cart_button.loading::after {
   background-color: rgba(255,255,255,0.8);
 }
 
+/* ── Always visible on tablet & mobile (no hover needed) ── */
+@media (max-width: 1199px) {
+  body .shop-main ul.products li.product .add_to_cart_button,
+  body .shop-main ul.products li.product .button,
+  body .shop-main ul.products li.product a.button {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    width: 32px !important;
+    height: 32px !important;
+    bottom: 10px !important;
+    left: 10px !important;
+  }
+}
+
+/* Even smaller on mobile */
+@media (max-width: 767px) {
+  body .shop-main ul.products li.product .add_to_cart_button,
+  body .shop-main ul.products li.product .button,
+  body .shop-main ul.products li.product a.button {
+    width: 30px !important;
+    height: 30px !important;
+    bottom: 8px !important;
+    left: 8px !important;
+  }
+  body .shop-main ul.products li.product .add_to_cart_button::after,
+  body .shop-main ul.products li.product .button::after,
+  body .shop-main ul.products li.product a.button::after {
+    width: 14px;
+    height: 14px;
+  }
+}
+
 /* Sale badge */
 body .shop-main ul.products li.product .onsale,
 body .shop-main ul.products li.product span.onsale,
@@ -555,6 +587,51 @@ body .shop-main.list-view ul.products li.product a.button::after {
 body .shop-main.list-view ul.products li.product:hover {
   box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
   transform: none !important;
+}
+
+/* ── Grid-view card responsive ── */
+@media (max-width: 991px) {
+  body .shop-main ul.products li.product .woocommerce-loop-product__title {
+    font-size: 0.82rem !important;
+    padding: 10px 10px 3px !important;
+  }
+  body .shop-main ul.products li.product .price {
+    font-size: 0.9rem !important;
+    padding: 3px 10px 8px !important;
+  }
+  body .shop-main ul.products li.product .price del {
+    font-size: 0.7rem !important;
+  }
+  body .shop-main ul.products li.product .price ins {
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 767px) {
+  body .shop-main ul.products li.product {
+    border-radius: 10px !important;
+  }
+  body .shop-main ul.products li.product .woocommerce-loop-product__title {
+    font-size: 0.78rem !important;
+    padding: 8px 8px 2px !important;
+    line-height: 1.5 !important;
+  }
+  body .shop-main ul.products li.product .price {
+    font-size: 0.85rem !important;
+    padding: 2px 8px 8px !important;
+  }
+  body .shop-main ul.products li.product .price del {
+    font-size: 0.68rem !important;
+  }
+  body .shop-main ul.products li.product .price ins {
+    font-size: 0.85rem !important;
+  }
+  .onsale-badge {
+    font-size: 0.65rem !important;
+    padding: 2px 6px !important;
+    top: 6px !important;
+    right: 6px !important;
+  }
 }
 
 body .shop-main.list-view ul.products li.product img {

@@ -1388,7 +1388,7 @@ body .shop-main.list-view ul.products li.product {
   }
 }
 
-/* ── Tablet 768-991 — 3 cols, 16px gap ── */
+/* ── Tablet 768-991 — 2 cols, 16px gap ── */
 @media (min-width: 768px) and (max-width: 991px) {
   .shop-layout {
     display: grid;
@@ -1398,7 +1398,7 @@ body .shop-main.list-view ul.products li.product {
   }
   .shop-main { margin-top: 0; }
   body .shop-main ul.products {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 16px !important;
   }
   body .shop-main.list-view ul.products li.product {
