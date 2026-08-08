@@ -1367,91 +1367,83 @@ body .shop-main ul.products::after {
 body .shop-main.list-view ul.products {
   display: flex !important;
   flex-direction: column !important;
-  gap: 16px !important;
+  gap: 20px !important;
 }
 
 body .shop-main.list-view ul.products li.product {
   display: grid !important;
-  grid-template-columns: 200px minmax(0, 1fr) !important;
-  gap: 20px !important;
+  grid-template-columns: 220px minmax(0, 1fr) !important;
+  gap: 24px !important;
   align-items: center !important;
-  padding: 16px !important;
+  padding: 20px !important;
   border-radius: 12px !important;
   border: 1px solid #e5e7eb !important;
 }
 
-/* ── Tablet 768-991px ── */
+/* ── Mobile — 2 cols, 10px gap ── */
+@media (max-width: 767px) {
+  body .shop-main ul.products {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+}
+
+/* ── Tablet 768-991 — 3 cols, 16px gap ── */
 @media (min-width: 768px) and (max-width: 991px) {
   .shop-layout {
     display: grid;
     grid-template-columns: 220px minmax(0, 1fr);
-    gap: 20px;
-    align-items: start;
-  }
-  .shop-main { margin-top: 0; }
-  body .shop-main ul.products {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 14px !important;
-  }
-  body .shop-main.list-view ul.products li.product {
-    grid-template-columns: 180px minmax(0, 1fr) !important;
-    gap: 16px !important;
-  }
-}
-
-/* ── Tablet 992-1199px ── */
-@media (min-width: 992px) and (max-width: 1199px) {
-  .shop-layout {
-    display: grid;
-    grid-template-columns: 240px minmax(0, 1fr);
-    gap: 22px;
+    gap: 24px;
     align-items: start;
   }
   .shop-main { margin-top: 0; }
   body .shop-main ul.products {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 14px !important;
+    gap: 16px !important;
   }
   body .shop-main.list-view ul.products li.product {
-    grid-template-columns: 200px minmax(0, 1fr) !important;
+    grid-template-columns: 180px minmax(0, 1fr) !important;
     gap: 18px !important;
+    padding: 16px !important;
   }
 }
 
-/* ── Desktop 1200-1399px ── */
-@media (min-width: 1200px) and (max-width: 1399px) {
+/* ── Tablet 992-1199 — 3 cols, 20px gap ── */
+@media (min-width: 992px) and (max-width: 1199px) {
   .shop-layout {
     display: grid;
-    grid-template-columns: 260px minmax(0, 1fr);
+    grid-template-columns: 240px minmax(0, 1fr);
     gap: 26px;
     align-items: start;
   }
   .shop-main { margin-top: 0; }
   body .shop-main ul.products {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 18px !important;
+    gap: 20px !important;
   }
   body .shop-main.list-view ul.products li.product {
-    grid-template-columns: 220px minmax(0, 1fr) !important;
+    grid-template-columns: 200px minmax(0, 1fr) !important;
     gap: 20px !important;
+    padding: 18px !important;
   }
 }
 
-/* ── Large Desktop 1400px+ ── */
-@media (min-width: 1400px) {
+/* ── Desktop 1200+ — 4 cols, 24px gap ── */
+@media (min-width: 1200px) {
   .shop-layout {
     display: grid;
-    grid-template-columns: 280px minmax(0, 1fr);
+    grid-template-columns: 250px minmax(0, 1fr);
     gap: 28px;
     align-items: start;
   }
   .shop-main { margin-top: 0; }
   body .shop-main ul.products {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 20px !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 24px !important;
   }
   body .shop-main.list-view ul.products li.product {
     grid-template-columns: 240px minmax(0, 1fr) !important;
     gap: 24px !important;
+    padding: 20px !important;
   }
 }
