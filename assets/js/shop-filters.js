@@ -16,6 +16,7 @@
   let observer = null;
 
   const grid = () => $('#productsWrapper');
+  const shopMain = () => $('#productsWrapper')?.closest('.shop-main');
   const ul = () => grid()?.querySelector('ul.products');
   const loader = () => $('#filterLoading');
   const trigger = () => $('#infiniteScrollTrigger');
@@ -120,7 +121,7 @@
         currentView = clone.dataset.view;
         $$('.view-btn').forEach(b => b.classList.remove('active'));
         clone.classList.add('active');
-        const g = grid();
+        const g = shopMain();
         if (g) {
           g.classList.remove('grid-view', 'list-view');
           g.classList.add(currentView === 'list' ? 'list-view' : 'grid-view');
@@ -200,8 +201,9 @@
     isLoading = true;
     showLoader();
     const g = grid();
-    // Preserve view class
-    const viewClass = g?.classList.contains('list-view') ? 'list-view' : 'grid-view';
+    // Preserve view class from shop-main
+    const sm = shopMain();
+    const viewClass = sm?.classList.contains('list-view') ? 'list-view' : 'grid-view';
     try {
       const res = await fetch(location.pathname + (qs ? '?' + qs : ''), {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
