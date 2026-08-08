@@ -2,60 +2,95 @@
 <html <?php language_attributes(); ?>>
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#fff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="theme-color" content="#2d2824">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="صنوبر">
     <link rel="manifest" href="<?php echo SENOOBAR_URI; ?>/manifest.json">
     <link rel="apple-touch-icon" href="<?php echo SENOOBAR_URI; ?>/assets/icons/icon-192.png">
+    
+    <!-- Preload Critical Assets -->
+    <link rel="preload" href="<?php echo SENOOBAR_URI; ?>/assets/fonts/IRANSansWeb.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<?php echo SENOOBAR_URI; ?>/assets/css/critical.css" as="style">
+    
     <?php wp_head(); ?>
 </head>
 <body <?php body_class('senoobar-body'); ?>>
-<?php wp_body_open(); ?>
-
-<a class="skip-link screen-reader-text" href="#primary">رفتن به محتوا</a>
-
-<div class="top-bar">🚚 ارسال رایگان به سراسر ایران  |  📞 ۰۹۱۳۰۲۰۵۸۹۸  |  📍 اصفهان، میدان لاله</div>
-
-<header id="masthead" class="site-header">
-    <div class="container header-row">
-        <button class="hamburger" id="js-hamburger" aria-label="منو"><span></span><span></span><span></span></button>
-        <a href="<?php echo esc_url(home_url('/')); ?>" class="brand-logo" rel="home">🛏️ صنوبر</a>
-        <div class="header-search">
-            <form role="search" method="get" action="<?php echo esc_url(home_url('/')); ?>">
-                <input type="search" name="s" placeholder="جستجوی تشک، سرویس خواب، بالش..." value="<?php echo get_search_query(); ?>">
-                <button type="submit" aria-label="جستجو">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                </button>
-            </form>
+    <?php wp_body_open(); ?>
+    
+    <!-- Skip Link -->
+    <a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e('رفتن به محتوا', 'senoobar'); ?></a>
+    
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        <div class="container">
+            <span class="announcement-bar__icon">🚚</span>
+            <span><?php echo esc_html(get_theme_mod('senoobar_announcement', 'ارسال رایگان برای سفارش‌های بالای ۲۰ میلیون تومان')); ?></span>
         </div>
-        <div class="header-contact">
-            <strong>۰۹۱۳۰۲۰۵۸۹۸</strong>
-            <span>پاسخگویی ۱۰ تا ۲۱</span>
-        </div>
-        <div class="header-actions">
-            <button class="header-action-btn" id="js-search-toggle-mob" aria-label="جستجو">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+    
+    <!-- Main Header -->
+    <header id="masthead" class="site-header">
+        <div class="container header-inner">
+            <button class="mobile-menu-toggle" aria-label="منو" id="menuToggle">
+                <span></span><span></span><span></span>
             </button>
-            <?php if (class_exists('WooCommerce')): ?>
-            <a href="<?php echo esc_url(wc_get_cart_url()); ?>" class="header-action-btn cart-link" aria-label="سبد خرید">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-                <span class="cart-count"><?php echo WC()->cart->get_cart_contents_count(); ?></span>
-            </a>
-            <?php endif; ?>
+            
+            <div class="site-branding">
+                <a href="<?php echo esc_url(home_url('/')); ?>" class="custom-logo-link">
+                    <span class="logo-text">صنوبر</span>
+                    <span class="logo-sub">مبلمان خانگی شما</span>
+                </a>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="header-search">
+                <form role="search" method="get" class="header-search-form" action="<?php echo esc_url(home_url('/')); ?>">
+                    <input type="search" placeholder="<?php esc_attr_e('جستجو در محصولات...', 'senoobar'); ?>" value="<?php echo get_search_query(); ?>" name="s">
+                    <button type="submit" aria-label="جستجو">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </button>
+                </form>
+            </div>
+            
+            <nav id="site-navigation" class="main-navigation">
+                <?php
+                wp_nav_menu([
+                    'theme_location' => 'primary',
+                    'menu_class'     => 'main-menu',
+                    'container'      => false,
+                    'fallback_cb'    => false,
+                ]);
+                ?>
+            </nav>
+            
+            <div class="header-actions">
+                <?php if (class_exists('WooCommerce')) : ?>
+                <a href="<?php echo wc_get_cart_url(); ?>" class="cart-icon" aria-label="سبد خرید">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    <span class="cart-count" data-cart-count="<?php echo WC()->cart ? WC()->cart->get_cart_contents_count() : 0; ?>"><?php echo WC()->cart ? WC()->cart->get_cart_contents_count() : 0; ?></span>
+                </a>
+                <?php endif; ?>
+            </div>
         </div>
-    </div>
-    <nav class="nav-bar">
-        <div class="container nav-bar__inner">
-            <a href="#" class="nav-categories">☰ دسته‌بندی‌ها</a>
-            <?php wp_nav_menu(['theme_location'=>'primary','menu_class'=>'','container'=>false,'fallback_cb'=>'__return_false','items_wrap'=>'%3$s']); ?>
+    </header>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu__header">
+            <span class="logo-text">صنوبر</span>
+            <button class="mobile-menu-close" id="menuClose">✕</button>
         </div>
-    </nav>
-</header>
-
-<div class="mobile-drawer" id="js-mobile-drawer">
-    <div class="mobile-drawer__head">
-        <span class="brand-logo">🛏️ صنوبر</span>
-        <button class="mobile-drawer__close" id="js-drawer-close" aria-label="بستن">✕</button>
+        <?php
+        wp_nav_menu([
+            'theme_location' => 'primary',
+            'menu_class'     => 'mobile-nav',
+            'container'      => false,
+            'fallback_cb'    => false,
+        ]);
+        ?>
     </div>
-    <?php wp_nav_menu(['theme_location'=>'primary','menu_class'=>'mobile-nav','container'=>false,'fallback_cb'=>'__return_false']); ?>
-</div>
-<div class="mobile-drawer-overlay" id="js-drawer-overlay"></div>
+    
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>

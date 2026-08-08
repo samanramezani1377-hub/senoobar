@@ -1,42 +1,44 @@
 <?php
 /**
- * Main Template
+ * Senoobar Theme - Main Template
+ * قالب فروشگاه مبلمان صنوبر
  */
-get_header();
-?>
+get_header(); ?>
 
-<div id="primary" class="site-content">
-
-    <?php if (is_front_page()) : ?>
-        <?php
-        // Homepage sections — safe even without WooCommerce
-        get_template_part('template-parts/hero');
-
-        if (class_exists('WooCommerce')) {
-            get_template_part('template-parts/categories-grid');
-            get_template_part('template-parts/featured-products');
-        }
-
-        get_template_part('template-parts/cta-banner');
-        ?>
-
-    <?php elseif (is_shop() || is_product_category() || is_product_tag()) : ?>
-        <?php woocommerce_content(); ?>
-
+<main id="primary" class="site-main">
+    <?php if (is_front_page() && is_home()) : ?>
+        <?php get_template_part('template-parts/hero'); ?>
+        <?php get_template_part('template-parts/categories-grid'); ?>
+        <?php get_template_part('template-parts/featured-products'); ?>
+        <?php get_template_part('template-parts/services'); ?>
+        <?php get_template_part('template-parts/promo-banners'); ?>
+        <?php get_template_part('template-parts/bestsellers'); ?>
+        <?php get_template_part('template-parts/inspiration'); ?>
+        <?php get_template_part('template-parts/testimonials'); ?>
+        <?php get_template_part('template-parts/story'); ?>
+        <?php get_template_part('template-parts/blog-section'); ?>
+        <?php get_template_part('template-parts/newsletter'); ?>
+    <?php elseif (is_shop() || is_product_category()) : ?>
+        <div class="container page-content">
+            <?php woocommerce_content(); ?>
+        </div>
     <?php elseif (is_single()) : ?>
-        <?php get_template_part('template-parts/content', 'single'); ?>
-
+        <div class="container page-content">
+            <?php get_template_part('template-parts/content', 'single'); ?>
+        </div>
     <?php elseif (is_page()) : ?>
-        <?php get_template_part('template-parts/content', 'page'); ?>
-
-    <?php elseif (is_archive() || is_search()) : ?>
-        <?php get_template_part('template-parts/content', 'archive'); ?>
-
+        <div class="container page-content">
+            <?php get_template_part('template-parts/content', 'page'); ?>
+        </div>
+    <?php elseif (is_archive()) : ?>
+        <div class="container page-content">
+            <?php get_template_part('template-parts/content', 'archive'); ?>
+        </div>
     <?php else : ?>
-        <?php get_template_part('template-parts/content', 'none'); ?>
+        <div class="container page-content">
+            <?php get_template_part('template-parts/content', 'none'); ?>
+        </div>
     <?php endif; ?>
+</main>
 
-</div><!-- #primary -->
-
-<?php
-get_footer();
+<?php get_footer(); ?>
