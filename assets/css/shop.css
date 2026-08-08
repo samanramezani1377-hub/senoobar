@@ -353,13 +353,31 @@ body .shop-main ul.products li.product .price {
   direction: rtl !important;
   text-align: right !important;
   display: flex !important;
-  align-items: center !important;
-  gap: 5px !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 2px !important;
   margin: 0 !important;
 }
-body .shop-main ul.products li.product .price .woocommerce-Price-amount { font-weight: 700 !important; }
-body .shop-main ul.products li.product .price del { font-size: 0.78rem !important; font-weight: 400 !important; color: #d1d5db !important; }
-  body .shop-main ul.products li.product .price ins { text-decoration: none !important; }
+body .shop-main ul.products li.product .price del {
+  order: 1;
+  font-size: 0.78rem !important;
+  font-weight: 400 !important;
+  color: #d1d5db !important;
+  text-decoration: line-through !important;
+}
+body .shop-main ul.products li.product .price ins {
+  order: 2;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  color: var(--color-primary, #1e3a2f) !important;
+}
+body .shop-main ul.products li.product .price .woocommerce-Price-amount {
+  font-weight: inherit !important;
+}
+body .shop-main ul.products li.product .price bdi {
+  font-weight: inherit !important;
+}
 
 /* Add to Cart Button */
 body .shop-main ul.products li.product .add_to_cart_button,

@@ -48,16 +48,16 @@ add_filter('loop_shop_per_page', function () {
 });
 
 // ─── 6. Products per row ────────────────────
-// CSS Grid handles columns; let WooCommerce know we have 3
+// CSS Grid handles columns
 add_filter('loop_shop_columns', function () {
-    return 3;
+    return 4;
 });
 
 // Override WooCommerce body class columns
 add_filter('body_class', function ($classes) {
     if (is_shop() || is_product_category() || is_product_tag()) {
         $classes = array_diff($classes, ['columns-4', 'columns-3', 'columns-2']);
-        $classes[] = 'columns-3';
+        $classes[] = 'columns-4';
     }
     return $classes;
 });
@@ -66,7 +66,7 @@ add_filter('body_class', function ($classes) {
 add_filter('post_class', function ($classes) {
     if (function_exists('is_shop') && (is_shop() || is_product_category() || is_product_tag())) {
         $classes = array_diff($classes, ['columns-4', 'columns-3', 'columns-2']);
-        $classes[] = 'columns-3';
+        $classes[] = 'columns-4';
     }
     return $classes;
 });
@@ -115,3 +115,156 @@ add_action('wp_print_scripts', function () {
         wp_dequeue_script('wc-password-strength-meter');
     }
 }, 100);
+
+// ─── 13. Persian translations for ALL buttons & labels ───
+
+// Breadcrumbs
+add_filter('woocommerce_breadcrumb_defaults', function ($args) {
+    $args['home'] = 'خانه';
+    return $args;
+});
+
+// Out of stock
+add_filter('woocommerce_get_availability_text', function ($text, $product) {
+    return $product->is_in_stock() ? 'موجود' : 'ناموجود';
+}, 10, 2);
+
+// Out of stock label
+add_filter('woocommerce_out_of_stock_message', function () {
+    return 'ناموجود';
+});
+
+// Sale badge text
+add_filter('woocommerce_sale_flash', function ($html) {
+    return '<span class="onsale-badge">حراج</span>';
+});
+
+// Add to cart
+add_filter('woocommerce_product_add_to_cart_text', function () {
+    return 'افزودن به سبد خرید';
+});
+add_filter('woocommerce_product_single_add_to_cart_text', function () {
+    return 'افزودن به سبد خرید';
+});
+
+// Select options (variable products)
+add_filter('woocommerce_product_add_to_cart_text', function ($text, $product) {
+    if ($product->is_type('variable')) {
+        return 'انتخاب گزینه‌ها';
+    }
+    return $text;
+}, 10, 2);
+
+// Read more (out of stock products)
+add_filter('woocommerce_loop_add_to_cart_link', function ($link, $product) {
+    if (!$product->is_in_stock()) {
+        return '<a href="' . get_permalink($product->get_id()) . '" class="button out-of-stock">مشاهده محصول</a>';
+    }
+    return $link;
+}, 10, 2);
+
+// Placeholder image text
+add_filter('woocommerce_placeholder_img_src', function () {
+    return '';
+});
+
+// Results count
+add_filter('woocommerce_get_result_count', function ($html) {
+    return '';
+});
+
+// Cart page
+add_filter('gettext', function ($translated, $text, $domain) {
+    if ($domain !== 'woocommerce') return $translated;
+    
+    $persian = [
+        'Product'             => 'محصول',
+        'Products'            => 'محصولات',
+        'Price'               => 'قیمت',
+        'Quantity'            => 'تعداد',
+        'Total'               => 'مجموع',
+        'Subtotal'            => 'جمع جزء',
+        'Cart'                => 'سبد خرید',
+        'Shop'                => 'فروشگاه',
+        'Home'                => 'خانه',
+        'Search'              => 'جستجو',
+        'Search results'      => 'نتایج جستجو',
+        'Category'            => 'دسته‌بندی',
+        'Categories'          => 'دسته‌بندی‌ها',
+        'SKU'                 => 'کد محصول',
+        'SKU:'                => 'کد محصول:',
+        'Description'         => 'توضیحات',
+        'Reviews'             => 'نظرات',
+        'Review'              => 'نظر',
+        'Additional information' => 'اطلاعات بیشتر',
+        'Related products'    => 'محصولات مرتبط',
+        'You may also like'   => 'ممکن است بپسندید',
+        'View cart'           => 'مشاهده سبد خرید',
+        'Checkout'            => 'تسویه حساب',
+        'Proceed to checkout' => 'ادامه جهت تسویه حساب',
+        'Place order'         => 'ثبت سفارش',
+        'Update cart'         => 'بروزرسانی سبد خرید',
+        'Apply coupon'        => 'اعمال کد تخفیف',
+        'Coupon code'         => 'کد تخفیف',
+        'Coupon'              => 'کد تخفیف',
+        'Have a coupon?'       => 'کد تخفیف دارید؟',
+        'Click here to enter your code' => 'کد خود را وارد کنید',
+        'Continue shopping'   => 'ادامه خرید',
+        'Shipping'            => 'حمل و نقل',
+        'Flat rate'           => 'نرخ ثابت',
+        'Free shipping'       => 'ارسال رایگان',
+        'Billing details'     => 'اطلاعات صورتحساب',
+        'First name'          => 'نام',
+        'Last name'           => 'نام خانوادگی',
+        'Phone'               => 'تلفن',
+        'Address'             => 'آدرس',
+        'City'                => 'شهر',
+        'Province'            => 'استان',
+        'Postcode'            => 'کد پستی',
+        'Order notes'         => 'یادداشت سفارش',
+        '(optional)'          => '(اختیاری)',
+        'Your order'          => 'سفارش شما',
+        'Payment'             => 'پرداخت',
+        'Cash on delivery'    => 'پرداخت در محل',
+        'Thank you.'           => 'متشکریم.',
+        'Thank you. Your order has been received.' => 'متشکریم. سفارش شما ثبت شد.',
+        'Order received'      => 'سفارش دریافت شد',
+        'Thank you'           => 'متشکریم',
+        'Your order'          => 'سفارش شما',
+        'Order number'        => 'شماره سفارش',
+        'Date'                => 'تاریخ',
+        'Email'               => 'ایمیل',
+        'Total'               => 'مجموع',
+        'Payment method'      => 'روش پرداخت',
+        'Loading'             => 'در حال بارگذاری',
+        'Load more'           => 'بارگذاری بیشتر',
+        'Show all'            => 'نمایش همه',
+        'New'                 => 'جدید',
+        'Sale'                => 'حراج',
+        'Save'                => 'ذخیره',
+        'Filter'              => 'فیلتر',
+        'Previous'            => 'قبلی',
+        'Next'                => 'بعدی',
+        'No products found'   => 'محصولی یافت نشد',
+        'No products were found matching your selection.' => 'هیچ محصولی با این شرایط یافت نشد.',
+        'Go to shop'          => 'رفتن به فروشگاه',
+        'Add to wishlist'     => 'افزودن به علاقه‌مندی‌ها',
+        'Browse wishlist'     => 'مشاهده علاقه‌مندی‌ها',
+        'Add to cart'        => 'افزودن به سبد خرید',
+        'Select options'      => 'انتخاب گزینه‌ها',
+        'Read more'           => 'اطلاعات بیشتر',
+        'View products'       => 'مشاهده محصولات',
+        'Out of stock'        => 'ناموجود',
+        'In stock'            => 'موجود',
+        'Availability'        => 'موجودی',
+        'Weight'              => 'وزن',
+        'Dimensions'          => 'ابعاد',
+        'Share'               => 'اشتراک‌گذاری',
+        'Return to shop'      => 'بازگشت به فروشگاه',
+    ];
+    
+    if (isset($persian[$text])) {
+        return $persian[$text];
+    }
+    return $translated;
+}, 20, 3);
