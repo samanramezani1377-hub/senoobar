@@ -269,73 +269,87 @@ final class Senoobar_Theme {
 
             // ─── Categories Grid Settings ─────────────
             $c->add_section('senoobar_cats', [
-                'title'    => '💎 دسته‌بندی‌های صفحه اصلی',
-                'description' => 'تنظیم کنید کدام دسته‌بندی‌ها و با چه ترتیبی در صفحه اصلی نمایش داده شوند.',
-                'priority' => 28,
+                'title'       => '💎 دسته‌بندی‌های صفحه اصلی',
+                'description' => 'انتخاب کنید کدام دسته‌بندی‌ها نمایش داده شوند و با چه ترتیبی. عدد اولویت کمتر = جلوتر.',
+                'priority'    => 28,
             ]);
 
-            // Count
-            $c->add_setting('senoobar_cats_count', ['default' => 6]);
-            $c->add_control('senoobar_cats_count', [
-                'label'       => 'تعداد دسته‌بندی‌ها',
-                'description' => 'چند دسته‌بندی نمایش داده شود؟',
-                'section'     => 'senoobar_cats',
-                'type'        => 'number',
-                'input_attrs' => ['min' => 1, 'max' => 20, 'step' => 1],
+            // ── Columns per device ──
+            $c->add_setting('senoobar_cats_cols_desktop', ['default' => 6]);
+            $c->add_control('senoobar_cats_cols_desktop', [
+                'label'   => 'تعداد ستون — دسکتاپ',
+                'section' => 'senoobar_cats',
+                'type'    => 'select',
+                'choices' => ['2' => '۲', '3' => '۳', '4' => '۴', '5' => '۵', '6' => '۶'],
+            ]);
+            $c->add_setting('senoobar_cats_cols_tablet', ['default' => 3]);
+            $c->add_control('senoobar_cats_cols_tablet', [
+                'label'   => 'تعداد ستون — تبلت',
+                'section' => 'senoobar_cats',
+                'type'    => 'select',
+                'choices' => ['1' => '۱', '2' => '۲', '3' => '۳', '4' => '۴'],
+            ]);
+            $c->add_setting('senoobar_cats_cols_mobile', ['default' => 2]);
+            $c->add_control('senoobar_cats_cols_mobile', [
+                'label'   => 'تعداد ستون — موبایل',
+                'section' => 'senoobar_cats',
+                'type'    => 'select',
+                'choices' => ['1' => '۱', '2' => '۲', '3' => '۳'],
             ]);
 
-            // Columns
-            $c->add_setting('senoobar_cats_columns', ['default' => 6]);
-            $c->add_control('senoobar_cats_columns', [
-                'label'       => 'تعداد ستون‌ها',
-                'description' => 'چند ستون در هر ردیف؟ (موبایل خودکار نصف می‌شود)',
-                'section'     => 'senoobar_cats',
-                'type'        => 'select',
-                'choices'     => ['2' => '۲ ستون', '3' => '۳ ستون', '4' => '۴ ستون', '6' => '۶ ستون'],
-            ]);
+            // ── Per-category: enabled + priority ──
+            // We add controls for the first 15 WooCommerce product categories
+            if (class_exists('WooCommerce')) {
+                $all_cats = get_terms([
+                    'taxonomy'   => 'product_cat',
+                    'hide_empty' => false,
+                    'number'     => 20,
+                    'orderby'    => 'name',
+                    'order'      => 'ASC',
+                ]);
+                if (!is_wp_error($all_cats) && !empty($all_cats)) {
+                    // Separator label
+                    $c->add_control(new WP_Customize_Control($c, 'senoobar_cats_sep', [
+                        'label'       => '⬇️ انتخاب و ترتیب دسته‌ها ⬇️',
+                        'description' => 'هر دسته را فعال/غیرفعال کنید و با عدد اولویت ترتیبش را مشخص کنید.',
+                        'section'     => 'senoobar_cats',
+                        'type'        => 'hidden',
+                    ]));
 
-            // Display mode
-            $c->add_setting('senoobar_cats_display_mode', ['default' => 'auto']);
-            $c->add_control('senoobar_cats_display_mode', [
-                'label'       => 'حالت نمایش',
-                'description' => 'خودکار = ترتیب الفبا/تعداد. دستی = انتخاب دستی.',
-                'section'     => 'senoobar_cats',
-                'type'        => 'select',
-                'choices'     => ['auto' => 'خودکار (همه دسته‌ها)', 'manual' => 'دستی (انتخاب دسته‌های خاص)'],
-            ]);
+                    $idx = 0;
+                    foreach ($all_cats as $cat) {
+                        $idx++;
+                        $cat_id = $cat->term_id;
+                        $cat_name = $cat->name;
+                        $cat_count = $cat->count;
 
-            // Manual IDs
-            $c->add_setting('senoobar_cats_manual_ids', ['default' => '']);
-            $c->add_control('senoobar_cats_manual_ids', [
-                'label'       => 'شناسه‌های دستی (ID)',
-                'description' => 'فقط در حالت دستی: شماره ID دسته‌ها را با کاما جدا کنید (مثال: 12,5,8,3). ترتیب = ترتیب نمایش.',
-                'section'     => 'senoobar_cats',
-                'type'        => 'text',
-            ]);
+                        // Enabled checkbox
+                        $c->add_setting("senoobar_cat_{$cat_id}_enabled", ['default' => ($idx <= 6) ? '1' : '']);
+                        $c->add_control("senoobar_cat_{$cat_id}_enabled", [
+                            'label'       => "✅ {$cat_name} ({$cat_count} محصول)",
+                            'section'     => 'senoobar_cats',
+                            'type'        => 'checkbox',
+                        ]);
 
-            // Order by
-            $c->add_setting('senoobar_cats_orderby', ['default' => 'name']);
-            $c->add_control('senoobar_cats_orderby', [
-                'label'       => 'مرتب‌سازی بر اساس',
-                'description' => 'فقط در حالت خودکار',
-                'section'     => 'senoobar_cats',
-                'type'        => 'select',
-                'choices'     => [
-                    'name'       => 'نام',
-                    'id'         => 'شناسه',
-                    'count'      => 'تعداد محصولات',
-                    'menu_order' => 'ترتیب دستی ووکامرس',
-                ],
-            ]);
-
-            // Order
-            $c->add_setting('senoobar_cats_order', ['default' => 'ASC']);
-            $c->add_control('senoobar_cats_order', [
-                'label'       => 'جهت مرتب‌سازی',
-                'section'     => 'senoobar_cats',
-                'type'        => 'select',
-                'choices'     => ['ASC' => 'صعودی', 'DESC' => 'نزولی'],
-            ]);
+                        // Priority number
+                        $c->add_setting("senoobar_cat_{$cat_id}_priority", ['default' => $idx]);
+                        $c->add_control("senoobar_cat_{$cat_id}_priority", [
+                            'label'       => "   ↳ اولویت (عدد کمتر = اول بالاتر)",
+                            'section'     => 'senoobar_cats',
+                            'type'        => 'number',
+                            'input_attrs' => ['min' => 1, 'max' => 99, 'step' => 1],
+                        ]);
+                    }
+                }
+            } else {
+                // No WooCommerce — show a notice
+                $c->add_control(new WP_Customize_Control($c, 'senoobar_cats_no_wc', [
+                    'label'       => '⚠️ ووکامرس فعال نیست',
+                    'description' => 'برای مدیریت دسته‌بندی‌ها، افزونه ووکامرس را نصب و فعال کنید.',
+                    'section'     => 'senoobar_cats',
+                    'type'        => 'hidden',
+                ]));
+            }
 
             // Brand Story
             $c->add_setting('senoobar_story_title', ['default' => 'داستان صنوبر']);
