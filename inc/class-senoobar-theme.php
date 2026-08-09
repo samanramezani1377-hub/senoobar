@@ -267,6 +267,76 @@ final class Senoobar_Theme {
                 ]);
             }
 
+            // ─── Categories Grid Settings ─────────────
+            $c->add_section('senoobar_cats', [
+                'title'    => '💎 دسته‌بندی‌های صفحه اصلی',
+                'description' => 'تنظیم کنید کدام دسته‌بندی‌ها و با چه ترتیبی در صفحه اصلی نمایش داده شوند.',
+                'priority' => 28,
+            ]);
+
+            // Count
+            $c->add_setting('senoobar_cats_count', ['default' => 6]);
+            $c->add_control('senoobar_cats_count', [
+                'label'       => 'تعداد دسته‌بندی‌ها',
+                'description' => 'چند دسته‌بندی نمایش داده شود؟',
+                'section'     => 'senoobar_cats',
+                'type'        => 'number',
+                'input_attrs' => ['min' => 1, 'max' => 20, 'step' => 1],
+            ]);
+
+            // Columns
+            $c->add_setting('senoobar_cats_columns', ['default' => 6]);
+            $c->add_control('senoobar_cats_columns', [
+                'label'       => 'تعداد ستون‌ها',
+                'description' => 'چند ستون در هر ردیف؟ (موبایل خودکار نصف می‌شود)',
+                'section'     => 'senoobar_cats',
+                'type'        => 'select',
+                'choices'     => ['2' => '۲ ستون', '3' => '۳ ستون', '4' => '۴ ستون', '6' => '۶ ستون'],
+            ]);
+
+            // Display mode
+            $c->add_setting('senoobar_cats_display_mode', ['default' => 'auto']);
+            $c->add_control('senoobar_cats_display_mode', [
+                'label'       => 'حالت نمایش',
+                'description' => 'خودکار = ترتیب الفبا/تعداد. دستی = انتخاب دستی.',
+                'section'     => 'senoobar_cats',
+                'type'        => 'select',
+                'choices'     => ['auto' => 'خودکار (همه دسته‌ها)', 'manual' => 'دستی (انتخاب دسته‌های خاص)'],
+            ]);
+
+            // Manual IDs
+            $c->add_setting('senoobar_cats_manual_ids', ['default' => '']);
+            $c->add_control('senoobar_cats_manual_ids', [
+                'label'       => 'شناسه‌های دستی (ID)',
+                'description' => 'فقط در حالت دستی: شماره ID دسته‌ها را با کاما جدا کنید (مثال: 12,5,8,3). ترتیب = ترتیب نمایش.',
+                'section'     => 'senoobar_cats',
+                'type'        => 'text',
+            ]);
+
+            // Order by
+            $c->add_setting('senoobar_cats_orderby', ['default' => 'name']);
+            $c->add_control('senoobar_cats_orderby', [
+                'label'       => 'مرتب‌سازی بر اساس',
+                'description' => 'فقط در حالت خودکار',
+                'section'     => 'senoobar_cats',
+                'type'        => 'select',
+                'choices'     => [
+                    'name'       => 'نام',
+                    'id'         => 'شناسه',
+                    'count'      => 'تعداد محصولات',
+                    'menu_order' => 'ترتیب دستی ووکامرس',
+                ],
+            ]);
+
+            // Order
+            $c->add_setting('senoobar_cats_order', ['default' => 'ASC']);
+            $c->add_control('senoobar_cats_order', [
+                'label'       => 'جهت مرتب‌سازی',
+                'section'     => 'senoobar_cats',
+                'type'        => 'select',
+                'choices'     => ['ASC' => 'صعودی', 'DESC' => 'نزولی'],
+            ]);
+
             // Brand Story
             $c->add_setting('senoobar_story_title', ['default' => 'داستان صنوبر']);
             $c->add_control('senoobar_story_title', ['label' => 'عنوان داستان', 'section' => 'senoobar_hero', 'type' => 'text']);
