@@ -231,6 +231,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
+  justify-items: center;
 }
 
 @media (min-width: 640px) {
@@ -312,6 +313,9 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products 
 
 /* Smaller title on mobile for homepage products */
 @media (max-width: 767px) {
+  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products {
+    justify-items: center;
+  }
   .woocommerce ul.products li.product .woocommerce-loop-product__title {
     font-size: 0.72rem;
   }
@@ -644,8 +648,12 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products 
   white-space: nowrap;
 }
 
-/* Mobile: 2-line title for long Persian names */
+/* Mobile: 2-column bestsellers with 2-line title */
 @media (max-width: 767px) {
+  .bestsellers-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
   .bestseller-card__title {
     white-space: normal;
     display: -webkit-box;
