@@ -311,10 +311,26 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products 
   color: var(--color-text);
 }
 
+/* Remove dots before product titles (WooCommerce ::before markers) */
+.woocommerce ul.products li.product .woocommerce-loop-product__title::before {
+  content: none !important;
+}
+
 /* Smaller title on mobile for homepage products */
 @media (max-width: 767px) {
   body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products {
     justify-items: center;
+  }
+  /* Center product image on mobile */
+  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product a.woocommerce-LoopProduct-link {
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+  }
+  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product a.woocommerce-LoopProduct-link img {
+    width: 100%;
+    max-width: 100%;
+    object-position: center;
   }
   .woocommerce ul.products li.product .woocommerce-loop-product__title {
     font-size: 0.72rem;

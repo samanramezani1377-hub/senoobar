@@ -346,6 +346,9 @@ body .shop-main ul.products li.product .woocommerce-loop-product__title {
   flex: 0 !important;
   min-height: auto !important;
 }
+body .shop-main ul.products li.product .woocommerce-loop-product__title::before {
+  content: none !important;
+}
 
 /* Price */
 body .shop-main ul.products li.product .price {
