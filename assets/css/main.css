@@ -257,6 +257,11 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products 
   padding: 0;
   list-style: none;
 }
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products::before,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products::marker {
+  content: none !important;
+  display: none !important;
+}
 
 @media (min-width: 640px) {
   body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products {
@@ -284,12 +289,43 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products 
   float: none !important;
   border: 1px solid var(--color-gray-100);
   list-style: none !important;
+  display: block !important;
+  box-sizing: border-box;
+  text-align: center;
 }
-body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product::before,
+/* Kill ALL dots / markers / pseudo-elements on homepage products */
 body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product::marker,
-body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product .woocommerce-loop-product__title::before {
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product::before {
   content: none !important;
   display: none !important;
+}
+.woocommerce ul.products li.product {
+  list-style: none !important;
+}
+.woocommerce ul.products li.product::marker {
+  content: none !important;
+  display: none !important;
+}
+/* Loop link — force block so nothing floats */
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product > a.woocommerce-LoopProduct-link {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  float: none !important;
+}
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product > a.woocommerce-LoopProduct-link img {
+  display: block !important;
+  float: none !important;
+  position: static !important;
+  margin: 0 auto !important;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: cover !important;
+}
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product > a.woocommerce-LoopProduct-link h2 {
+  width: 100% !important;
+  text-align: center !important;
+  clear: both !important;
 }
 
 .woocommerce ul.products li.product:hover {
@@ -327,18 +363,6 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products 
 @media (max-width: 767px) {
   body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products {
     justify-items: center;
-  }
-  /* Center product image and link on mobile */
-  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product a.woocommerce-LoopProduct-link {
-    display: block !important;
-    width: 100% !important;
-    text-align: center !important;
-  }
-  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product a.woocommerce-LoopProduct-link img {
-    display: block !important;
-    width: 100% !important;
-    margin: 0 auto !important;
-    object-fit: cover !important;
   }
   .woocommerce ul.products li.product .woocommerce-loop-product__title {
     font-size: 0.72rem;
