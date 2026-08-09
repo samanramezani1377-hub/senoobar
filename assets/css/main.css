@@ -228,24 +228,7 @@
    PRODUCTS GRID
    ============================================ */
 .products-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  justify-items: center;
-}
-
-@media (min-width: 640px) {
-  .products-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
-}
-
-@media (min-width: 992px) {
-  .products-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-  }
+  /* Grid is on inner ul.products — this is just a container */
 }
 
 /* WooCommerce product cards (non-shop pages) */
@@ -394,6 +377,9 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   color: var(--color-gray-900) !important;
   padding: 0 12px 8px;
   margin: 0;
+  text-align: center !important;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .woocommerce ul.products li.product .price del {
@@ -419,6 +405,9 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   color: var(--color-white) !important;
   border-radius: var(--radius-xl) !important;
   transition: var(--transition) !important;
+  align-self: center !important;
+  width: calc(100% - 24px) !important;
+  box-sizing: border-box !important;
 }
 
 .woocommerce ul.products li.product .button:hover {
