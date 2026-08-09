@@ -6,7 +6,7 @@ $title = get_theme_mod('senoobar_section_featured_title', 'محصولات ویژ
 $desc  = get_theme_mod('senoobar_section_featured_desc', 'بهترین انتخاب‌های هفته با تخفیف‌های استثنایی');
 ?>
 
-<section class="section homepage-featured">
+<section class="section">
     <div class="container">
         <div class="flex-between mb-6">
             <div>
