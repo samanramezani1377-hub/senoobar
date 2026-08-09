@@ -249,7 +249,8 @@
 }
 
 /* WooCommerce product cards (non-shop pages) */
-body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products {
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
@@ -258,47 +259,107 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products 
   list-style: none;
 }
 body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products::before,
-body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products::marker {
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products::marker,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products::before,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products::marker {
   content: none !important;
   display: none !important;
 }
 
 @media (min-width: 640px) {
-  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products {
+  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products,
+  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products {
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
   }
 }
 
 @media (min-width: 992px) {
-  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products {
+  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products,
+  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products {
     grid-template-columns: repeat(4, 1fr);
     gap: 18px;
   }
 }
 
-body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product {
+/* ── Product card: clean, centered ── */
+.senoobar-product-card,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products li.product {
   background: var(--color-white);
   border-radius: var(--radius-2xl);
   overflow: hidden;
   box-shadow: var(--shadow-xs);
   transition: all var(--transition);
-  position: relative;
-  margin: 0 !important;
-  width: 100% !important;
-  float: none !important;
   border: 1px solid var(--color-gray-100);
   list-style: none !important;
-  display: block !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin: 0 !important;
+  float: none !important;
+  clear: none !important;
   box-sizing: border-box;
   text-align: center;
 }
-/* Kill ALL dots / markers / pseudo-elements on homepage products */
+.senoobar-product-card::marker,
+.senoobar-product-card::before,
 body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product::marker,
-body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product::before {
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product::before,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products li.product::marker,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products li.product::before {
   content: none !important;
   display: none !important;
 }
+/* Product link inside card */
+.senoobar-product-card > a.woocommerce-LoopProduct-link,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product > a.woocommerce-LoopProduct-link,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products li.product > a.woocommerce-LoopProduct-link {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 100% !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  overflow: hidden !important;
+  flex: 1 !important;
+  float: none !important;
+}
+.senoobar-product-card > a.woocommerce-LoopProduct-link img,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product > a.woocommerce-LoopProduct-link img,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products li.product > a.woocommerce-LoopProduct-link img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 1 !important;
+  object-fit: cover !important;
+  margin: 0 !important;
+  float: none !important;
+}
+.senoobar-product-card .woocommerce-loop-product__title,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product .woocommerce-loop-product__title,
+body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products li.product .woocommerce-loop-product__title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 10px 12px 2px;
+  margin: 0;
+  line-height: 1.6;
+  color: var(--color-text);
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 767px) {
+  .senoobar-product-card .woocommerce-loop-product__title,
+  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product .woocommerce-loop-product__title,
+  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.products li.product .woocommerce-loop-product__title {
+    font-size: 0.72rem;
+  }
+}
+
+/* Delete old duplicate rules */
 .woocommerce ul.products li.product {
   list-style: none !important;
 }
@@ -306,26 +367,8 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products 
   content: none !important;
   display: none !important;
 }
-/* Loop link — force block so nothing floats */
-body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product > a.woocommerce-LoopProduct-link {
-  display: block !important;
-  width: 100% !important;
-  text-align: center !important;
-  float: none !important;
-}
-body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product > a.woocommerce-LoopProduct-link img {
-  display: block !important;
-  float: none !important;
-  position: static !important;
-  margin: 0 auto !important;
-  width: 100% !important;
-  height: auto !important;
-  object-fit: cover !important;
-}
-body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products li.product > a.woocommerce-LoopProduct-link h2 {
-  width: 100% !important;
-  text-align: center !important;
-  clear: both !important;
+.woocommerce ul.products li.product .woocommerce-loop-product__title::before {
+  content: none !important;
 }
 
 .woocommerce ul.products li.product:hover {
@@ -343,30 +386,6 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products 
 
 .woocommerce ul.products li.product:hover img {
   transform: scale(1.05);
-}
-
-.woocommerce ul.products li.product .woocommerce-loop-product__title {
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 10px 12px 2px;
-  margin: 0;
-  line-height: 1.6;
-  color: var(--color-text);
-}
-
-/* Remove dots before product titles (WooCommerce ::before markers) */
-.woocommerce ul.products li.product .woocommerce-loop-product__title::before {
-  content: none !important;
-}
-
-/* Smaller title on mobile for homepage products */
-@media (max-width: 767px) {
-  body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .woocommerce ul.products {
-    justify-items: center;
-  }
-  .woocommerce ul.products li.product .woocommerce-loop-product__title {
-    font-size: 0.72rem;
-  }
 }
 
 .woocommerce ul.products li.product .price {

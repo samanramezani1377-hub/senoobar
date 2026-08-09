@@ -36,9 +36,11 @@ $desc  = get_theme_mod('senoobar_section_featured_desc', 'بهترین انتخ�
             ?>
             <?php if ($featured->have_posts()): ?>
             <div class="products-grid">
+                <ul class="products">
                 <?php while ($featured->have_posts()): $featured->the_post(); ?>
                     <?php wc_get_template_part('content', 'product'); ?>
                 <?php endwhile; ?>
+                </ul>
             </div>
             <?php else: ?>
             <!-- Fallback static products -->
