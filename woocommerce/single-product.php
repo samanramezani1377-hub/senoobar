@@ -10,8 +10,18 @@ defined('ABSPATH') || exit;
 
 get_header();
 
+if (!have_posts()) {
+    get_footer();
+    return;
+}
+
+while (have_posts()) : the_post();
+
 global $product;
-if (!is_a($product, 'WC_Product')) return;
+if (!is_a($product, 'WC_Product')) {
+    $product = wc_get_product(get_the_ID());
+}
+if (!is_a($product, 'WC_Product')) continue;
 
 $product_id     = $product->get_id();
 $product_name   = $product->get_name();
@@ -431,4 +441,7 @@ wp_enqueue_style('senoobar-product-detail', get_template_directory_uri() . '/ass
 })();
 </script>
 
-<?php get_footer(); ?>
+<?php
+endwhile;
+get_footer();
+?>
