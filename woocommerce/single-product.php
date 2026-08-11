@@ -230,7 +230,7 @@ wp_enqueue_style('senoobar-product-detail', get_template_directory_uri() . '/ass
             <div class="pd-service-bar__grid">
                 <div class="pd-service-item">
                     <span class="pd-service-icon">🚚</span>
-                    <div><p class="pd-service-title">ارسال رایگان</p><p class="pd-service-desc">برای سفارش‌های بالای [مبلغ]</p></div>
+                    <div><p class="pd-service-title">ارسال حرفه‌ای</p><p class="pd-service-desc">بسته‌بندی مطمئن و ارسال سریع</p></div>
                 </div>
                 <div class="pd-service-item">
                     <span class="pd-service-icon">🛡️</span>
