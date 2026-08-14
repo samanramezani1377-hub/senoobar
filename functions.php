@@ -4,6 +4,7 @@ define('SENOOBAR_DIR', get_template_directory());
 define('SENOOBAR_URI', get_template_directory_uri());
 
 require_once SENOOBAR_DIR . '/inc/class-senoobar-theme.php';
+require_once SENOOBAR_DIR . '/inc/cart-handlers.php';
 
 function senoobar_init() {
     Senoobar_Theme::get_instance()->init();
