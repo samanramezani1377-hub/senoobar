@@ -25,15 +25,14 @@ remove_action('woocommerce_before_main_content', 'woocommerce_output_content_wra
 remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
 
 add_action('woocommerce_before_main_content', function () {
-    // archive-product.php has its own <main> wrapper
-    if (is_shop() || is_product_category() || is_product_tag()) {
+    if (is_shop() || is_product_category() || is_product_tag() || is_cart() || is_checkout() || is_account_page()) {
         return;
     }
     echo '<main id="primary" class="site-main"><div class="container page-content">';
 }, 10);
 
 add_action('woocommerce_after_main_content', function () {
-    if (is_shop() || is_product_category() || is_product_tag()) {
+    if (is_shop() || is_product_category() || is_product_tag() || is_cart() || is_checkout() || is_account_page()) {
         return;
     }
     echo '</div></main>';
