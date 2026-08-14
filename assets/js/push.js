@@ -14,10 +14,6 @@
 
     btn.style.display = 'flex';
 
-    btn.addEventListener('click', function () {
-      handleClick();
-    });
-
     updateButtonState();
   }
 
