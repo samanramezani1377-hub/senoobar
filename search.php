@@ -177,7 +177,7 @@ $product_categories = get_terms([
           </div>
 
           <!-- Products Grid -->
-          <div class="products-wrapper">
+          <div class="products-wrapper" id="productsWrapper">
             <?php
             wc_set_loop_prop('columns', 3);
             ?>
@@ -189,7 +189,7 @@ $product_categories = get_terms([
           </div>
 
           <!-- Pagination -->
-          <div class="shop-pagination" style="margin-top:32px;display:flex;justify-content:center;">
+          <div class="shop-pagination" id="shopPagination" style="margin-top:32px;display:flex;justify-content:center;">
             <?php woocommerce_pagination(); ?>
           </div>
 
