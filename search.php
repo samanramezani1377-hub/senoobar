@@ -254,30 +254,6 @@ $product_categories = get_terms([
   color: #1e3a2f;
   font-weight: 600;
 }
-
-.products-wrapper ul.products {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-.products-wrapper ul.products li.product {
-  width: 100% !important;
-  margin: 0 !important;
-  float: none !important;
-}
-
-@media (max-width: 1023px) {
-  .products-wrapper ul.products {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 639px) {
-  .products-wrapper ul.products {
-    grid-template-columns: 1fr;
-  }
-}
 </style>
 
 <?php get_footer(); ?>
