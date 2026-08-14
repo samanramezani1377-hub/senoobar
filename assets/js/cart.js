@@ -232,7 +232,10 @@
   var cpArrow = document.getElementById('cpArrow');
 
   if (cpToggle && cpBody) {
-    <?php if (!empty($cart->get_coupons())): ?>cpBody.style.display='block';if(cpArrow)cpArrow.style.transform='rotate(180deg)';<?php endif; ?>
+    if (cpBody.querySelector('.cart-coupon-success')) {
+      cpBody.style.display = 'block';
+      if (cpArrow) cpArrow.style.transform = 'rotate(180deg)';
+    }
     cpToggle.addEventListener('click', function () {
       var open = cpBody.style.display !== 'none';
       cpBody.style.display = open ? 'none' : 'block';

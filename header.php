@@ -6,7 +6,6 @@
     <meta name="theme-color" content="#1e3a2f">
     <link rel="manifest" href="<?php echo SENOOBAR_URI; ?>/manifest.json">
     <?php $custom_logo_id = get_theme_mod('custom_logo'); if($custom_logo_id){echo '<link rel="apple-touch-icon" href="'.esc_url(wp_get_attachment_url($custom_logo_id)).'">';} ?>
-    <link rel="preload" href="<?php echo SENOOBAR_URI; ?>/assets/fonts/Vazirmatn.woff2" as="font" type="font/woff2" crossorigin>
     <?php wp_head(); ?>
 </head>
 <body <?php body_class('senoobar-body'); ?>>
