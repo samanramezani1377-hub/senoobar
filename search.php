@@ -51,15 +51,24 @@ $product_categories = get_terms([
     </p>
   </div>
 
-  <div style="max-width:1280px;margin:0 auto;padding:24px 16px 32px;">
+  <div style="max-width:1280px;margin:0 auto;padding:24px 16px 32px;" class="shop-main">
 
     <?php if (have_posts()): ?>
 
       <div style="display:flex;gap:24px;">
 
         <!-- Sidebar Filters -->
-        <aside style="width:260px;flex-shrink:0;" class="search-sidebar">
+        <aside style="width:260px;flex-shrink:0;" class="shop-sidebar search-sidebar">
           <div style="background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:20px;position:sticky;top:80px;">
+            <!-- Filter Header (Mobile Toggle) -->
+            <div class="filter-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+              <h4 style="font-size:1rem;font-weight:700;color:#111827;margin:0;">فیلترها</h4>
+              <button type="button" class="filter-close" id="filterClose" aria-label="بستن فیلترها" style="background:none;border:none;cursor:pointer;padding:4px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
             
             <!-- Category Filter -->
             <div class="filter-group" style="margin-bottom:24px;">
@@ -121,14 +130,26 @@ $product_categories = get_terms([
           </div>
         </aside>
 
+        <!-- Mobile Filter Overlay -->
+        <div class="filter-overlay" id="filterOverlay" style="display:none;"></div>
+
         <!-- Main Content -->
         <div style="flex:1;min-width:0;">
           
           <!-- Toolbar -->
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:16px 20px;">
-            <span class="results-count" style="font-size:0.9rem;color:#6b7280;">
-              <?php echo $total_results; ?> محصول
-            </span>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="results-count" style="font-size:0.9rem;color:#6b7280;">
+                <?php echo $total_results; ?> محصول
+              </span>
+              <!-- Mobile Filter Button -->
+              <button type="button" class="btn-filter-toggle" id="filterToggle" style="display:flex;align-items:center;gap:6px;background:none;border:1px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:0.85rem;color:#374151;cursor:pointer;font-family:Vazirmatn,sans-serif;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+                </svg>
+                فیلترها
+              </button>
+            </div>
             <div style="display:flex;align-items:center;gap:12px;">
               <!-- Sort -->
               <form method="get" action="<?php echo esc_url(home_url('/')); ?>" style="display:flex;align-items:center;gap:8px;">

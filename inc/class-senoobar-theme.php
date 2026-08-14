@@ -418,7 +418,7 @@ final class Senoobar_Theme {
                 wp_enqueue_style('senoobar-rtl', SENOOBAR_URI . '/assets/css/rtl.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // Shop CSS
-            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag())) {
+            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search())) {
                 wp_enqueue_style('senoobar-shop', SENOOBAR_URI . '/assets/css/shop.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // JS
@@ -441,7 +441,7 @@ final class Senoobar_Theme {
                 'siteUrl'        => home_url(),
             ]);
             // Shop filter JS
-            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag())) {
+            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search())) {
                 wp_enqueue_script('senoobar-shop-filters', SENOOBAR_URI . '/assets/js/shop-filters.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
         });
