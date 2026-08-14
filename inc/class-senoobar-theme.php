@@ -464,6 +464,10 @@ final class Senoobar_Theme {
             // Cart JS
             if (is_cart()) {
                 wp_enqueue_script('senoobar-cart', SENOOBAR_URI . '/assets/js/cart.js', ['senoobar-app'], SENOOBAR_VERSION, true);
+                wp_localize_script('senoobar-cart', 'SenoobarCart', [
+                    'ajaxUrl' => admin_url('admin-ajax.php'),
+                    'nonce'   => wp_create_nonce('senoobar_cart_nonce'),
+                ]);
             }
             // Push JS
             wp_enqueue_script('senoobar-push', SENOOBAR_URI . '/assets/js/push.js', ['senoobar-app'], SENOOBAR_VERSION, true);
