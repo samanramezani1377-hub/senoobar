@@ -17,7 +17,6 @@
 <!-- Announcement Bar -->
 <div class="ann-bar">
     <div class="container ann-bar__inner">
-        <span>🚚</span>
         <span><?php echo esc_html(get_theme_mod('senoobar_announcement', '🚚 ارسال به سراسر کشور | 💳 خرید اقساطی ۳ ماهه بدون کارمزد | 🕐 شنبه تا پنجشنبه ۱۰ صبح تا ۹ شب')); ?></span>
     </div>
 </div>
