@@ -441,7 +441,7 @@ final class Senoobar_Theme {
                 'siteUrl'        => home_url(),
             ]);
             // Shop filter JS
-            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search())) {
+            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag())) {
                 wp_enqueue_script('senoobar-shop-filters', SENOOBAR_URI . '/assets/js/shop-filters.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
         });
