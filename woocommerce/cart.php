@@ -1,5 +1,4 @@
 <?php
-<?php
 /**
  * Cart Page — Senoobar v2 AJAX Design
  * Fully AJAX-powered cart with floating mobile drawer
