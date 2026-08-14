@@ -3,6 +3,12 @@
  * Push Notification AJAX Handlers
  */
 
+function senoobar_sanitize_base64_url(string $value): string
+{
+    $value = preg_replace('/[^A-Za-z0-9\-_=]/', '', $value);
+    return $value !== false ? $value : '';
+}
+
 // ---- Subscribe ----
 add_action('wp_ajax_senoobar_push_subscribe', 'senoobar_handle_push_subscribe');
 add_action('wp_ajax_nopriv_senoobar_push_subscribe', 'senoobar_handle_push_subscribe');
@@ -11,9 +17,9 @@ function senoobar_handle_push_subscribe(): void
 {
     check_ajax_referer('senoobar_push_nonce', 'nonce');
 
-    $endpoint = sanitize_text_field($_POST['endpoint'] ?? '');
-    $p256dh   = sanitize_text_field($_POST['p256dh'] ?? '');
-    $auth     = sanitize_text_field($_POST['auth'] ?? '');
+    $endpoint = sanitize_url($_POST['endpoint'] ?? '');
+    $p256dh   = senoobar_sanitize_base64_url($_POST['p256dh'] ?? '');
+    $auth     = senoobar_sanitize_base64_url($_POST['auth'] ?? '');
 
     if (empty($endpoint)) {
         wp_send_json_error(['message' => 'Missing endpoint']);
@@ -54,6 +60,10 @@ function senoobar_handle_push_unsubscribe(): void
 // ---- Send Push Notification ----
 function senoobar_send_push_notification(string $title, string $body, string $url = '/', array $data = []): bool
 {
+    if (!current_user_can('manage_options')) {
+        return false;
+    }
+
     $subs = get_option('senoobar_push_subscriptions', []);
     if (empty($subs)) {
         return false;

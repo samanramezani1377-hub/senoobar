@@ -49,7 +49,7 @@
         <!-- Search (Desktop) -->
         <div class="header-search">
             <form role="search" method="get" class="header-search-form" action="<?php echo esc_url(home_url('/')); ?>">
-                <input type="search" name="s" placeholder="<?php esc_attr_e('جستجو در محصولات...', 'senoobar'); ?>" value="<?php echo get_search_query(); ?>">
+                <input type="search" name="s" placeholder="<?php esc_attr_e('جستجو در محصولات...', 'senoobar'); ?>" value="<?php echo esc_attr(get_search_query()); ?>">
                 <button type="submit" aria-label="<?php esc_attr_e('جستجو', 'senoobar'); ?>">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>

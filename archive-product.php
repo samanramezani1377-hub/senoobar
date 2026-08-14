@@ -158,12 +158,12 @@ $current_cat_slug = is_product_category() ? get_queried_object()->slug : '';
             <div class="sort-wrapper">
               <label for="sortBy" class="sort-label">مرتب‌سازی:</label>
               <select id="sortBy" name="orderby" class="sort-select">
-                <option value="menu_order" <?php selected(isset($_GET['orderby']) ? $_GET['orderby'] : '', 'menu_order'); ?>>پیش‌فرض</option>
-                <option value="popularity" <?php selected(isset($_GET['orderby']) ? $_GET['orderby'] : '', 'popularity'); ?>>محبوب‌ترین</option>
-                <option value="rating" <?php selected(isset($_GET['orderby']) ? $_GET['orderby'] : '', 'rating'); ?>>بالاترین امتیاز</option>
-                <option value="date" <?php selected(isset($_GET['orderby']) ? $_GET['orderby'] : '', 'date'); ?>>جدیدترین</option>
-                <option value="price" <?php selected(isset($_GET['orderby']) ? $_GET['orderby'] : '', 'price'); ?>>قیمت: کم به زیاد</option>
-                <option value="price-desc" <?php selected(isset($_GET['orderby']) ? $_GET['orderby'] : '', 'price-desc'); ?>>قیمت: زیاد به کم</option>
+                <option value="menu_order" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'menu_order'); ?>>پیش‌فرض</option>
+                <option value="popularity" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'popularity'); ?>>محبوب‌ترین</option>
+                <option value="rating" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'rating'); ?>>بالاترین امتیاز</option>
+                <option value="date" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'date'); ?>>جدیدترین</option>
+                <option value="price" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'price'); ?>>قیمت: کم به زیاد</option>
+                <option value="price-desc" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'price-desc'); ?>>قیمت: زیاد به کم</option>
               </select>
             </div>
 
