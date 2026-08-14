@@ -262,6 +262,32 @@ final class Senoobar_Theme {
                 'type'    => 'text',
             ]);
 
+            // Cart
+            $c->add_section('senoobar_cart', [
+                'title'    => '🛒 سبد خرید',
+                'priority' => 85,
+            ]);
+            $cart_settings = [
+                'cart_title'       => ['default' => 'سبد خرید شما', 'type' => 'text'],
+                'cart_empty_title' => ['default' => 'سبد خرید شما خالی است', 'type' => 'text'],
+                'cart_empty_text'  => ['default' => 'محصولات مورد نظر خود را انتخاب کنید.', 'type' => 'textarea'],
+                'cart_empty_btn'   => ['default' => 'مشاهده محصولات', 'type' => 'text'],
+                'checkout_btn'     => ['default' => 'ادامه جهت تسویه حساب', 'type' => 'text'],
+                'continue_btn'     => ['default' => 'ادامه خرید', 'type' => 'text'],
+                'support_phone'    => ['default' => '۰۹۱۳۰۲۰۵۸۹۸', 'type' => 'text'],
+                'support_title'    => ['default' => 'سوالی دارید؟ ما در کنار شما هستیم', 'type' => 'text'],
+                'support_text'     => ['default' => 'برای راهنمایی در خرید یا پیگیری سفارش‌تان با پشتیبانی ما تماس بگیرید.', 'type' => 'textarea'],
+                'support_btn'      => ['default' => 'تماس با پشتیبانی', 'type' => 'text'],
+            ];
+            foreach ($cart_settings as $k => $cfg) {
+                $c->add_setting("senoobar_cart_{$k}", ['default' => $cfg['default']]);
+                $c->add_control("senoobar_cart_{$k}", [
+                    'label'   => $k,
+                    'section' => 'senoobar_cart',
+                    'type'    => $cfg['type'],
+                ]);
+            }
+
             // Footer
             $c->add_section('senoobar_footer', [
                 'title'    => 'فوتر',

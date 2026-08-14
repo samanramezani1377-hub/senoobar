@@ -1,5 +1,6 @@
 /**
  * Senoobar — Cart AJAX + Mobile Drawer
+ * Pure JavaScript, no PHP inside JS
  */
 (function () {
   'use strict';

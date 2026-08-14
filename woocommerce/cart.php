@@ -2,6 +2,7 @@
 /**
  * Cart Page — Senoobar v2 AJAX Design
  * Fully AJAX-powered cart with floating mobile drawer
+ * Uses real WooCommerce cart data
  */
 
 if (!defined('ABSPATH')) exit;
@@ -14,6 +15,18 @@ $cart_count = $cart->get_cart_contents_count();
 $cart_subtotal = $cart->get_subtotal();
 $cart_total = $cart->get_total();
 $cart_discount = $cart->get_cart_discount_total();
+
+// Customizer settings
+$cart_title         = get_theme_mod('senoobar_cart_cart_title', 'سبد خرید شما');
+$cart_empty_title   = get_theme_mod('senoobar_cart_cart_empty_title', 'سبد خرید شما خالی است');
+$cart_empty_text    = get_theme_mod('senoobar_cart_cart_empty_text', 'محصولات مورد نظر خود را انتخاب کنید.');
+$cart_empty_btn     = get_theme_mod('senoobar_cart_cart_empty_btn', 'مشاهده محصولات');
+$checkout_btn       = get_theme_mod('senoobar_cart_checkout_btn', 'ادامه جهت تسویه حساب');
+$continue_btn       = get_theme_mod('senoobar_cart_continue_btn', 'ادامه خرید');
+$support_phone      = get_theme_mod('senoobar_cart_support_phone', '۰۹۱۳۰۲۰۵۸۹۸');
+$support_title      = get_theme_mod('senoobar_cart_support_title', 'سوالی دارید؟ ما در کنار شما هستیم');
+$support_text       = get_theme_mod('senoobar_cart_support_text', 'برای راهنمایی در خرید یا پیگیری سفارش‌تان با پشتیبانی ما تماس بگیرید.');
+$support_btn        = get_theme_mod('senoobar_cart_support_btn', 'تماس با پشتیبانی');
 ?>
 
 <div style="background:#f9fafb;min-height:100vh;direction:rtl;font-family:Vazirmatn,sans-serif;">
@@ -25,7 +38,7 @@ $cart_discount = $cart->get_cart_discount_total();
       <span>/</span>
       <span style="color:#1e3a2f;font-weight:600;">سبد خرید</span>
     </div>
-    <h1 style="font-size:1.8rem;font-weight:800;color:#111827;margin:0 0 4px 0;">سبد خرید شما</h1>
+    <h1 style="font-size:1.8rem;font-weight:800;color:#111827;margin:0 0 4px 0;"><?php echo esc_html($cart_title); ?></h1>
     <p style="font-size:0.9rem;color:#6b7280;margin:0;">
       <?php echo $cart_count; ?> محصول در سبد خرید
     </p>
@@ -37,11 +50,11 @@ $cart_discount = $cart->get_cart_discount_total();
       <!-- Empty Cart -->
       <div style="background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);text-align:center;padding:60px 20px;max-width:500px;margin:0 auto;">
         <div style="font-size:4rem;margin-bottom:16px;">🛒</div>
-        <h3 style="font-size:1.2rem;font-weight:700;color:#374151;margin-bottom:8px;">سبد خرید شما خالی است</h3>
-        <p style="font-size:0.9rem;color:#6b7280;margin-bottom:24px;line-height:1.8;">محصولات مورد نظر خود را انتخاب کنید.</p>
+        <h3 style="font-size:1.2rem;font-weight:700;color:#374151;margin-bottom:8px;"><?php echo esc_html($cart_empty_title); ?></h3>
+        <p style="font-size:0.9rem;color:#6b7280;margin-bottom:24px;line-height:1.8;"><?php echo esc_html($cart_empty_text); ?></p>
         <a href="<?php echo get_permalink(wc_get_page_id('shop')); ?>" style="background:#1e3a2f;color:#fff;border-radius:12px;padding:12px 32px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          مشاهده محصولات
+          <?php echo esc_html($cart_empty_btn); ?>
         </a>
       </div>
 
@@ -133,8 +146,8 @@ $cart_discount = $cart->get_cart_discount_total();
                   <span>جمع کل</span>
                   <span class="cart-totals__total-price" id="cartTotal"><?php echo wc_price($cart_total); ?></span>
                 </div>
-                <a href="<?php echo wc_get_checkout_url(); ?>" class="btn-checkout">ادامه جهت تسویه حساب</a>
-                <a href="<?php echo get_permalink(wc_get_page_id('shop')); ?>" class="btn-continue">ادامه خرید</a>
+                <a href="<?php echo wc_get_checkout_url(); ?>" class="btn-checkout"><?php echo esc_html($checkout_btn); ?></a>
+                <a href="<?php echo get_permalink(wc_get_page_id('shop')); ?>" class="btn-continue"><?php echo esc_html($continue_btn); ?></a>
               </div>
             </div>
 
@@ -179,13 +192,13 @@ $cart_discount = $cart->get_cart_discount_total();
         <div style="display:flex;align-items:center;gap:16px;">
           <div style="width:48px;height:48px;border-radius:12px;background:#f0f7f4;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">💬</div>
           <div>
-            <h3 style="font-weight:700;color:#111827;font-size:1rem;margin:0;">سوالی دارید؟ ما در کنار شما هستیم</h3>
-            <p style="font-size:0.85rem;color:#6b7280;margin:2px 0 0 0;">برای راهنمایی در خرید یا پیگیری سفارش‌تان با پشتیبانی ما تماس بگیرید.</p>
+            <h3 style="font-weight:700;color:#111827;font-size:1rem;margin:0;"><?php echo esc_html($support_title); ?></h3>
+            <p style="font-size:0.85rem;color:#6b7280;margin:2px 0 0 0;"><?php echo esc_html($support_text); ?></p>
           </div>
         </div>
-        <a href="tel:09130205898" style="background:#1e3a2f;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-weight:600;font-size:0.9rem;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:8px;font-family:Vazirmatn,sans-serif;">
+        <a href="tel:<?php echo esc_attr($support_phone); ?>" style="background:#1e3a2f;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-weight:600;font-size:0.9rem;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:8px;font-family:Vazirmatn,sans-serif;">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c-.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
-          تماس با پشتیبانی
+          <?php echo esc_html($support_btn); ?>
         </a>
       </div>
 
@@ -258,8 +271,8 @@ $cart_discount = $cart->get_cart_discount_total();
           <span id="drawerCartTotal"><?php echo wc_price($cart_total); ?></span>
         </div>
       </div>
-      <a href="<?php echo wc_get_checkout_url(); ?>" class="btn-checkout">تسویه حساب</a>
-      <a href="<?php echo get_permalink(wc_get_page_id('shop')); ?>" class="btn-continue">ادامه خرید</a>
+      <a href="<?php echo wc_get_checkout_url(); ?>" class="btn-checkout"><?php echo esc_html($checkout_btn); ?></a>
+      <a href="<?php echo get_permalink(wc_get_page_id('shop')); ?>" class="btn-continue"><?php echo esc_html($continue_btn); ?></a>
     </div>
   </div>
 </div>
