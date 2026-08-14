@@ -3,10 +3,11 @@
  * Search Page — Senoobar v2 Design
  * Fully functional search with:
  * - Breadcrumb navigation
- * - Search results for products and posts
- * - Product cards with add-to-cart
- * - Blog post cards
+ * - Product-only search results (via pre_get_posts)
+ * - Sidebar filters: categories, price range, sort
+ * - 3-column product grid
  * - Empty state with suggestions
+ * - Support banner
  * - RTL + Vazirmatn
  */
 
@@ -14,8 +15,15 @@ if (!defined('ABSPATH')) exit;
 
 get_header();
 
+global $wp_query;
 $search_query = get_search_query();
 $total_results = $wp_query->found_posts;
+
+$product_categories = get_terms([
+    'taxonomy'   => 'product_cat',
+    'hide_empty' => true,
+    'orderby'    => 'name',
+]);
 ?>
 
 <div style="background:#f9fafb;min-height:100vh;direction:rtl;font-family:Vazirmatn,sans-serif;">
@@ -36,7 +44,7 @@ $total_results = $wp_query->found_posts;
     </h1>
     <p style="font-size:0.9rem;color:#6b7280;margin:0;">
       <?php if ($total_results > 0): ?>
-        <?php echo $total_results; ?> نتیجه پیدا شد
+        <?php echo $total_results; ?> محصول پیدا شد
       <?php else: ?>
         نتیجه‌ای پیدا نشد
       <?php endif; ?>
@@ -47,99 +55,124 @@ $total_results = $wp_query->found_posts;
 
     <?php if (have_posts()): ?>
 
-      <!-- Search Results -->
-      <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;gap:24px;">
 
-        <?php while (have_posts()): the_post(); ?>
-          <?php $post_type = get_post_type(); ?>
-
-          <?php if ($post_type === 'product' && class_exists('WooCommerce')): ?>
-            <?php
-            global $product;
-            $_product = wc_get_product(get_the_ID());
-            if (!$_product || !$_product->is_visible()) continue;
-            $pimg = wp_get_attachment_image_url($_product->get_image_id(), 'medium') ?: wc_placeholder_img_src('medium');
-            $pprice = $_product->get_price();
-            $pname = $_product->get_name();
-            $plink = get_permalink(get_the_ID());
-            ?>
-            <!-- Product Card -->
-            <div style="background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);overflow:hidden;display:flex;flex-direction:column;border:1px solid #f3f4f6;" class="search-product-card">
-              <div style="display:flex;flex-direction:column;md:flex-row;gap:16px;padding:16px;">
-                <div style="flex-shrink:0;">
-                  <a href="<?php echo esc_url($plink); ?>" style="display:block;text-decoration:none;">
-                    <img src="<?php echo esc_url($pimg); ?>" alt="<?php echo esc_attr($pname); ?>" style="width:100%;max-width:200px;height:auto;aspect-ratio:1;object-fit:cover;border-radius:12px;">
+        <!-- Sidebar Filters -->
+        <aside style="width:260px;flex-shrink:0;" class="search-sidebar">
+          <div style="background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:20px;position:sticky;top:80px;">
+            
+            <!-- Category Filter -->
+            <div class="filter-group" style="margin-bottom:24px;">
+              <h4 class="filter-group-title" style="font-size:0.9rem;font-weight:700;color:#111827;margin:0 0 12px;">دسته‌بندی</h4>
+              <ul class="category-filter-list" style="list-style:none;padding:0;margin:0;">
+                <li style="margin-bottom:8px;">
+                  <a href="<?php echo add_query_arg(['s' => $search_query, 'product_cat' => ''], home_url('/')); ?>" 
+                     class="category-filter-item <?php echo (!isset($_GET['product_cat']) || empty($_GET['product_cat'])) ? 'active' : ''; ?>"
+                     style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:10px;font-size:0.85rem;color:#374151;text-decoration:none;transition:all 0.2s;">
+                    همه محصولات
                   </a>
-                </div>
-                <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;">
-                  <div style="margin-bottom:8px;">
-                    <span style="display:inline-block;background:rgba(30,58,47,0.06);color:#1e3a2f;font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:20px;">محصول</span>
-                  </div>
-                  <a href="<?php echo esc_url($plink); ?>" style="text-decoration:none;display:block;margin-bottom:8px;">
-                    <h3 style="font-size:1.1rem;font-weight:700;color:#111827;margin:0;line-height:1.5;"><?php echo esc_html($pname); ?></h3>
-                  </a>
-                  <p style="font-size:0.85rem;color:#6b7280;margin:0 0 12px;line-height:1.6;">
-                    <?php echo wp_trim_words(get_the_excerpt(), 20, '...'); ?>
-                  </p>
-                  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-                    <div>
-                      <span style="font-size:1.2rem;font-weight:800;color:#1e3a2f;"><?php echo number_format($pprice); ?></span>
-                      <span style="font-size:0.8rem;color:#6b7280;margin-right:4px;">تومان</span>
-                    </div>
-                    <a href="<?php echo esc_url($plink); ?>" style="background:#1e3a2f;color:#fff;border:none;border-radius:12px;padding:10px 24px;font-weight:600;font-size:0.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
-                      مشاهده محصول
-                      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </li>
+                <?php foreach ($product_categories as $cat): ?>
+                  <li style="margin-bottom:8px;">
+                    <a href="<?php echo add_query_arg(['s' => $search_query, 'product_cat' => $cat->slug], home_url('/')); ?>" 
+                       class="category-filter-item <?php echo (isset($_GET['product_cat']) && $_GET['product_cat'] === $cat->slug) ? 'active' : ''; ?>"
+                       style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:10px;font-size:0.85rem;color:#374151;text-decoration:none;transition:all 0.2s;">
+                      <span><?php echo esc_html($cat->name); ?></span>
+                      <span class="cat-count" style="background:#f3f4f6;color:#6b7280;font-size:0.75rem;padding:2px 8px;border-radius:20px;"><?php echo $cat->count; ?></span>
                     </a>
-                  </div>
-                </div>
-              </div>
+                  </li>
+                <?php endforeach; ?>
+              </ul>
             </div>
 
-          <?php elseif ($post_type === 'post'): ?>
+            <!-- Price Range Filter -->
+            <div class="filter-group" style="margin-bottom:24px;">
+              <h4 class="filter-group-title" style="font-size:0.9rem;font-weight:700;color:#111827;margin:0 0 12px;">محدوده قیمت</h4>
+              <form method="get" action="<?php echo esc_url(home_url('/')); ?>" style="display:flex;flex-direction:column;gap:8px;">
+                <input type="hidden" name="s" value="<?php echo esc_attr($search_query); ?>">
+                <?php if (isset($_GET['product_cat'])): ?>
+                  <input type="hidden" name="product_cat" value="<?php echo esc_attr(sanitize_key($_GET['product_cat'])); ?>">
+                <?php endif; ?>
+                <?php if (isset($_GET['orderby'])): ?>
+                  <input type="hidden" name="orderby" value="<?php echo esc_attr(sanitize_key($_GET['orderby'])); ?>">
+                <?php endif; ?>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <input type="number" name="min_price" placeholder="از" min="0" step="100000"
+                         value="<?php echo isset($_GET['min_price']) ? intval($_GET['min_price']) : ''; ?>"
+                         style="flex:1;border:1px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:0.85rem;background:#f9fafb;outline:none;font-family:Vazirmatn,sans-serif;">
+                  <span style="color:#9ca3af;font-size:0.85rem;">تا</span>
+                  <input type="number" name="max_price" placeholder="تا" min="0" step="100000"
+                         value="<?php echo isset($_GET['max_price']) ? intval($_GET['max_price']) : ''; ?>"
+                         style="flex:1;border:1px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:0.85rem;background:#f9fafb;outline:none;font-family:Vazirmatn,sans-serif;">
+                </div>
+                <button type="submit" style="background:#1e3a2f;color:#fff;border:none;border-radius:10px;padding:10px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:Vazirmatn,sans-serif;">اعمال فیلتر</button>
+              </form>
+            </div>
+
+            <!-- Reset Filters -->
+            <?php if (isset($_GET['min_price']) || isset($_GET['max_price']) || isset($_GET['product_cat'])): ?>
+              <a href="<?php echo add_query_arg(['s' => $search_query, 'min_price' => '', 'max_price' => '', 'product_cat' => '', 'orderby' => ''], home_url('/')); ?>" 
+                 style="display:flex;align-items:center;justify-content:center;gap:6px;color:#ef4444;font-size:0.85rem;text-decoration:none;font-weight:600;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+                حذف همه فیلترها
+              </a>
+            <?php endif; ?>
+
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div style="flex:1;min-width:0;">
+          
+          <!-- Toolbar -->
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:16px 20px;">
+            <span class="results-count" style="font-size:0.9rem;color:#6b7280;">
+              <?php echo $total_results; ?> محصول
+            </span>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <!-- Sort -->
+              <form method="get" action="<?php echo esc_url(home_url('/')); ?>" style="display:flex;align-items:center;gap:8px;">
+                <input type="hidden" name="s" value="<?php echo esc_attr($search_query); ?>">
+                <?php if (isset($_GET['product_cat'])): ?>
+                  <input type="hidden" name="product_cat" value="<?php echo esc_attr(sanitize_key($_GET['product_cat'])); ?>">
+                <?php endif; ?>
+                <?php if (isset($_GET['min_price'])): ?>
+                  <input type="hidden" name="min_price" value="<?php echo esc_attr(intval($_GET['min_price'])); ?>">
+                <?php endif; ?>
+                <?php if (isset($_GET['max_price'])): ?>
+                  <input type="hidden" name="max_price" value="<?php echo esc_attr(intval($_GET['max_price'])); ?>">
+                <?php endif; ?>
+                <label for="sortBy" style="font-size:0.85rem;color:#4b5563;">مرتب‌سازی:</label>
+                <select id="sortBy" name="orderby" onchange="this.form.submit()" style="border:1px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:0.85rem;background:#f9fafb;outline:none;font-family:Vazirmatn,sans-serif;">
+                  <option value="menu_order" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'menu_order'); ?>>پیش‌فرض</option>
+                  <option value="popularity" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'popularity'); ?>>محبوب‌ترین</option>
+                  <option value="rating" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'rating'); ?>>بالاترین امتیاز</option>
+                  <option value="date" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'date'); ?>>جدیدترین</option>
+                  <option value="price" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'price'); ?>>قیمت: کم به زیاد</option>
+                  <option value="price-desc" <?php selected(isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : '', 'price-desc'); ?>>قیمت: زیاد به کم</option>
+                </select>
+              </form>
+            </div>
+          </div>
+
+          <!-- Products Grid -->
+          <div class="products-wrapper">
             <?php
-            $pimg = has_post_thumbnail() ? get_the_post_thumbnail_url(get_the_ID(), 'medium') : 'https://images.unsplash.com/photo-1673300881006-3bd384aa1949?w=400&h=300&fit=crop&auto=format';
-            $pdate = get_the_date('j F Y');
-            $pauthor = get_the_author();
+            wc_set_loop_prop('columns', 3);
             ?>
-            <!-- Blog Card -->
-            <a href="<?php the_permalink(); ?>" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:1px solid #f3f4f6;text-decoration:none;display:flex;flex-direction:column;md:flex-row;" class="search-blog-card">
-              <div style="flex-shrink:0;overflow:hidden;">
-                <img src="<?php echo esc_url($pimg); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" style="width:100%;max-width:240px;height:auto;aspect-ratio:4/3;object-fit:cover;display:block;" loading="lazy">
-              </div>
-              <div style="flex:1;min-width:0;padding:16px;display:flex;flex-direction:column;justify-content:center;">
-                <div style="margin-bottom:8px;">
-                  <span style="display:inline-block;background:rgba(30,58,47,0.06);color:#1e3a2f;font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:20px;">مقاله</span>
-                </div>
-                <h3 style="font-size:1.1rem;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.5;"><?php the_title(); ?></h3>
-                <p style="font-size:0.85rem;color:#6b7280;margin:0 0 12px;line-height:1.6;">
-                  <?php echo wp_trim_words(get_the_excerpt(), 20, '...'); ?>
-                </p>
-                <div style="display:flex;align-items:center;gap:12px;font-size:0.8rem;color:#9ca3af;">
-                  <span>📅 <?php echo esc_html($pdate); ?></span>
-                  <span>✍️ <?php echo esc_html($pauthor); ?></span>
-                </div>
-              </div>
-            </a>
+            <ul class="products">
+              <?php while (have_posts()): the_post(); ?>
+                <?php wc_get_template_part('content', 'product'); ?>
+              <?php endwhile; ?>
+            </ul>
+          </div>
 
-          <?php else: ?>
-            <!-- Generic Post Card -->
-            <a href="<?php the_permalink(); ?>" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:1px solid #f3f4f6;text-decoration:none;display:block;padding:20px;" class="search-generic-card">
-              <div style="margin-bottom:8px;">
-                <span style="display:inline-block;background:rgba(30,58,47,0.06);color:#1e3a2f;font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:20px;"><?php echo esc_html($post_type); ?></span>
-              </div>
-              <h3 style="font-size:1.1rem;font-weight:700;color:#111827;margin:0 0 8px;line-height:1.5;"><?php the_title(); ?></h3>
-              <p style="font-size:0.85rem;color:#6b7280;margin:0;line-height:1.6;">
-                <?php echo wp_trim_words(get_the_excerpt(), 20, '...'); ?>
-              </p>
-            </a>
-          <?php endif; ?>
+          <!-- Pagination -->
+          <div class="shop-pagination" style="margin-top:32px;display:flex;justify-content:center;">
+            <?php woocommerce_pagination(); ?>
+          </div>
 
-        <?php endwhile; ?>
-      </div>
-
-      <!-- Pagination -->
-      <div style="margin-top:32px;display:flex;justify-content:center;">
-        <?php the_posts_pagination(['prev_text' => 'قبلی', 'next_text' => 'بعدی']); ?>
+        </div>
       </div>
 
     <?php else: ?>
@@ -149,7 +182,7 @@ $total_results = $wp_query->found_posts;
         <div style="font-size:4rem;margin-bottom:16px;">🔍</div>
         <h3 style="font-size:1.2rem;font-weight:700;color:#374151;margin-bottom:8px;">نتیجه‌ای پیدا نشد</h3>
         <p style="font-size:0.9rem;color:#6b7280;margin-bottom:24px;line-height:1.8;">
-          متأسفانه هیچ موردی مطابق با عبارت «<?php echo esc_html($search_query); ?>» پیدا نشد.<br>
+          متأسفانه هیچ محصولی مطابق با عبارت «<?php echo esc_html($search_query); ?>» پیدا نشد.<br>
           پیشنهاد می‌کنیم عبارات دیگری را امتحان کنید یا از دسته‌بندی‌های زیر بازدید کنید.
         </p>
         <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
@@ -185,22 +218,43 @@ $total_results = $wp_query->found_posts;
 </div>
 
 <style>
-@media (min-width: 768px) {
-  .search-product-card,
-  .search-blog-card {
-    flex-direction: row !important;
+@media (max-width: 767px) {
+  .search-sidebar {
+    display: none;
   }
-  .search-product-card > div:first-child,
-  .search-blog-card > div:first-child {
-    width: 240px;
-    flex-shrink: 0;
+}
+
+.category-filter-item:hover {
+  background: #f3f4f6;
+}
+
+.category-filter-item.active {
+  background: #f0f7f4;
+  color: #1e3a2f;
+  font-weight: 600;
+}
+
+.products-wrapper ul.products {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.products-wrapper ul.products li.product {
+  width: 100% !important;
+  margin: 0 !important;
+  float: none !important;
+}
+
+@media (max-width: 1023px) {
+  .products-wrapper ul.products {
+    grid-template-columns: repeat(2, 1fr);
   }
-  .search-product-card img,
-  .search-blog-card img {
-    max-width: 240px;
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 1;
+}
+
+@media (max-width: 639px) {
+  .products-wrapper ul.products {
+    grid-template-columns: 1fr;
   }
 }
 </style>

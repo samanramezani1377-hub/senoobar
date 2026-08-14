@@ -50,6 +50,12 @@ final class Senoobar_Theme {
         add_image_size('senoobar-product-medium', 600, 600, true);
         add_image_size('senoobar-product-large', 1200, 800, true);
         add_image_size('senoobar-hero', 800, 1000, true);
+
+        add_action('pre_get_posts', function ($query) {
+            if (!is_admin() && $query->is_main_query() && $query->is_search()) {
+                $query->set('post_type', 'product');
+            }
+        });
     }
 
     // ─── Navigation ───────────────────────────────
