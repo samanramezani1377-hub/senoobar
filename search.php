@@ -193,6 +193,9 @@ $product_categories = get_terms([
             <?php woocommerce_pagination(); ?>
           </div>
 
+          <!-- Infinite Scroll Trigger -->
+          <div id="infiniteScrollTrigger" style="display:none;"></div>
+
         </div>
       </div>
 
@@ -229,10 +232,10 @@ $product_categories = get_terms([
           <p style="font-size:0.85rem;color:#6b7280;margin:2px 0 0 0;">برای راهنمایی در خرید یا پیگیری سفارش‌تان با پشتیبانی ما تماس بگیرید.</p>
         </div>
       </div>
-      <button style="background:#1e3a2f;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-weight:600;font-size:0.9rem;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px;font-family:Vazirmatn,sans-serif;">
+      <a href="tel:09130205898" style="background:#1e3a2f;color:#fff;border:none;border-radius:12px;padding:12px 24px;font-weight:600;font-size:0.9rem;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:8px;font-family:Vazirmatn,sans-serif;">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
         تماس با پشتیبانی
-      </button>
+      </a>
     </div>
 
   </div>
@@ -281,6 +284,114 @@ $product_categories = get_terms([
     grid-template-columns: 1fr !important;
   }
 }
+
+.search-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.search-spinner .spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #f3f4f6;
+  border-top-color: #1e3a2f;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 </style>
+
+<script>
+(function(){
+  'use strict';
+  var trigger = document.getElementById('infiniteScrollTrigger');
+  var grid = document.getElementById('productsWrapper');
+  if (!trigger || !grid) return;
+
+  var loading = false;
+  var maxPage = 1;
+
+  function getMaxPage() {
+    var pag = document.getElementById('shopPagination');
+    if (!pag) return 1;
+    var links = pag.querySelectorAll('a.page-numbers');
+    var max = 1;
+    links.forEach(function(a) {
+      var n = parseInt(a.textContent, 10);
+      if (!isNaN(n) && n > max) max = n;
+    });
+    return max;
+  }
+
+  function loadMore() {
+    if (loading) return;
+    var currentPage = 1;
+    var match = location.search.match(/[?&]paged=(\d+)/);
+    if (match) currentPage = parseInt(match[1], 10);
+    if (currentPage >= maxPage) return;
+
+    loading = true;
+    var spinner = document.createElement('div');
+    spinner.className = 'search-spinner';
+    spinner.innerHTML = '<div class="spinner"></div><span>در حال بارگذاری...</span>';
+    grid.parentNode.insertBefore(spinner, grid.nextSibling);
+
+    var nextPage = currentPage + 1;
+    var params = new URLSearchParams(location.search);
+    params.set('paged', nextPage);
+    var url = location.pathname + '?' + params.toString();
+
+    fetch(url, { credentials: 'same-origin' })
+      .then(function(res) { return res.text(); })
+      .then(function(html) {
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, 'text/html');
+        var newGrid = doc.getElementById('productsWrapper');
+        if (newGrid) {
+          var newItems = newGrid.querySelectorAll('.products li.product');
+          var ul = grid.querySelector('.products');
+          newItems.forEach(function(item) {
+            ul.appendChild(item.cloneNode(true));
+          });
+        }
+        spinner.remove();
+        loading = false;
+        if (nextPage >= maxPage) trigger.style.display = 'none';
+      })
+      .catch(function() {
+        spinner.remove();
+        loading = false;
+      });
+  }
+
+  maxPage = getMaxPage();
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          loadMore();
+        }
+      });
+    }, { rootMargin: '200px' });
+    observer.observe(trigger);
+  } else {
+    window.addEventListener('scroll', function() {
+      var rect = trigger.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 200) {
+        loadMore();
+      }
+    }, { passive: true });
+  }
+})();
+</script>
 
 <?php get_footer(); ?>
