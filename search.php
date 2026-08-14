@@ -181,7 +181,7 @@ $product_categories = get_terms([
             <?php
             wc_set_loop_prop('columns', 3);
             ?>
-            <ul class="products">
+            <ul class="products search-products-grid">
               <?php while (have_posts()): the_post(); ?>
                 <?php wc_get_template_part('content', 'product'); ?>
               <?php endwhile; ?>
@@ -253,6 +253,33 @@ $product_categories = get_terms([
   background: #f0f7f4;
   color: #1e3a2f;
   font-weight: 600;
+}
+
+.search-products-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 16px !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.search-products-grid li.product {
+  width: 100% !important;
+  margin: 0 !important;
+  float: none !important;
+}
+
+@media (max-width: 1023px) {
+  .search-products-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .search-products-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 </style>
 
