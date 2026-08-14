@@ -15,8 +15,6 @@ const PRECACHE_URLS = [
   '/wp-content/themes/senoobar/assets/css/critical.css',
   '/wp-content/themes/senoobar/assets/css/main.css',
   '/wp-content/themes/senoobar/assets/js/app.js',
-  '/wp-content/themes/senoobar/assets/fonts/IRANSansWeb.woff2',
-  '/wp-content/themes/senoobar/assets/fonts/IRANSansWeb_Bold.woff2',
   '/wp-content/themes/senoobar/assets/icons/icon-192.png',
   '/offline/',
 ];

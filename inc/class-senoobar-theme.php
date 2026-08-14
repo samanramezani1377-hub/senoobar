@@ -216,6 +216,45 @@ final class Senoobar_Theme {
                 }
             }
 
+            // Push Notifications
+            $c->add_section('senoobar_push', [
+                'title'    => '🔔 پوش نوتیفیکیشن',
+                'priority' => 37,
+            ]);
+            $c->add_setting('senoobar_push_vapid_public', ['default' => '']);
+            $c->add_control('senoobar_push_vapid_public', [
+                'label'       => 'VAPID Public Key',
+                'description' => 'کلید عمومی VAPID برای Web Push (Base64 encoded).',
+                'section'     => 'senoobar_push',
+                'type'        => 'textarea',
+            ]);
+            $c->add_setting('senoobar_push_api_url', ['default' => '']);
+            $c->add_control('senoobar_push_api_url', [
+                'label'       => 'API URL سرویس پوش',
+                'description' => 'مثلاً https://fcm.googleapis.com/fcm/send یا endpoint سرویسirds شخص ثالث.',
+                'section'     => 'senoobar_push',
+                'type'        => 'text',
+            ]);
+            $c->add_setting('senoobar_push_api_key', ['default' => '']);
+            $c->add_control('senoobar_push_api_key', [
+                'label'       => 'API Key / Server Key',
+                'description' => 'کلید سرور سرویس پوش.',
+                'section'     => 'senoobar_push',
+                'type'        => 'password',
+            ]);
+            $c->add_setting('senoobar_push_btn_text', ['default' => 'دریافت نوتیفیکیشن']);
+            $c->add_control('senoobar_push_btn_text', [
+                'label'   => 'متن دکمه سابسکریپت',
+                'section' => 'senoobar_push',
+                'type'    => 'text',
+            ]);
+            $c->add_setting('senoobar_push_subscribed_btn_text', ['default' => 'لغو نوتیفیکیشن']);
+            $c->add_control('senoobar_push_subscribed_btn_text', [
+                'label'   => 'متن دکمه لغو سابسکریپت',
+                'section' => 'senoobar_push',
+                'type'    => 'text',
+            ]);
+
             // Footer
             $c->add_section('senoobar_footer', [
                 'title'    => 'فوتر',
@@ -383,6 +422,17 @@ final class Senoobar_Theme {
                 'cartUrl' => class_exists('WooCommerce') ? wc_get_cart_url() : '',
                 'isRTL'   => is_rtl(),
                 'siteUrl' => home_url(),
+            ]);
+            // Push JS
+            wp_enqueue_script('senoobar-push', SENOOBAR_URI . '/assets/js/push.js', ['senoobar-app'], SENOOBAR_VERSION, true);
+            wp_localize_script('senoobar-push', 'senoobarPush', [
+                'ajaxUrl'        => admin_url('admin-ajax.php'),
+                'nonce'          => wp_create_nonce('senoobar_push_nonce'),
+                'publicKey'      => get_theme_mod('senoobar_push_vapid_public', ''),
+                'btnText'        => get_theme_mod('senoobar_push_btn_text', 'دریافت نوتیفیکیشن'),
+                'subscribedText' => get_theme_mod('senoobar_push_subscribed_btn_text', 'لغو نوتیفیکیشن'),
+                'isRTL'          => is_rtl(),
+                'siteUrl'        => home_url(),
             ]);
             // Shop filter JS
             if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag())) {

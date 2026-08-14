@@ -412,6 +412,28 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
   padding: 0 4px;
 }
 
+.push-action-btn {
+  background: rgba(30, 58, 47, 0.06);
+  border-radius: var(--radius-xl);
+  padding: 6px 12px;
+  gap: 6px;
+}
+
+.push-action-btn:hover {
+  background: rgba(30, 58, 47, 0.12);
+  color: var(--color-brand);
+}
+
+.push-action-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.push-action-btn.push-btn--active {
+  background: rgba(30, 58, 47, 0.1);
+  color: var(--color-brand);
+}
+
 /* ============================================
    MOBILE MENU
    ============================================ */
