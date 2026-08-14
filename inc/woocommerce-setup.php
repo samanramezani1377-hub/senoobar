@@ -25,7 +25,6 @@ remove_action('woocommerce_before_main_content', 'woocommerce_output_content_wra
 remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
 
 add_action('woocommerce_before_main_content', function () {
-    // These templates handle their own wrapper
     if (is_shop() || is_product_category() || is_product_tag() || is_cart() || is_checkout() || is_account_page()) {
         return;
     }
