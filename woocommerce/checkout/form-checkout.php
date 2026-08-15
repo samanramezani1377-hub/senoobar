@@ -1,21 +1,28 @@
 <?php
 /**
  * Senoobar - WooCommerce Checkout Template (minimal)
- * Only asks: name, last name, phone, province, address.
+ * Only asks: name, last name, phone, province, postal code, address.
+ * Renders its own header/footer so it works even with an empty page content.
  *
  * @package Senoobar
  */
 
 defined( 'ABSPATH' ) || exit;
 
+get_header(); ?>
+
+<main id="primary" class="site-main">
+<div class="container page-content">
+
+<?php
 do_action( 'woocommerce_before_checkout_form', $checkout );
 
+// If checkout registration is required and not logged in, show login/register.
 if ( ! is_user_logged_in() && $checkout->is_registration_required() ) {
     echo '<div class="senoobar-auth-section">';
     wc_get_template_part( 'checkout/login' );
     echo '</div>';
 }
-
 ?>
 
 <div class="senoobar-checkout-page" dir="rtl">
@@ -100,3 +107,8 @@ if ( ! is_user_logged_in() && $checkout->is_registration_required() ) {
 </div>
 
 <?php do_action( 'woocommerce_after_checkout_form', $checkout ); ?>
+
+</div>
+</main>
+
+<?php get_footer();

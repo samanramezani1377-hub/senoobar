@@ -16,15 +16,24 @@ add_action('after_setup_theme', function () {
     add_theme_support('wc-product-gallery-slider');
 });
 
-// ─── 1b. Force cart template independent of shortcode/content ──
+// ─── 1b. Force cart + checkout templates independent of shortcode/content ──
 // The shop page works even with empty content because it is an archive.
-// The cart page normally needs the [woocommerce_cart] shortcode in its content
-// for WooCommerce to recognize it. This filter makes the cart page behave like
-// the shop page: pointing it at woocommerce/cart/cart.php directly, so it
-// renders correctly even when the page content is empty.
+// Cart / checkout pages normally need the [woocommerce_cart] or
+// [woocommerce_checkout] shortcode in their content to be recognized. This
+// filter points them at the custom templates directly, so they render
+// correctly even when the page content is empty (and lets us delete the page
+// content entirely, matching the cart-page approach).
 add_filter('template_include', function ($template) {
-    if (function_exists('wc_get_page_id') && is_page(wc_get_page_id('cart'))) {
-        $custom = get_stylesheet_directory() . '/woocommerce/cart/cart.php';
+    $forced = '';
+    if (function_exists('wc_get_page_id')) {
+        if (is_page(wc_get_page_id('cart'))) {
+            $forced = '/woocommerce/cart/cart.php';
+        } elseif (is_page(wc_get_page_id('checkout'))) {
+            $forced = '/woocommerce/checkout/form-checkout.php';
+        }
+    }
+    if ($forced !== '') {
+        $custom = get_stylesheet_directory() . $forced;
         if (file_exists($custom)) {
             return $custom;
         }
