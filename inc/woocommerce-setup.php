@@ -16,6 +16,22 @@ add_action('after_setup_theme', function () {
     add_theme_support('wc-product-gallery-slider');
 });
 
+// ─── 1b. Force cart template independent of shortcode/content ──
+// The shop page works even with empty content because it is an archive.
+// The cart page normally needs the [woocommerce_cart] shortcode in its content
+// for WooCommerce to recognize it. This filter makes the cart page behave like
+// the shop page: pointing it at woocommerce/cart/cart.php directly, so it
+// renders correctly even when the page content is empty.
+add_filter('template_include', function ($template) {
+    if (function_exists('wc_get_page_id') && is_page(wc_get_page_id('cart'))) {
+        $custom = get_stylesheet_directory() . '/woocommerce/cart/cart.php';
+        if (file_exists($custom)) {
+            return $custom;
+        }
+    }
+    return $template;
+}, 99);
+
 // ─── 2. Kill default Woo styles ─────────────
 add_filter('woocommerce_enqueue_styles', '__return_empty_array');
 
