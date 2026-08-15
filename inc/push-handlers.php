@@ -81,8 +81,8 @@ function senoobar_send_push_notification(string $title, string $body, string $ur
         'body'    => $body,
         'url'     => $url,
         'data'    => $data,
-        'icon'    => '/wp-content/themes/senoobar/assets/icons/icon-192.png',
-        'badge'   => '/wp-content/themes/senoobar/assets/icons/badge-72.png',
+        'icon'    => get_template_directory_uri() . '/assets/icons/icon-192.png',
+        'badge'   => get_template_directory_uri() . '/assets/icons/badge-72.png',
         'vibrate' => [200, 100, 200],
         'actions' => [
             ['action' => 'view', 'title' => 'مشاهده'],

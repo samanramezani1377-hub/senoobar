@@ -1,1 +1,18 @@
-<?php $title=get_theme_mod('senoobar_section_newsletter_title','در خبرنامه صنوبر عضو شوید!');$desc=get_theme_mod('senoobar_section_newsletter_desc','از تخفیف‌ها و جدیدترین محصولات باخبر شوید.');?><section class="newsletter-section"><div class="container"><div class="newsletter__wrap"><h2><?php echo esc_html($title);?></h2><p><?php echo esc_html($desc);?></p><form class="newsletter-form" method="post" action="#"><input type="email" name="email" placeholder="ایمیل خود را وارد کنید..." required><button type="submit">عضویت</button></form></div></div></section>
+<?php
+$title = get_theme_mod('senoobar_section_newsletter_title', 'در خبرنامه صنوبر عضو شوید!');
+$desc  = get_theme_mod('senoobar_section_newsletter_desc', 'از تخفیف‌ها و جدیدترین محصولات باخبر شوید.');
+$nonce = wp_create_nonce('senoobar_newsletter_nonce');
+?>
+<section class="newsletter-section">
+    <div class="container">
+        <div class="newsletter__wrap">
+            <h2><?php echo esc_html($title); ?></h2>
+            <p><?php echo esc_html($desc); ?></p>
+            <form class="newsletter-form" method="post" action="#" data-nonce="<?php echo esc_attr($nonce); ?>">
+                <input type="email" name="email" placeholder="ایمیل خود را وارد کنید..." required autocomplete="email" />
+                <button type="submit">عضویت</button>
+                <div class="newsletter-message" role="alert" aria-live="polite"></div>
+            </form>
+        </div>
+    </div>
+</section>

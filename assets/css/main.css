@@ -912,10 +912,20 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
 }
 
 .testimonial-card__avatar {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-full);
-  object-fit: cover;
+  background: var(--color-brand-lighter);
+  color: var(--color-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.testimonial-card__avatar svg {
+  width: 28px;
+  height: 28px;
 }
 
 .testimonial-card__name {
@@ -1235,6 +1245,34 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
 
 .newsletter-form button:hover {
   background: var(--color-gray-100);
+}
+
+.newsletter-message {
+  display: none;
+  margin-top: 12px;
+  padding: 10px 16px;
+  border-radius: var(--radius-lg);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.newsletter-message.success {
+  display: block;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.newsletter-message.error {
+  display: block;
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.newsletter-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ============================================

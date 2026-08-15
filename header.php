@@ -4,7 +4,7 @@
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <meta name="theme-color" content="#1e3a2f">
-    <link rel="manifest" href="<?php echo SENOOBAR_URI; ?>/manifest.json">
+    <link rel="manifest" href="<?php echo home_url('manifest.json'); ?>">
     <?php $custom_logo_id = get_theme_mod('custom_logo'); if($custom_logo_id){echo '<link rel="apple-touch-icon" href="'.esc_url(wp_get_attachment_url($custom_logo_id)).'">';} ?>
     <?php wp_head(); ?>
 </head>

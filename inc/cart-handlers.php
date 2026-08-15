@@ -23,17 +23,15 @@ function senoobar_cart_update_quantity(): void {
     $cart->calculate_totals();
 
     // Return updated cart HTML and totals
-    ob_start();
     $cart_html = '';
     foreach ($cart->get_cart() as $key => $item) {
         $_product = apply_filters('woocommerce_cart_item_product', $item['data'], $item, $key);
-        $product_id = apply_filters('woocommerce_cart_item_product_id', $item['product_id'], $item, $key);
         if (!$_product || !$_product->exists() || $item['quantity'] < 1) {
             continue;
         }
 
         $product_name = $_product->get_name();
-        $product_permalink = $_product->is_visible() ? $_product->get_permalink($cart_item) : '';
+        $product_permalink = $_product->is_visible() ? $_product->get_permalink($item) : '';
         $thumbnail = $_product->get_image('woocommerce_thumbnail');
         $unit_price = $cart->get_product_price($_product);
         $line_subtotal = $cart->get_product_subtotal($_product, $item['quantity']);
@@ -57,7 +55,11 @@ function senoobar_cart_update_quantity(): void {
             $cart_html .= '<span class="senoobar-cart-product-name">' . esc_html($product_name) . '</span>';
         }
 
-        echo wc_get_formatted_cart_item_data($item);
+        // Variation / metadata
+        $variation_data = wc_get_formatted_cart_item_data($item);
+        if (!empty($variation_data)) {
+            $cart_html .= $variation_data;
+        }
 
         if ($_product->get_sku()) {
             $cart_html .= '<span class="senoobar-product-sku">کد محصول: ' . esc_html($_product->get_sku()) . '</span>';
@@ -84,7 +86,6 @@ function senoobar_cart_update_quantity(): void {
 
         $cart_html .= '</article>';
     }
-    $cart_html = ob_get_clean();
 
     $subtotal_html = $cart->get_cart_subtotal();
     $total_html = $cart->get_total();
@@ -125,17 +126,15 @@ function senoobar_cart_remove_item(): void {
     }
 
     // Return updated cart HTML and totals
-    ob_start();
     $cart_html = '';
     foreach ($cart->get_cart() as $key => $item) {
         $_product = apply_filters('woocommerce_cart_item_product', $item['data'], $item, $key);
-        $product_id = apply_filters('woocommerce_cart_item_product_id', $item['product_id'], $item, $key);
         if (!$_product || !$_product->exists() || $item['quantity'] < 1) {
             continue;
         }
 
         $product_name = $_product->get_name();
-        $product_permalink = $_product->is_visible() ? $_product->get_permalink($cart_item) : '';
+        $product_permalink = $_product->is_visible() ? $_product->get_permalink($item) : '';
         $thumbnail = $_product->get_image('woocommerce_thumbnail');
         $unit_price = $cart->get_product_price($_product);
         $line_subtotal = $cart->get_product_subtotal($_product, $item['quantity']);
@@ -159,7 +158,11 @@ function senoobar_cart_remove_item(): void {
             $cart_html .= '<span class="senoobar-cart-product-name">' . esc_html($product_name) . '</span>';
         }
 
-        echo wc_get_formatted_cart_item_data($item);
+        // Variation / metadata
+        $variation_data = wc_get_formatted_cart_item_data($item);
+        if (!empty($variation_data)) {
+            $cart_html .= $variation_data;
+        }
 
         if ($_product->get_sku()) {
             $cart_html .= '<span class="senoobar-product-sku">کد محصول: ' . esc_html($_product->get_sku()) . '</span>';
@@ -186,7 +189,6 @@ function senoobar_cart_remove_item(): void {
 
         $cart_html .= '</article>';
     }
-    $cart_html = ob_get_clean();
 
     $subtotal_html = $cart->get_cart_subtotal();
     $total_html = $cart->get_total();
@@ -228,11 +230,17 @@ function senoobar_apply_coupon(): void {
     $applied_coupons = $cart->get_applied_coupons();
     $success = in_array($coupon_code, $applied_coupons);
 
-    wp_send_json_success([
-        'subtotal_html' => $subtotal_html,
-        'total_html'    => $total_html,
-        'discount_html' => $discount_html,
-        'count'         => $count,
-        'message'       => $success ? 'کد تخفیف با موفقیت اعمال شد.' : 'کد تخفیف معتبر نیست.',
-    ]);
+    if ($success) {
+        wp_send_json_success([
+            'subtotal_html' => $subtotal_html,
+            'total_html'    => $total_html,
+            'discount_html' => $discount_html,
+            'count'         => $count,
+            'message'       => 'کد تخفیف با موفقیت اعمال شد.',
+        ]);
+    } else {
+        wp_send_json_error([
+            'message' => 'کد تخفیف معتبر نیست.',
+        ]);
+    }
 }

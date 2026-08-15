@@ -12,7 +12,18 @@
         <div class="footer-col"><h4>دسترسی سریع</h4><ul><li><a href="#">درباره ما</a></li><li><a href="#">تماس با ما</a></li><li><a href="#">سوالات متداول</a></li><li><a href="#">شرایط و قوانین</a></li><li><a href="#">حریم خصوصی</a></li></ul></div>
         <div class="footer-col"><h4>اطلاعات تماس</h4><div class="footer-contact"><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone1','۰۹۱۳۰۲۰۵۸۹۸')); ?></span></div><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone2','۰۹۱۳۰۲۰۵۸۶۸')); ?></span></div><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone3','۰۹۱۳۰۲۰۵۳۲۳')); ?></span></div><div><span>📍</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_address','اصفهان، شهرک صنعتی دولت‌آباد، خیابان شماره ۱۰ (خیام)، فروشگاه صنوبر')); ?></span></div><div><span>🕐</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_hours','شنبه تا پنجشنبه، ۱۰ صبح تا ۹ شب')); ?></span></div></div></div>
     </div>
-    <div class="footer-bottom"><p>© <?php echo date('Y'); ?> فروشگاه صنوبر — کلیه حقوق این وب‌سایت متعلق به صنوبر است.</p><div class="footer-bottom__badges"><span>نماد اعتماد الکترونیکی</span><span>استفاده از مطالب با ذکر منبع</span></div></div>
+    <div class="footer-bottom">
+        <p>© <?php echo date('Y'); ?> فروشگاه صنوبر — کلیه حقوق این وب‌سایت متعلق به صنوبر است.</p>
+        <div class="footer-bottom__badges">
+            <?php
+            $enamad_code = get_theme_mod('senoobar_enamad_code', '');
+            if (!empty($enamad_code)) :
+                echo '<div class="enamad-badge">' . $enamad_code . '</div>';
+            endif;
+            ?>
+            <span>استفاده از مطالب با ذکر منبع</span>
+        </div>
+    </div>
 </footer>
 <button id="backToTop" class="back-to-top" aria-label="بازگشت به بالا">↑</button>
 <?php wp_footer(); ?>

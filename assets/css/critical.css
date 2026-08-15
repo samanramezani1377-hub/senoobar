@@ -834,6 +834,7 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .footer-bottom__badges span {
@@ -841,6 +842,22 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
   padding: 6px 12px;
   border-radius: var(--radius-lg);
   font-size: 0.75rem;
+}
+
+.enamad-badge {
+  display: inline-block;
+  line-height: 1;
+}
+
+.enamad-badge img,
+.enamad-badge iframe {
+  max-height: 60px;
+  max-width: 200px;
+  vertical-align: middle;
+}
+
+.enamad-badge script {
+  display: none;
 }
 
 /* ============================================

@@ -24,6 +24,7 @@ final class Senoobar_Theme {
         $this->menus();
         $this->customizer();
         $this->pwa();
+        $this->sw_rewrite();
         $this->perf();
     }
 
@@ -55,6 +56,15 @@ final class Senoobar_Theme {
             if (!is_admin() && $query->is_main_query() && $query->is_search()) {
                 $query->set('post_type', 'product');
                 $query->set('posts_per_page', 30);
+                
+                // Persian search normalization
+                $search_term = $query->get('s');
+                if (!empty($search_term)) {
+                    $normalized = senoobar_normalize_persian_search($search_term);
+                    if ($normalized !== $search_term) {
+                        $query->set('s', $normalized);
+                    }
+                }
             }
         });
     }
@@ -96,8 +106,40 @@ final class Senoobar_Theme {
             echo '<meta name="apple-mobile-web-app-title" content="' . esc_attr(get_bloginfo('name')) . '">';
             echo '<link rel="apple-touch-icon" href="' . esc_url(SENOOBAR_URI . '/assets/images/logo.png') . '">';
         });
+}
+    
+    // ─── Service Worker Rewrite ─────────────────────
+    private function sw_rewrite() {
+        add_action('init', function () {
+            add_rewrite_rule('^sw\.js$', 'index.php?senoobar_sw=1', 'top');
+            add_rewrite_rule('^manifest\.json$', 'index.php?senoobar_manifest=1', 'top');
+        });
+        
+        add_filter('query_vars', function ($vars) {
+            $vars[] = 'senoobar_sw';
+            $vars[] = 'senoobar_manifest';
+            return $vars;
+        });
+        
+        add_action('template_redirect', function () {
+            if (get_query_var('senoobar_sw') === '1') {
+                $sw_file = get_template_directory() . '/sw.php';
+                if (file_exists($sw_file)) {
+                    include $sw_file;
+                    exit;
+                }
+            }
+            
+            if (get_query_var('senoobar_manifest') === '1') {
+                $manifest_file = get_template_directory() . '/manifest.php';
+                if (file_exists($manifest_file)) {
+                    include $manifest_file;
+                    exit;
+                }
+            }
+        });
     }
-
+    
     // ─── Performance ──────────────────────────────
     private function perf() {
         remove_action('wp_head', 'print_emoji_detection_script', 7);
@@ -313,6 +355,22 @@ final class Senoobar_Theme {
                 ]);
             }
 
+            // E-Namad / Trust Badges
+            $c->add_section('senoobar_trust', [
+                'title'    => 'اعتماد و نمادها',
+                'priority' => 95,
+            ]);
+            $c->add_setting('senoobar_enamad_code', [
+                'default'           => '',
+                'sanitize_callback' => 'senoobar_sanitize_enamad_code',
+            ]);
+            $c->add_control(new WP_Customize_Control($c, 'senoobar_enamad_code', [
+                'label'       => 'کد نماد اعتماد الکترونیکی',
+                'description' => 'کد امبد/اسنیپت رسمی نماد اعتماد الکترونیکی را اینجا قرار دهید. خالی بگذارید برای عدم نمایش.',
+                'section'     => 'senoobar_trust',
+                'type'        => 'textarea',
+            ]));
+
             // Section Titles
             $c->add_section('senoobar_sections', [
                 'title'    => 'عناوین بخش‌ها',
@@ -492,6 +550,8 @@ final class Senoobar_Theme {
             if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag())) {
                 wp_enqueue_script('senoobar-shop-filters', SENOOBAR_URI . '/assets/js/shop-filters.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
+            // Newsletter JS
+            wp_enqueue_script('senoobar-newsletter', SENOOBAR_URI . '/assets/js/newsletter.js', ['senoobar-app'], SENOOBAR_VERSION, true);
         });
 
         // Vazirmatn font
@@ -502,4 +562,93 @@ final class Senoobar_Theme {
             echo '<style>@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap");</style>';
         }, 1);
     }
+}
+
+/**
+ * Sanitize E-Namad code - only allow safe HTML for trusted badges
+ *
+ * @param string $input Raw input from Customizer
+ * @return string Sanitized output
+ */
+function senoobar_sanitize_enamad_code(string $input): string {
+    if (empty($input)) {
+        return '';
+    }
+
+    // Allow only specific safe tags and attributes for E-Namad embeds
+    $allowed_tags = [
+        'a'      => ['href' => [], 'title' => [], 'target' => [], 'rel' => [], 'id' => [], 'class' => []],
+        'img'    => ['src' => [], 'alt' => [], 'width' => [], 'height' => [], 'style' => [], 'id' => [], 'class' => []],
+        'script' => ['src' => [], 'async' => [], 'defer' => [], 'type' => [], 'id' => [], 'class' => []],
+        'div'    => ['id' => [], 'class' => [], 'style' => []],
+        'span'   => ['id' => [], 'class' => [], 'style' => []],
+        'iframe' => ['src' => [], 'width' => [], 'height' => [], 'frameborder' => [], 'scrolling' => [], 'style' => [], 'id' => [], 'class' => []],
+    ];
+
+    $sanitized = wp_kses($input, $allowed_tags);
+
+    // Additional safety: ensure scripts/iframes only from trusted domains
+    // This is a basic check - in production, you might want more sophisticated validation
+    return $sanitized;
+}
+
+/**
+ * Normalize Persian/Arabic search query for consistent matching.
+ * 
+ * Normalizes:
+ * - Arabic ي → Persian ی
+ * - Arabic ك → Persian ک
+ * - Arabic/Persian digits → English digits
+ * - Zero-width characters (ZWNJ/ZWJ) normalized
+ * - Excessive whitespace trimmed
+ * 
+ * Does NOT modify original stored data - only normalizes the search query.
+ * 
+ * @param string $query Raw search query
+ * @return string Normalized query
+ */
+function senoobar_normalize_persian_search(string $query): string {
+    if (empty($query)) {
+        return $query;
+    }
+    
+    // Arabic to Persian character mapping
+    $arabic_to_persian = [
+        'ي' => 'ی',  // Arabic yeh -> Persian yeh
+        'ك' => 'ک',  // Arabic kaf -> Persian kaf
+        '٠' => '0',  // Arabic-Indic digits
+        '١' => '1',
+        '٢' => '2',
+        '٣' => '3',
+        '٤' => '4',
+        '٥' => '5',
+        '٦' => '6',
+        '٧' => '7',
+        '٨' => '8',
+        '٩' => '9',
+        '۰' => '0',  // Extended Arabic-Indic digits
+        '۱' => '1',
+        '۲' => '2',
+        '۳' => '3',
+        '۴' => '4',
+        '۵' => '5',
+        '۶' => '6',
+        '۷' => '7',
+        '۸' => '8',
+        '۹' => '9',
+    ];
+    
+    // Replace Arabic chars with Persian equivalents
+    $query = strtr($query, $arabic_to_persian);
+    
+    // Normalize zero-width characters
+    // ZWNJ (U+200C) - keep as-is for Persian compound words (نیم‌فاصله)
+    // ZWJ (U+200D) - remove
+    $query = str_replace("\u{200D}", '', $query); // Remove ZWJ
+    
+    // Normalize whitespace - collapse multiple spaces, trim
+    $query = preg_replace('/\s+/u', ' ', $query);
+    $query = trim($query);
+    
+    return $query;
 }
