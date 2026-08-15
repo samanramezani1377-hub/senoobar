@@ -637,27 +637,35 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
 }
 
 .mobile-subcat-group .mobile-cat-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.82rem;
   color: var(--color-gray-500);
-  padding: 8px 12px 8px 26px;
-  position: relative;
+  padding: 8px 12px 8px 20px;
 }
 
 .mobile-subcat-group .mobile-cat-child::before {
   content: '';
-  position: absolute;
-  inset-inline-start: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6px;
-  height: 6px;
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: var(--color-gray-200);
+  background: var(--color-gray-300);
+}
+
+.mobile-subcat-group .mobile-cat-child > span {
+  flex: 1;
+  min-width: 0;
 }
 
 .mobile-subcat-group .mobile-cat-child:hover {
   background: var(--color-gray-50);
   color: var(--color-brand);
+}
+
+.mobile-subcat-group .mobile-cat-child:hover::before {
+  background: var(--color-brand);
 }
 
 .mobile-subcat-group .mobile-cat-children {
