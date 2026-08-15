@@ -534,6 +534,7 @@ final class Senoobar_Theme {
                 'nonce'   => wp_create_nonce('senoobar_cart_nonce'),
                 'isRTL'   => is_rtl(),
                 'siteUrl' => home_url(),
+                'shopUrl' => class_exists('WooCommerce') ? get_permalink(wc_get_page_id('shop')) : home_url('/'),
             ]);
             // Cart JS — always load when WooCommerce is active (so the AJAX +/- /
             // remove handlers are present regardless of how is_cart() resolves).
@@ -560,8 +561,9 @@ final class Senoobar_Theme {
             if ($is_checkout_page) {
                 wp_enqueue_script('senoobar-checkout', SENOOBAR_URI . '/assets/js/checkout.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
-            // Shop filter JS
-            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag())) {
+            // Shop filter JS (also on search results, so category/price filtering
+            // works there too)
+            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search())) {
                 wp_enqueue_script('senoobar-shop-filters', SENOOBAR_URI . '/assets/js/shop-filters.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
             // Product buy-box JS (single product: button -> stepper behavior)

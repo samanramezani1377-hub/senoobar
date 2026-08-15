@@ -21,6 +21,26 @@
   const loader = () => $('#filterLoading');
   const trigger = () => $('#infiniteScrollTrigger');
 
+  // The "all products" target: the shop page. If we're on a category page,
+  // clicking "all" must navigate back to the shop URL (not the category URL).
+  // Normalize the shop URL to a pathname (strip origin, since fetch + pushState
+  // expect a path). Handles Persian slugs like /فروشگاه/.
+  function toPath(u) {
+    if (!u) return '/shop/';
+    try {
+      const url = new URL(u, location.origin);
+      return url.pathname;
+    } catch (_) {
+      return u;
+    }
+  }
+  const shopUrl = toPath(window.senoobarData && senoobarData.shopUrl);
+  const isCategoryPage = document.body.classList.contains('tax-product_cat')
+    || /\/product-category\/|\/product-tag\//.test(location.pathname);
+  const isSearchPage = document.body.classList.contains('search')
+    || new URLSearchParams(location.search).has('s')
+    || document.body.classList.contains('search-results');
+
   // ─── Helpers ────────────────────────────────────
   function showLoader() {
     const el = loader();
@@ -46,6 +66,11 @@
     currentPage = cur ? (parseInt(cur.textContent, 10) || 1) : 1;
   }
 
+  function currentSearchTerm() {
+    const p = new URLSearchParams(location.search);
+    return p.get('s') || '';
+  }
+
   function buildQuery(extra = {}) {
     const p = new URLSearchParams(location.search);
     for (const [k, v] of Object.entries(extra)) {
@@ -56,6 +81,11 @@
 
   function pushUrl(qs) {
     const url = location.pathname + (qs ? '?' + qs : '');
+    history.pushState({}, '', url);
+  }
+
+  function pushUrlTo(basePath, qs) {
+    const url = (basePath || location.pathname) + (qs ? '?' + qs : '');
     history.pushState({}, '', url);
   }
 
@@ -70,9 +100,28 @@
         clone.classList.add('active');
         closeMobile();
         const cat = clone.dataset.cat;
-        const qs = cat === 'all' ? '' : buildQuery({ product_cat: cat, min_price: '', max_price: '' });
         resetScroll();
-        load(qs);
+        if (cat === 'all') {
+          // "All products" -> go to the shop page (or keep the search term
+          // on the search page) and clear category/price filters.
+          if (isSearchPage) {
+            const s = currentSearchTerm();
+            loadTo('', s ? { s } : {});
+          } else if (isCategoryPage) {
+            loadTo(shopUrl, {});
+          } else {
+            load('');
+          }
+        } else {
+          const extra = { product_cat: cat, min_price: '', max_price: '' };
+          if (isSearchPage) {
+            const s = currentSearchTerm();
+            if (s) extra.s = s;
+            loadTo('', extra);
+          } else {
+            loadTo('', extra);
+          }
+        }
       });
     });
   }
@@ -196,16 +245,41 @@
   }
 
   // ─── AJAX: full replace (filter/sort) ──────────
+  // basePath: explicit path (e.g. the shop URL); params: object or query string.
+  async function loadTo(basePath, params) {
+    if (isLoading) return;
+    let qs;
+    if (typeof params === 'string') {
+      qs = params;
+    } else {
+      const p = new URLSearchParams(location.search);
+      // When we change context (e.g. category -> shop, or search page),
+      // drop the previous category & price & sort filters entirely so the new
+      // context shows its own clean results.
+      ['product_cat', 'min_price', 'max_price', 'orderby', 'paged'].forEach(k => p.delete(k));
+      for (const [k, v] of Object.entries(params || {})) {
+        if (v) p.set(k, v); else p.delete(k);
+      }
+      qs = p.toString();
+    }
+
+    return loadInternal(basePath || location.pathname, qs, true);
+  }
+
   async function load(qs) {
+    return loadInternal(location.pathname, qs, true);
+  }
+
+  async function loadInternal(basePath, qs, replaceGrid = true) {
     if (isLoading) return;
     isLoading = true;
     showLoader();
     const g = grid();
-    // Preserve view class from shop-main
     const sm = shopMain();
     const viewClass = sm?.classList.contains('list-view') ? 'list-view' : 'grid-view';
     try {
-      const res = await fetch(location.pathname + (qs ? '?' + qs : ''), {
+      const url = basePath + (qs ? '?' + qs : '');
+      const res = await fetch(url, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
       });
       if (!res.ok) throw new Error('Fetch failed');
@@ -234,7 +308,7 @@
         if (cntEl) cntEl.textContent = newCnt.textContent;
       }
 
-      pushUrl(qs);
+      pushUrlTo(basePath, qs);
       readPagination();
       bindAll();
     } catch (e) {

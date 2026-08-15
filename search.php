@@ -58,7 +58,7 @@ $product_categories = get_terms([
       <div style="display:flex;gap:24px;">
 
         <!-- Sidebar Filters -->
-        <aside style="width:260px;flex-shrink:0;" class="shop-sidebar search-sidebar">
+        <aside style="width:260px;flex-shrink:0;" class="shop-sidebar search-sidebar" id="shopFilters">
           <div style="background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:20px;position:sticky;top:80px;">
             <!-- Filter Header (Mobile Toggle) -->
             <div class="filter-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
@@ -75,16 +75,18 @@ $product_categories = get_terms([
               <h4 class="filter-group-title" style="font-size:0.9rem;font-weight:700;color:#111827;margin:0 0 12px;">دسته‌بندی</h4>
               <ul class="category-filter-list" style="list-style:none;padding:0;margin:0;">
                 <li style="margin-bottom:8px;">
-                  <a href="<?php echo add_query_arg(['s' => $search_query, 'product_cat' => ''], home_url('/')); ?>" 
-                     class="category-filter-item <?php echo (!isset($_GET['product_cat']) || empty($_GET['product_cat'])) ? 'active' : ''; ?>"
+                  <a href="<?php echo esc_url(add_query_arg('s', $search_query, home_url('/'))); ?>" 
+                     class="category-filter-item <?php echo (empty($_GET['product_cat'])) ? 'active' : ''; ?>"
+                     data-cat="all"
                      style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:10px;font-size:0.85rem;color:#374151;text-decoration:none;transition:all 0.2s;">
                     همه محصولات
                   </a>
                 </li>
                 <?php foreach ($product_categories as $cat): ?>
                   <li style="margin-bottom:8px;">
-                    <a href="<?php echo add_query_arg(['s' => $search_query, 'product_cat' => $cat->slug], home_url('/')); ?>" 
+                    <a href="<?php echo esc_url(add_query_arg(['s' => $search_query, 'product_cat' => $cat->slug], home_url('/'))); ?>" 
                        class="category-filter-item <?php echo (isset($_GET['product_cat']) && $_GET['product_cat'] === $cat->slug) ? 'active' : ''; ?>"
+                       data-cat="<?php echo esc_attr($cat->slug); ?>"
                        style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:10px;font-size:0.85rem;color:#374151;text-decoration:none;transition:all 0.2s;">
                       <span><?php echo esc_html($cat->name); ?></span>
                       <span class="cat-count" style="background:#f3f4f6;color:#6b7280;font-size:0.75rem;padding:2px 8px;border-radius:20px;"><?php echo $cat->count; ?></span>
@@ -139,7 +141,7 @@ $product_categories = get_terms([
           <!-- Toolbar -->
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:16px 20px;">
             <div style="display:flex;align-items:center;gap:12px;">
-              <span class="results-count" style="font-size:0.9rem;color:#6b7280;">
+              <span class="results-count" id="resultsCount" style="font-size:0.9rem;color:#6b7280;">
                 <?php echo $total_results; ?> محصول
               </span>
               <!-- Mobile Filter Button -->
