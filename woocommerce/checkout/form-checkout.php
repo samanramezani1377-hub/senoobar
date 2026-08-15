@@ -9,6 +9,13 @@
 
 defined( 'ABSPATH' ) || exit;
 
+<?php
+// When loaded directly via template_include, $checkout is not passed in the
+// way wc_get_template() normally would, so ensure it is always available.
+if ( ! isset( $checkout ) || ! is_object( $checkout ) ) {
+    $checkout = WC()->checkout();
+}
+
 get_header(); ?>
 
 <main id="primary" class="site-main">
@@ -65,7 +72,12 @@ if ( ! is_user_logged_in() && $checkout->is_registration_required() ) {
 
                     <h2 id="billing-heading" class="senoobar-section-title">اطلاعات سفارش</h2>
 
-                    <?php do_action( 'woocommerce_checkout_billing' ); ?>
+                    <?php
+                    // Render the billing form directly so it does not depend on
+                    // the woocommerce_checkout_billing hook firing (which can be
+                    // unreliable when the template is loaded via template_include).
+                    wc_get_template( 'checkout/form-billing.php' );
+                    ?>
 
                 </section>
 
@@ -79,7 +91,7 @@ if ( ! is_user_logged_in() && $checkout->is_registration_required() ) {
                         <h2 id="order-summary-heading">خلاصه سفارش</h2>
 
                         <div class="senoobar-checkout-section">
-                            <?php do_action( 'woocommerce_checkout_order_review' ); ?>
+                            <?php wc_get_template( 'checkout/review-order.php' ); ?>
                         </div>
                     </div>
 
