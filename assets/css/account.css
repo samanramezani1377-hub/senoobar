@@ -146,7 +146,7 @@
     .snb-nav {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+        gap: 8px;
         background: transparent;
         box-shadow: none;
         overflow: visible;
@@ -154,25 +154,26 @@
     }
     .snb-nav-link {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 8px;
-        padding: 16px 10px;
+        padding: 8px 12px;
         background: #fff;
         border: 1px solid var(--snb-border);
-        border-radius: 14px;
+        border-radius: 10px;
         box-shadow: var(--snb-shadow);
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 600;
         color: var(--snb-text);
-        text-align: center;
+        text-align: right;
         white-space: normal;
+        line-height: 1.3;
     }
     .snb-nav-link:hover { background: #fafbfa; }
     .snb-nav-link.is-active { background: #eef4f0; border-color: var(--snb-brand); color: var(--snb-brand); }
-    .snb-nav-icon { font-size: 22px; opacity: 1; }
-    .snb-nav-link.snb-logout { color: #dc2626; grid-column: 1 / -1; }
+    .snb-nav-icon { font-size: 16px; opacity: 1; flex-shrink: 0; }
+    .snb-nav-link.snb-logout { color: #dc2626; grid-column: 1 / -1; justify-content: center; }
     .snb-nav-link.snb-logout:hover { background: #fef2f2; }
 }
 @media (max-width: 520px) {
