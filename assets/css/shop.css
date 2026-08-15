@@ -178,22 +178,34 @@
 /* ─── Price Filter ─────────────────────────── */
 .price-filter { display: flex; flex-direction: column; gap: 12px; }
 .price-inputs { display: flex; align-items: center; gap: 8px; }
-.price-input-group { flex: 1; position: relative; }
-.price-input-group label { display: block; font-size: 0.75rem; color: #9ca3af; margin-bottom: 4px; }
+.price-input-group { flex: 1; position: relative; min-width: 0; }
+.price-input-group label { display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 4px; }
 .price-input-group input {
   width: 100%;
-  padding: 8px 36px 8px 8px;
+  padding: 9px 40px 9px 10px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 0.85rem;
   font-family: inherit;
   text-align: left;
   direction: ltr;
+  box-sizing: border-box;
+  appearance: textfield;
+  -moz-appearance: textfield;
   transition: border-color 0.2s;
 }
+.price-input-group input::-webkit-outer-spin-button,
+.price-input-group input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .price-input-group input:focus { outline: none; border-color: var(--color-primary, #1e3a2f); box-shadow: 0 0 0 3px rgba(30,58,47,0.1); }
-.price-unit { position: absolute; top: 28px; left: 8px; font-size: 0.7rem; color: #9ca3af; pointer-events: none; }
-.price-separator { color: #d1d5db; font-weight: 600; margin-top: 20px; }
+.price-unit { position: absolute; top: 50%; left: 10px; transform: translateY(calc(-50% + 10px)); font-size: 0.7rem; color: #9ca3af; pointer-events: none; }
+.price-separator { color: #d1d5db; font-weight: 600; }
+
+/* Desktop: stack the two price inputs vertically for comfortable use
+   inside a narrow sidebar */
+@media (min-width: 768px) {
+  .price-inputs { flex-direction: column; align-items: stretch; gap: 10px; }
+  .price-separator { display: none; }
+}
 
 .btn-filter-apply,
 .btn-reset-filters {
@@ -308,7 +320,7 @@ body .shop-main ul.products li.product {
   position: relative !important;
   list-style: none !important;
   list-style-type: none !important;
-  padding-bottom: 38px !important; /* room for the round cart button */
+  padding-bottom: 30px !important; /* room for the round cart button */
 }
 body .shop-main ul.products li.product::marker {
   content: none !important;
@@ -336,7 +348,7 @@ body .shop-main ul.products li.product a.woocommerce-LoopProduct-link {
 /* Product image */
 body .shop-main ul.products li.product a.woocommerce-LoopProduct-link img {
   width: 100% !important;
-  aspect-ratio: 4 / 3 !important;
+  aspect-ratio: 3 / 2 !important;
   object-fit: cover !important;
   display: block !important;
   margin: 0 !important;
