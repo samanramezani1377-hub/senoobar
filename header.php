@@ -116,12 +116,34 @@
     </nav>
 </header>
 
+<!-- Mobile Menu -->
 <?php
-// Helper: build hierarchical product categories (top-level + children)
+// ── Mobile Sidebar data (configurable via Customizer → ☰ سایدبار موبایل) ──
+
 $snb_shop_url = function_exists('wc_get_page_permalink') && class_exists('WooCommerce')
     ? wc_get_page_permalink('shop') : home_url('/shop/');
+
+// Section visibility + order
+$snb_sec_enabled = [];
+$snb_sec_order   = [];
+foreach (['search','categories','quicklinks','newsletter'] as $k) {
+    $snb_sec_enabled[$k] = (bool) get_theme_mod("senoobar_menu_{$k}_enabled", '1');
+    $snb_sec_order[$k]   = (int) get_theme_mod("senoobar_menu_{$k}_order", ['search'=>10,'categories'=>20,'quicklinks'=>30,'newsletter'=>40][$k]);
+}
+
+// Build ordered list of enabled sections
+$snb_sections = [];
+foreach (['search','categories','quicklinks','newsletter'] as $k) {
+    if ($snb_sec_enabled[$k]) {
+        $snb_sections[$k] = $snb_sec_order[$k];
+    }
+}
+asort($snb_sections); // sort by order asc
+
+// Categories (hierarchical, filtered + ordered)
 $snb_cat_tree = [];
-if (class_exists('WooCommerce')) {
+$snb_children_map = [];
+if (class_exists('WooCommerce') && $snb_sec_enabled['categories']) {
     $snb_all_cats = get_terms([
         'taxonomy'   => 'product_cat',
         'hide_empty' => false,
@@ -131,27 +153,59 @@ if (class_exists('WooCommerce')) {
     if (!is_wp_error($snb_all_cats)) {
         $snb_by_parent = [];
         foreach ($snb_all_cats as $c) {
+            // filter: only show categories enabled in customizer
+            if (!get_theme_mod("senoobar_menu_cat_{$c->term_id}_enabled", '1')) {
+                continue;
+            }
             $snb_by_parent[(int)$c->parent][] = $c;
         }
+        $snb_children_map = $snb_by_parent;
         $snb_cat_tree = isset($snb_by_parent[0]) ? $snb_by_parent[0] : [];
-        // attach children (referenced below during render)
-        $GLOBALS['snb_cat_children'] = $snb_by_parent;
+        // sort top-level by order
+        usort($snb_cat_tree, function($a, $b) {
+            $oa = (int) get_theme_mod("senoobar_menu_cat_{$a->term_id}_order", 99);
+            $ob = (int) get_theme_mod("senoobar_menu_cat_{$b->term_id}_order", 99);
+            return $oa <=> $ob;
+        });
     }
 }
-$snb_children_map = isset($GLOBALS['snb_cat_children']) ? $GLOBALS['snb_cat_children'] : [];
 
-// Header actions (account / wishlist / cart)
+// Quick links
 $snb_account_url = get_permalink(get_option('woocommerce_myaccount_page_id'));
 $snb_cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/cart/');
 $snb_wish_url = function_exists('senoobar_wishlist_page_url') ? senoobar_wishlist_page_url() : home_url('/wishlist/');
 
-// Footer-style links (pages)
-$snb_terms_url  = home_url('/terms/');
-$snb_privacy_url= home_url('/privacy-policy/');
-$snb_about_url  = home_url('/about/');
-$snb_contact_url= home_url('/contact/');
-$snb_faq_url    = home_url('/faq/');
+// Quick links config (label => [key, icon, auto_url, default_url])
+$snb_quick_defs = [
+    'account'  => ['حساب کاربری', 'account', $snb_account_url],
+    'wishlist' => ['علاقه‌مندی‌ها', 'wishlist', $snb_wish_url],
+    'cart'     => ['سبد خرید', 'cart', $snb_cart_url],
+    'about'    => ['درباره ما', 'text', home_url('/about/')],
+    'contact'  => ['تماس با ما', 'text', home_url('/contact/')],
+    'faq'      => ['سوالات متداول', 'text', home_url('/faq/')],
+    'terms'    => ['شرایط و ضوابط', 'text', home_url('/terms/')],
+    'privacy'  => ['حریم خصوصی', 'text', home_url('/privacy-policy/')],
+];
 
+$snb_quick_links = [];
+foreach ($snb_quick_defs as $key => $def) {
+    if (!get_theme_mod("senoobar_menu_link_{$key}_enabled", '1')) {
+        continue;
+    }
+    $url = get_theme_mod("senoobar_menu_link_{$key}_url", '');
+    if (empty($url)) {
+        $url = $def[2]; // auto/default URL
+    }
+    $snb_quick_links[] = [
+        'label' => $def[0],
+        'type'  => $def[1],
+        'url'   => $url,
+    ];
+}
+
+// Newsletter
+$snb_nl_title = get_theme_mod('senoobar_menu_newsletter_title', '📬 خبرنامه صنوبر');
+$snb_nl_desc  = get_theme_mod('senoobar_menu_newsletter_desc', 'از تخفیف‌ها و جدیدترین محصولات باخبر شوید.');
 $snb_newsletter_nonce = wp_create_nonce('senoobar_newsletter_nonce');
 ?>
 <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="منوی موبایل">
@@ -170,76 +224,75 @@ $snb_newsletter_nonce = wp_create_nonce('senoobar_newsletter_nonce');
     </div>
 
     <div class="mobile-menu__body">
-        <!-- Search -->
-        <div class="mobile-menu__search">
-            <form role="search" method="get" action="<?php echo esc_url(home_url('/')); ?>">
-                <input type="search" name="s" placeholder="<?php esc_attr_e('جستجو در محصولات...', 'senoobar'); ?>" value="<?php echo esc_attr(get_search_query()); ?>">
-                <button type="submit" aria-label="جستجو">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                </button>
-            </form>
-        </div>
+        <?php foreach ($snb_sections as $section => $order): ?>
 
-        <!-- Categories (hierarchical) -->
-        <nav class="mobile-cats" aria-label="دسته‌بندی محصولات">
-            <div class="mobile-cats__label">دسته‌بندی محصولات</div>
+            <?php if ($section === 'search'): ?>
+                <div class="mobile-menu__search">
+                    <form role="search" method="get" action="<?php echo esc_url(home_url('/')); ?>">
+                        <input type="search" name="s" placeholder="<?php esc_attr_e('جستجو در محصولات...', 'senoobar'); ?>" value="<?php echo esc_attr(get_search_query()); ?>">
+                        <button type="submit" aria-label="جستجو">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </button>
+                    </form>
+                </div>
+            <?php endif; ?>
 
-            <a href="<?php echo esc_url($snb_shop_url); ?>" class="mobile-cat-link mobile-cat-link--all">
-                <span>همه محصولات</span>
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-            </a>
-
-            <?php foreach ($snb_cat_tree as $cat): ?>
-                <?php $kids = isset($snb_children_map[$cat->term_id]) ? $snb_children_map[$cat->term_id] : []; ?>
-                <div class="mobile-cat-group">
-                    <a href="<?php echo esc_url(get_term_link($cat)); ?>" class="mobile-cat-link">
-                        <span><?php echo esc_html($cat->name); ?></span>
+            <?php if ($section === 'categories'): ?>
+                <nav class="mobile-cats" aria-label="دسته‌بندی محصولات">
+                    <div class="mobile-cats__label">دسته‌بندی محصولات</div>
+                    <a href="<?php echo esc_url($snb_shop_url); ?>" class="mobile-cat-link mobile-cat-link--all">
+                        <span>همه محصولات</span>
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                     </a>
-                    <?php if ($kids): ?>
-                        <div class="mobile-cat-children">
-                            <?php foreach ($kids as $child): ?>
-                                <a href="<?php echo esc_url(get_term_link($child)); ?>" class="mobile-cat-child"><?php echo esc_html($child->name); ?></a>
-                            <?php endforeach; ?>
+                    <?php foreach ($snb_cat_tree as $cat): ?>
+                        <?php $kids = isset($snb_children_map[$cat->term_id]) ? $snb_children_map[$cat->term_id] : []; ?>
+                        <div class="mobile-cat-group">
+                            <a href="<?php echo esc_url(get_term_link($cat)); ?>" class="mobile-cat-link">
+                                <span><?php echo esc_html($cat->name); ?></span>
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                            </a>
+                            <?php if ($kids): ?>
+                                <div class="mobile-cat-children">
+                                    <?php foreach ($kids as $child): ?>
+                                        <a href="<?php echo esc_url(get_term_link($child)); ?>" class="mobile-cat-child"><?php echo esc_html($child->name); ?></a>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
-                    <?php endif; ?>
+                    <?php endforeach; ?>
+                </nav>
+            <?php endif; ?>
+
+            <?php if ($section === 'quicklinks'): ?>
+                <nav class="mobile-links" aria-label="صفحات">
+                    <?php foreach ($snb_quick_links as $link): ?>
+                        <a href="<?php echo esc_url($link['url']); ?>" class="mobile-link-item">
+                            <?php if ($link['type'] === 'account'): ?>
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                            <?php elseif ($link['type'] === 'wishlist'): ?>
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                            <?php elseif ($link['type'] === 'cart'): ?>
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272"/></svg>
+                            <?php endif; ?>
+                            <span><?php echo esc_html($link['label']); ?></span>
+                        </a>
+                    <?php endforeach; ?>
+                </nav>
+            <?php endif; ?>
+
+            <?php if ($section === 'newsletter'): ?>
+                <div class="mobile-newsletter">
+                    <div class="mobile-newsletter__title"><?php echo esc_html($snb_nl_title); ?></div>
+                    <p class="mobile-newsletter__desc"><?php echo esc_html($snb_nl_desc); ?></p>
+                    <form class="mobile-newsletter-form" method="post" action="#" data-nonce="<?php echo esc_attr($snb_newsletter_nonce); ?>">
+                        <input type="email" name="email" placeholder="ایمیل خود را وارد کنید..." required autocomplete="email">
+                        <button type="submit">عضویت</button>
+                        <div class="mobile-newsletter-message" role="alert" aria-live="polite"></div>
+                    </form>
                 </div>
-            <?php endforeach; ?>
-        </nav>
+            <?php endif; ?>
 
-        <!-- Quick links -->
-        <nav class="mobile-links" aria-label="صفحات">
-            <a href="<?php echo esc_url($snb_account_url); ?>" class="mobile-link-item">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
-                <span>حساب کاربری</span>
-            </a>
-            <a href="<?php echo esc_url($snb_wish_url); ?>" class="mobile-link-item">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                <span>علاقه‌مندی‌ها</span>
-            </a>
-            <a href="<?php echo esc_url($snb_cart_url); ?>" class="mobile-link-item">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272"/></svg>
-                <span>سبد خرید</span>
-            </a>
-            <div class="mobile-links__divider"></div>
-            <a href="<?php echo esc_url($snb_about_url); ?>" class="mobile-link-item"><span>درباره ما</span></a>
-            <a href="<?php echo esc_url($snb_contact_url); ?>" class="mobile-link-item"><span>تماس با ما</span></a>
-            <a href="<?php echo esc_url($snb_faq_url); ?>" class="mobile-link-item"><span>سوالات متداول</span></a>
-            <a href="<?php echo esc_url($snb_terms_url); ?>" class="mobile-link-item"><span>شرایط و ضوابط</span></a>
-            <a href="<?php echo esc_url($snb_privacy_url); ?>" class="mobile-link-item"><span>حریم خصوصی</span></a>
-        </nav>
-
-        <!-- Newsletter -->
-        <div class="mobile-newsletter">
-            <div class="mobile-newsletter__title">📬 خبرنامه صنوبر</div>
-            <p class="mobile-newsletter__desc">از تخفیف‌ها و جدیدترین محصولات باخبر شوید.</p>
-            <form class="mobile-newsletter-form" method="post" action="#" data-nonce="<?php echo esc_attr($snb_newsletter_nonce); ?>">
-                <input type="email" name="email" placeholder="ایمیل خود را وارد کنید..." required autocomplete="email">
-                <button type="submit">عضویت</button>
-                <div class="mobile-newsletter-message" role="alert" aria-live="polite"></div>
-            </form>
-        </div>
+        <?php endforeach; ?>
     </div>
 </div>
 <div class="menu-overlay" id="menuOverlay"></div>
-

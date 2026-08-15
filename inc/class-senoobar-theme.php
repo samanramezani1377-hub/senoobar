@@ -481,6 +481,122 @@ final class Senoobar_Theme {
                 ]));
             }
 
+// ─── Mobile Sidebar (☰) Settings ─────────────
+            $c->add_section('senoobar_mobile_menu', [
+                'title'       => '☰ سایدبار موبایل',
+                'description' => 'تنظیم کامل منوی کشویی موبایل: ترتیب بخش‌ها و نمایش/عدم نمایش هر بخش.',
+                'priority'    => 27,
+            ]);
+
+            // ── Section order + visibility ──
+            $menu_sections = [
+                'search'      => '🔍 جستجو',
+                'categories'  => '📂 دسته‌بندی محصولات',
+                'quicklinks'  => '🔗 لینک‌های سریع (حساب/سبد/صفحات)',
+                'newsletter'  => '📬 خبرنامه',
+            ];
+            $default_order = ['search' => 10, 'categories' => 20, 'quicklinks' => 30, 'newsletter' => 40];
+            foreach ($menu_sections as $key => $label) {
+                $c->add_setting("senoobar_menu_{$key}_enabled", ['default' => '1']);
+                $c->add_control("senoobar_menu_{$key}_enabled", [
+                    'label'   => "نمایش: {$label}",
+                    'section' => 'senoobar_mobile_menu',
+                    'type'    => 'checkbox',
+                ]);
+                $c->add_setting("senoobar_menu_{$key}_order", ['default' => $default_order[$key]]);
+                $c->add_control("senoobar_menu_{$key}_order", [
+                    'label'       => "   ↳ ترتیب {$label} (عدد کمتر = بالاتر)",
+                    'section'     => 'senoobar_mobile_menu',
+                    'type'        => 'number',
+                    'input_attrs' => ['min' => 1, 'max' => 99, 'step' => 1],
+                ]);
+            }
+
+            // ── Quick links (show/hide + custom URL/text) ──
+            $c->add_control(new WP_Customize_Control($c, 'senoobar_menu_links_sep', [
+                'label'   => '🔗 لینک‌های سریع',
+                'section' => 'senoobar_mobile_menu',
+                'type'    => 'hidden',
+            ]));
+
+            $quick_links = [
+                'account'  => ['label' => 'حساب کاربری', 'default' => ''],   // empty = auto
+                'wishlist' => ['label' => 'علاقه‌مندی‌ها', 'default' => ''],
+                'cart'     => ['label' => 'سبد خرید', 'default' => ''],
+                'about'    => ['label' => 'درباره ما', 'default' => home_url('/about/')],
+                'contact'  => ['label' => 'تماس با ما', 'default' => home_url('/contact/')],
+                'faq'      => ['label' => 'سوالات متداول', 'default' => home_url('/faq/')],
+                'terms'    => ['label' => 'شرایط و ضوابط', 'default' => home_url('/terms/')],
+                'privacy'  => ['label' => 'حریم خصوصی', 'default' => home_url('/privacy-policy/')],
+            ];
+            foreach ($quick_links as $key => $cfg) {
+                $c->add_setting("senoobar_menu_link_{$key}_enabled", ['default' => '1']);
+                $c->add_control("senoobar_menu_link_{$key}_enabled", [
+                    'label'   => "نمایش: {$cfg['label']}",
+                    'section' => 'senoobar_mobile_menu',
+                    'type'    => 'checkbox',
+                ]);
+                $c->add_setting("senoobar_menu_link_{$key}_url", ['default' => $cfg['default']]);
+                $c->add_control("senoobar_menu_link_{$key}_url", [
+                    'label'       => "   ↳ آدرس {$cfg['label']} (خالی = خودکار)",
+                    'section'     => 'senoobar_mobile_menu',
+                    'type'        => 'text',
+                ]);
+            }
+
+            // ── Newsletter title/desc ──
+            $c->add_setting('senoobar_menu_newsletter_title', ['default' => '📬 خبرنامه صنوبر']);
+            $c->add_control('senoobar_menu_newsletter_title', [
+                'label'   => 'عنوان خبرنامه',
+                'section' => 'senoobar_mobile_menu',
+                'type'    => 'text',
+            ]);
+            $c->add_setting('senoobar_menu_newsletter_desc', ['default' => 'از تخفیف‌ها و جدیدترین محصولات باخبر شوید.']);
+            $c->add_control('senoobar_menu_newsletter_desc', [
+                'label'   => 'توضیح خبرنامه',
+                'section' => 'senoobar_mobile_menu',
+                'type'    => 'textarea',
+            ]);
+
+            // ── Categories: per-category show/hide + order ──
+            if (class_exists('WooCommerce')) {
+                $menu_all_cats = get_terms([
+                    'taxonomy'   => 'product_cat',
+                    'hide_empty' => false,
+                    'number'     => 40,
+                    'orderby'    => 'name',
+                    'order'      => 'ASC',
+                ]);
+                if (!is_wp_error($menu_all_cats) && !empty($menu_all_cats)) {
+                    $c->add_control(new WP_Customize_Control($c, 'senoobar_menu_cats_sep', [
+                        'label'       => '📂 انتخاب و ترتیب دسته‌های سایدبار',
+                        'description' => 'برای هر دسته تعیین کنید نمایش داده شود یا نه و با چه ترتیبی (برای دسته‌های تو در تو، زیرمجموعه فقط وقتی نمایش داده می‌شود که دسته والد نمایش داده شود).',
+                        'section'     => 'senoobar_mobile_menu',
+                        'type'        => 'hidden',
+                    ]));
+                    $midx = 0;
+                    foreach ($menu_all_cats as $mcat) {
+                        $midx++;
+                        $mcat_id = $mcat->term_id;
+                        $mcat_name = $mcat->name;
+                        $mcat_count = $mcat->count;
+                        $c->add_setting("senoobar_menu_cat_{$mcat_id}_enabled", ['default' => '1']);
+                        $c->add_control("senoobar_menu_cat_{$mcat_id}_enabled", [
+                            'label'   => "✅ {$mcat_name} ({$mcat_count} محصول)",
+                            'section' => 'senoobar_mobile_menu',
+                            'type'    => 'checkbox',
+                        ]);
+                        $c->add_setting("senoobar_menu_cat_{$mcat_id}_order", ['default' => $midx]);
+                        $c->add_control("senoobar_menu_cat_{$mcat_id}_order", [
+                            'label'       => "   ↳ اولویت {$mcat_name} (عدد کمتر = بالاتر)",
+                            'section'     => 'senoobar_mobile_menu',
+                            'type'        => 'number',
+                            'input_attrs' => ['min' => 1, 'max' => 99, 'step' => 1],
+                        ]);
+                    }
+                }
+            }
+
             // Brand Story
             $c->add_setting('senoobar_story_title', ['default' => 'داستان صنوبر']);
             $c->add_control('senoobar_story_title', ['label' => 'عنوان داستان', 'section' => 'senoobar_hero', 'type' => 'text']);
