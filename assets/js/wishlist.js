@@ -283,7 +283,11 @@
       const clone = btn.cloneNode(true);
       btn.replaceWith(clone);
       paint(clone);
-      clone.addEventListener('click', async () => {
+      clone.addEventListener('click', async (e) => {
+        // Stop the click from bubbling up to the product link (the heart sits
+        // inside the product <a>), and prevent any default navigation.
+        e.preventDefault();
+        e.stopPropagation();
         await toggle(Number(clone.dataset.wishlistBtn));
         paint(clone);
       });
