@@ -71,12 +71,13 @@
                 <span class="action-label">سبد خرید</span>
             </a>
             <!-- Wishlist -->
-            <button class="header-action-btn">
+            <?php $senoobar_wishlist_url = function_exists('senoobar_wishlist_page_url') ? senoobar_wishlist_page_url() : ''; if (empty($senoobar_wishlist_url)) $senoobar_wishlist_url = home_url('/wishlist/'); ?>
+            <a href="<?php echo esc_url($senoobar_wishlist_url); ?>" class="header-action-btn">
                 <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
                 </svg>
                 <span class="action-label">علاقه‌مندی‌ها</span>
-            </button>
+            </a>
             <!-- Account -->
             <a href="<?php echo get_permalink(get_option('woocommerce_myaccount_page_id')); ?>" class="header-action-btn">
                 <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">

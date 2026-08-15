@@ -15,6 +15,15 @@ $full_name        = $args['full_name'] ?? '';
 $wishlist_items = 0;
 $wishlist = get_user_meta( get_current_user_id(), 'senoobar_wishlist', true );
 if ( is_array( $wishlist ) ) { $wishlist_items = count( $wishlist ); }
+
+// Wishlist page URL (auto-created via wishlist-page-setup.php).
+$wishlist_url = '';
+if ( function_exists( 'senoobar_wishlist_page_url' ) ) {
+    $wishlist_url = senoobar_wishlist_page_url();
+}
+if ( empty( $wishlist_url ) ) {
+    $wishlist_url = home_url( '/wishlist/' );
+}
 ?>
 
 <div class="snb-dashboard">
@@ -27,7 +36,7 @@ if ( is_array( $wishlist ) ) { $wishlist_items = count( $wishlist ); }
         <div class="snb-stat"><div class="snb-stat-icon" style="background:#dbeafe">📦</div><strong style="color:#2563eb"><?php echo esc_html( $order_count ); ?></strong><span>کل سفارش‌ها</span></div>
         <div class="snb-stat"><div class="snb-stat-icon" style="background:#dcfce7">✅</div><strong style="color:#16a34a"><?php echo esc_html( $delivered_count ); ?></strong><span>تحویل شده</span></div>
         <div class="snb-stat"><div class="snb-stat-icon" style="background:#fef3c7">🚚</div><strong style="color:#d97706"><?php echo esc_html( $processing_count ); ?></strong><span>در پردازش</span></div>
-        <div class="snb-stat"><div class="snb-stat-icon" style="background:#fee2e2">❤️</div><strong style="color:#dc2626"><?php echo esc_html( $wishlist_items ); ?></strong><span>علاقه‌مندی‌ها</span></div>
+        <a href="<?php echo esc_url( $wishlist_url ); ?>" class="snb-stat snb-stat--link"><div class="snb-stat-icon" style="background:#fee2e2">❤️</div><strong style="color:#dc2626"><?php echo esc_html( $wishlist_items ); ?></strong><span>علاقه‌مندی‌ها</span></a>
     </div>
 
     <div class="snb-total-spent">

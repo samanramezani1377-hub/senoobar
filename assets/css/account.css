@@ -145,3 +145,15 @@
     .snb-form-grid { grid-template-columns: 1fr; }
     .snb-order-body { flex-direction: column; gap: 12px; align-items: flex-start; }
 }
+
+/* Clickable stat card (wishlist) */
+.snb-stat--link {
+    text-decoration: none; display: block; cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.snb-stat--link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(16,24,18,0.10);
+}
+.snb-stat--link .snb-stat-icon { transition: transform 0.15s; }
+.snb-stat--link:hover .snb-stat-icon { transform: scale(1.08); }

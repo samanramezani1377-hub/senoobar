@@ -373,6 +373,7 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
   color: var(--color-gray-600);
   transition: color var(--transition-fast);
   position: relative;
+  text-decoration: none;
 }
 
 @media (min-width: 768px) {
