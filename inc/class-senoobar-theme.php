@@ -546,7 +546,8 @@ final class Senoobar_Theme {
                 'siteUrl'        => home_url(),
             ]);
             // Checkout JS
-            if (is_checkout()) {
+            $is_checkout_page = function_exists('wc_get_page_id') && is_page(wc_get_page_id('checkout'));
+            if ($is_checkout_page) {
                 wp_enqueue_script('senoobar-checkout', SENOOBAR_URI . '/assets/js/checkout.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
             // Shop filter JS

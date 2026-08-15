@@ -10,6 +10,31 @@ defined( 'ABSPATH' ) || exit;
 do_action( 'woocommerce_before_cart' );
 
 $cart = WC()->cart;
+
+// Fallback: if Cart Page is not configured, show notice and link to setup
+$cart_page_id = wc_get_page_id('cart');
+if ( ! $cart_page_id ) {
+    ?>
+    <div class="senoobar-cart-page" dir="rtl">
+        <div class="senoobar-cart-container">
+            <div class="senoobar-cart-message error" style="display:block; margin-bottom:24px; padding:16px; background:#fff0f0; color:#b73737; border-radius:12px;">
+                <strong>تنظیمات سبد خرید کامل نیست</strong><br>
+                برگه «سبد خرید» در تنظیمات ووکامرس انتخاب نشده است.
+                <?php if ( current_user_can( 'manage_woocommerce' ) ) : ?>
+                    <br><a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=advanced' ) ); ?>" class="senoobar-primary-button" style="display:inline-block; margin-top:12px;">تنظیم برگه سبد خرید</a>
+                <?php endif; ?>
+            </div>
+            <div class="senoobar-empty-cart">
+                <div class="senoobar-empty-cart-icon">🛒</div>
+                <h2>سبد خرید شما خالی است</h2>
+                <p>هنوز محصولی به سبد خرید خود اضافه نکرده‌اید.</p>
+                <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="senoobar-primary-button">مشاهده محصولات</a>
+            </div>
+        </div>
+    </div>
+    <?php
+    return;
+}
 ?>
 
 <div class="senoobar-cart-page" dir="rtl">

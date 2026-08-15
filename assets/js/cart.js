@@ -34,6 +34,7 @@
         const discountElement = document.getElementById('senoobar-cart-discount');
 
         let requestInProgress = false;
+        let currentAbortController = null;
 
         /* =====================================================
            HELPERS
@@ -120,6 +121,12 @@
         async function request(action, payload) {
             if (requestInProgress) return;
 
+            // Abort any in-flight request to prevent race conditions
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+            currentAbortController = new AbortController();
+
             setLoading(true);
 
             const formData = new FormData();
@@ -135,6 +142,7 @@
                     method: 'POST',
                     credentials: 'same-origin',
                     body: formData,
+                    signal: currentAbortController.signal,
                 });
 
                 const data = await response.json();
@@ -147,6 +155,10 @@
 
                 return data.data;
             } catch (error) {
+                // Ignore aborted requests - they're intentional
+                if (error.name === 'AbortError') {
+                    return;
+                }
                 showMessage(
                     error.message || 'خطایی در بروزرسانی سبد خرید رخ داد.',
                     'error'
@@ -154,6 +166,7 @@
                 throw error;
             } finally {
                 setLoading(false);
+                currentAbortController = null;
             }
         }
 
