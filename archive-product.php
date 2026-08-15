@@ -167,22 +167,6 @@ $current_cat_slug = is_product_category() ? get_queried_object()->slug : '';
               </select>
             </div>
 
-            <!-- View Toggle -->
-            <div class="view-toggle">
-              <button type="button" class="view-btn active" data-view="grid" aria-label="نمایش جدولی">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <rect x="2" y="2" width="9" height="9" rx="1"/><rect x="13" y="2" width="9" height="9" rx="1"/>
-                  <rect x="2" y="13" width="9" height="9" rx="1"/><rect x="13" y="13" width="9" height="9" rx="1"/>
-                </svg>
-              </button>
-              <button type="button" class="view-btn" data-view="list" aria-label="نمایش لیستی">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <rect x="2" y="3" width="20" height="3" rx="1"/>
-                  <rect x="2" y="10.5" width="20" height="3" rx="1"/>
-                  <rect x="2" y="18" width="20" height="3" rx="1"/>
-                </svg>
-              </button>
-            </div>
           </div>
         </div>
 

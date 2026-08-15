@@ -9,7 +9,6 @@
   const $$ = (sel, ctx) => [...(ctx || document).querySelectorAll(sel)];
 
   // ─── State ──────────────────────────────────────
-  let currentView = 'grid';
   let currentPage = 1;
   let totalPages = 1;
   let isLoading = false;
@@ -161,30 +160,6 @@
     });
   }
 
-  // ─── View toggle ───────────────────────────────
-  function bindViewToggle() {
-    $$('.view-btn[data-view]').forEach(btn => {
-      const clone = btn.cloneNode(true);
-      btn.replaceWith(clone);
-      clone.addEventListener('click', () => {
-        currentView = clone.dataset.view;
-        $$('.view-btn').forEach(b => b.classList.remove('active'));
-        clone.classList.add('active');
-        const g = shopMain();
-        if (g) {
-          g.classList.remove('grid-view', 'list-view');
-          g.classList.add(currentView === 'list' ? 'list-view' : 'grid-view');
-        }
-        try { localStorage.setItem('senoobar_shop_view', currentView); } catch (_) {}
-      });
-    });
-    try {
-      if (localStorage.getItem('senoobar_shop_view') === 'list') {
-        $('.view-btn[data-view="list"]')?.click();
-      }
-    } catch (_) {}
-  }
-
   // ─── Mobile filter ─────────────────────────────
   function bindMobile() {
     const toggle = $('#filterToggle');
@@ -276,7 +251,6 @@
     showLoader();
     const g = grid();
     const sm = shopMain();
-    const viewClass = sm?.classList.contains('list-view') ? 'list-view' : 'grid-view';
     try {
       const url = basePath + (qs ? '?' + qs : '');
       const res = await fetch(url, {
@@ -427,7 +401,6 @@
     bindCategories();
     bindSort();
     bindPrice();
-    bindViewToggle();
     bindMobile();
     bindReset();
     initObserver();
