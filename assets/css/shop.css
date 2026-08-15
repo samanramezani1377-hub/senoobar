@@ -308,7 +308,7 @@ body .shop-main ul.products li.product {
   position: relative !important;
   list-style: none !important;
   list-style-type: none !important;
-  padding-bottom: 58px !important; /* room for the round cart button */
+  padding-bottom: 48px !important; /* room for the round cart button */
 }
 body .shop-main ul.products li.product::marker {
   content: none !important;
@@ -349,9 +349,9 @@ body .shop-main ul.products li.product .woocommerce-loop-product__title {
   font-size: 0.9rem !important;
   font-weight: 600 !important;
   color: #374151 !important;
-  padding: 10px 12px 3px !important;
+  padding: 8px 12px 2px !important;
   margin: 0 !important;
-  line-height: 1.5 !important;
+  line-height: 1.4 !important;
   flex: 0 !important;
   min-height: auto !important;
   text-align: center !important;
@@ -365,7 +365,7 @@ body .shop-main ul.products li.product .woocommerce-loop-product__title::before 
 
 /* Price */
 body .shop-main ul.products li.product .price {
-  padding: 3px 12px 8px !important;
+  padding: 2px 12px 6px !important;
   direction: rtl !important;
   text-align: right !important;
   display: flex !important;
@@ -413,7 +413,7 @@ body .shop-main ul.products li.product .add_to_cart_button,
 body .shop-main ul.products li.product .button,
 body .shop-main ul.products li.product a.button {
   position: absolute !important;
-  bottom: 14px !important;
+  bottom: 10px !important;
   left: 14px !important;
   width: 42px !important;
   height: 42px !important;
@@ -492,7 +492,7 @@ body .shop-main ul.products li.product a.added_to_cart {
 /* Card qty stepper (shown once the product is in the cart) */
 body .shop-main ul.products li.product .snb-card-stepper {
   position: absolute !important;
-  bottom: 14px !important;
+  bottom: 8px !important;
   left: 14px !important;
   right: 14px !important;
   display: flex !important;
@@ -633,18 +633,18 @@ body .shop-main.list-view ul.products {
 
 /* Extra bottom room only while the qty stepper is shown */
 body .shop-main ul.products li.product:has(.snb-card-stepper) {
-  padding-bottom: 70px !important;
+  padding-bottom: 60px !important;
 }
 
-/* ── Add-to-cart -> stepper morph animation ── */
+/* ── Add-to-cart -> stepper morph animation (single continuous motion) ── */
 body .shop-main ul.products li.product .snb-card-stepper {
-  animation: snb-stepper-in 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  animation: snb-stepper-in 0.22s ease-out !important;
   transform-origin: bottom left !important;
 }
 @keyframes snb-stepper-in {
   from {
     opacity: 0 !important;
-    transform: scale(0.7) translateY(6px) !important;
+    transform: scale(0.85) translateY(4px) !important;
   }
   to {
     opacity: 1 !important;
@@ -654,16 +654,16 @@ body .shop-main ul.products li.product .snb-card-stepper {
 
 /* ── Smooth grid <-> list transition ── */
 body .shop-main ul.products li.product {
-  transition: opacity 0.22s ease, transform 0.25s ease, box-shadow 0.25s ease !important;
+  transition: opacity 0.14s ease, transform 0.25s ease, box-shadow 0.25s ease !important;
 }
 body .shop-main ul.products li.product a.woocommerce-LoopProduct-link,
 body .shop-main ul.products li.product img {
-  transition: opacity 0.22s ease, transform 0.25s ease !important;
+  transition: opacity 0.14s ease, transform 0.25s ease !important;
 }
 
 body .shop-main.view-animating ul.products li.product {
   opacity: 0 !important;
-  transform: translateY(10px) scale(0.98) !important;
+  transform: translateY(6px) scale(0.99) !important;
   pointer-events: none !important;
 }
 

@@ -441,54 +441,42 @@
   }
 
   function initCardCartStepper() {
-    // Delegated click on the round add-to-cart button: after WooCommerce fires
-    // 'added_to_cart', swap in our stepper for that specific card.
-    document.addEventListener('click', (e) => {
-      const addBtn = e.target.closest('.add_to_cart_button');
-      if (addBtn) {
-        const card = findCardContainer(addBtn);
-        const pid = Number(
-          addBtn.getAttribute('data-product_id')
-          || addBtn.getAttribute('data-quantity') // unlikely; fallback below
-        );
-        // data-product_id is the reliable source; if missing, read from link href.
-        let productId = pid;
-        if (!productId) {
-          const m = (addBtn.getAttribute('href') || '').match(/add-to-cart=(\d+)/);
-          productId = m ? Number(m[1]) : 0;
-        }
-        if (productId && card) {
-          // Wait for WooCommerce to finish adding, then show the stepper.
-          setTimeout(() => ensureStepper(card, productId), 400);
-        }
-      }
-    });
+    // Attach a stepper right after WooCommerce confirms the add. This fires
+    // immediately after the AJAX add completes (no extra delay), so the icon ->
+    // stepper swap feels like one continuous motion.
+    function showStepperForButton(btn) {
+      if (!btn) return;
+      const card = findCardContainer(btn);
+      const pid = Number(btn.getAttribute('data-product_id') || 0);
+      if (card && pid) ensureStepper(card, pid);
+    }
 
-    // Also handle the 'added_to_cart' jQuery event for robustness.
     if (window.jQuery) {
-      window.jQuery(document.body).on('added_to_cart', function (e, frags, key, qty) {
-        // key is the cart item key; product id is embedded in it as 'product_id'.
-        // We have full fragments; find the most recent .add_to_cart_button.added
-        // and attach a stepper.
-        const addedButtons = $$('.add_to_cart_button.added');
-        if (addedButtons.length) {
-          const btn = addedButtons[0];
-          const card = findCardContainer(btn);
-          const pid = Number(btn.getAttribute('data-product_id') || 0);
-          if (card && pid) {
-            setTimeout(() => ensureStepper(card, pid), 50);
-          }
-        }
+      window.jQuery(document.body).on('added_to_cart', function () {
+        // The button that just got added is the last one marked .added.
+        const added = $$('.add_to_cart_button.added');
+        if (added.length) showStepperForButton(added[0]);
       });
     }
 
+    // Fallback for non-AJAX add (page may navigate) or when jQuery is missing:
+    // after a click, if WooCommerce hasn't fired the event in a tick, show it.
+    document.addEventListener('click', (e) => {
+      const addBtn = e.target.closest('.add_to_cart_button');
+      if (!addBtn) return;
+      const card = findCardContainer(addBtn);
+      const pid = Number(addBtn.getAttribute('data-product_id') || 0);
+      if (!pid || !card) return;
+      // Give the AJAX add a brief moment; if the button got the .added class,
+      // ensureStepper is idempotent (no double-stepper) and runs at once.
+      setTimeout(() => {
+        if (addBtn.classList.contains('added')) showStepperForButton(addBtn);
+      }, 120);
+    });
+
     // On page load, any card already "added" (e.g. after reload) gets a stepper.
     document.addEventListener('DOMContentLoaded', () => {
-      $$('.add_to_cart_button.added').forEach((btn) => {
-        const card = findCardContainer(btn);
-        const pid = Number(btn.getAttribute('data-product_id') || 0);
-        if (card && pid) ensureStepper(card, pid);
-      });
+      $$('.add_to_cart_button.added').forEach(showStepperForButton);
     });
   }
 
