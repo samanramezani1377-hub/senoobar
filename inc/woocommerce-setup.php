@@ -417,6 +417,13 @@ add_filter('woocommerce_get_stock_html', function ($html, $product) {
     return $html;
 }, 20, 2);
 
+// Currency: always place the "تومان" symbol AFTER the number (right side),
+// regardless of the `woocommerce_currency_pos` option, so it reads correctly
+// in RTL: "۱۲٬۰۰۰٬۰۰۰ تومان" (number first, symbol to its left).
+add_filter('woocommerce_price_format', function ($format, $currency_pos) {
+    return '%2$s%1$s'; // price then currency symbol
+}, 20, 2);
+
 // Currency: render a lightweight, styled "تومان" label.
 add_filter('woocommerce_currency_symbol', function ($symbol, $currency) {
     if ($symbol === 'تومان' || mb_strtolower($symbol) === 'toman' || $symbol === 'ت') {
