@@ -1112,3 +1112,17 @@
 .pd-badge-pop {
   animation: pd-badge-pop 0.4s ease;
 }
+
+/* ─── Product page only: keep the raised "Home" nav button flush with the
+       rest of the bottom nav so it never collides with the fixed buy bar.
+       (The buy bar sits at bottom:62px, directly above the nav.) ─── */
+@media (max-width: 1023px) {
+  .mobile-bottom-nav .mbn-home {
+    margin-top: 0 !important;
+  }
+  .mobile-bottom-nav .mbn-home .mbn-home-icon {
+    width: 44px !important;
+    height: 44px !important;
+    margin-top: 0 !important;
+  }
+}
