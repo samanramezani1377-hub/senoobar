@@ -507,11 +507,14 @@ final class Senoobar_Theme {
                 wp_enqueue_style('senoobar-shop', SENOOBAR_URI . '/assets/css/shop.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // Cart CSS
-            if (is_cart()) {
+            $is_cart_page = function_exists('wc_get_page_id') && is_page(wc_get_page_id('cart'));
+            $is_checkout_page = function_exists('wc_get_page_id') && is_page(wc_get_page_id('checkout'));
+            
+            if ($is_cart_page) {
                 wp_enqueue_style('senoobar-cart', SENOOBAR_URI . '/assets/css/cart.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // Checkout CSS
-            if (is_checkout()) {
+            if ($is_checkout_page) {
                 wp_enqueue_style('senoobar-checkout', SENOOBAR_URI . '/assets/css/checkout.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // JS
@@ -524,7 +527,7 @@ final class Senoobar_Theme {
                 'siteUrl' => home_url(),
             ]);
             // Cart JS
-            if (is_cart()) {
+            if ($is_cart_page) {
                 wp_enqueue_script('senoobar-cart', SENOOBAR_URI . '/assets/js/cart.js', ['senoobar-app'], SENOOBAR_VERSION, true);
                 wp_localize_script('senoobar-cart', 'SenoobarCart', [
                     'ajaxUrl' => admin_url('admin-ajax.php'),
