@@ -25,10 +25,39 @@ add_action('after_setup_theme', function () {
 // content entirely, matching the cart-page approach).
 add_filter('template_include', function ($template) {
     $forced = '';
-    if (function_exists('wc_get_page_id')) {
-        if (is_page(wc_get_page_id('cart'))) {
+    if (function_exists('is_cart') && function_exists('is_checkout')) {
+        $is_cart = is_cart();
+        $is_checkout = is_checkout();
+
+        // Fallback: if is_cart/is_checkout haven't resolved yet (they can be
+        // unreliable at the template_include stage, especially when the page
+        // content is empty), detect by page ID.
+        if (!$is_cart && !$is_checkout && function_exists('wc_get_page_id')) {
+            $cid = wc_get_page_id('cart');
+            $kid = wc_get_page_id('checkout');
+            if ($cid && is_page($cid)) {
+                $is_cart = true;
+            } elseif ($kid && is_page($kid)) {
+                $is_checkout = true;
+            }
+        }
+
+        // Last-resort: detect by the checkout/cart page shortcode existing in
+        // the current queried object (in case page IDs are unset in WC settings).
+        if (!$is_cart && !$is_checkout) {
+            $q = get_queried_object();
+            if ($q && !empty($q->post_content)) {
+                if (strpos($q->post_content, '[woocommerce_cart]') !== false) {
+                    $is_cart = true;
+                } elseif (strpos($q->post_content, '[woocommerce_checkout]') !== false) {
+                    $is_checkout = true;
+                }
+            }
+        }
+
+        if ($is_cart) {
             $forced = '/woocommerce/cart/cart.php';
-        } elseif (is_page(wc_get_page_id('checkout'))) {
+        } elseif ($is_checkout) {
             $forced = '/woocommerce/checkout/form-checkout.php';
         }
     }
@@ -39,7 +68,7 @@ add_filter('template_include', function ($template) {
         }
     }
     return $template;
-}, 99);
+}, 100);
 
 // ─── 2. Kill default Woo styles ─────────────
 add_filter('woocommerce_enqueue_styles', '__return_empty_array');
