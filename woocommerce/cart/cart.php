@@ -7,7 +7,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
-do_action( 'woocommerce_before_cart' );
+get_header(); ?>
+
+<main id="primary" class="site-main">
+<div class="container page-content">
+
+<?php do_action( 'woocommerce_before_cart' );
 
 $cart = WC()->cart;
 
@@ -571,4 +576,9 @@ if ( ! $cart_page_id ) {
 
 <?php
 
-do_action( 'woocommerce_after_cart' );
+do_action( 'woocommerce_after_cart' ); ?>
+
+</div>
+</main>
+
+<?php get_footer();
