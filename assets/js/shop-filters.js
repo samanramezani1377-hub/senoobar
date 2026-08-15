@@ -162,18 +162,10 @@
   }
 
   // ─── View toggle ───────────────────────────────
-  function animateViewSwitch(g) {
-    // Quick fade out -> switch -> fade in for a smooth grid<->list transition.
+  function switchView(g) {
     if (!g) return;
-    if (g.classList.contains('view-animating')) return;
-    g.classList.add('view-animating');
-    // The CSS transition on .view-animating li.product fades them out; after
-    // the short fade completes we flip the view class and fade back in.
-    setTimeout(() => {
-      g.classList.remove('grid-view', 'list-view');
-      g.classList.add(currentView === 'list' ? 'list-view' : 'grid-view');
-      g.classList.remove('view-animating');
-    }, 130);
+    g.classList.remove('grid-view', 'list-view');
+    g.classList.add(currentView === 'list' ? 'list-view' : 'grid-view');
   }
 
   function bindViewToggle() {
@@ -185,9 +177,7 @@
         $$('.view-btn').forEach(b => b.classList.remove('active'));
         clone.classList.add('active');
         const g = shopMain();
-        if (g) {
-          animateViewSwitch(g);
-        }
+        switchView(g);
         try { localStorage.setItem('senoobar_shop_view', currentView); } catch (_) {}
       });
     });
