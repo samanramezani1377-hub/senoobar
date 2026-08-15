@@ -1105,6 +1105,13 @@ body .shop-main.list-view ul.products li.product .snb-card-heart {
     font-size: 1rem !important;
     flex: 0 0 auto !important;
   }
+  /* Since the stepper is in-flow, remove the extra bottom padding reserved for
+     the absolutely-positioned cart button so the card ends right below it. */
+  body .shop-main[data-home-loop] ul.products li.product,
+  body .shop-main[data-home-loop] ul.products li.product:has(.snb-card-stepper) {
+    padding-bottom: 8px !important;
+  }
+
   /* Row 1: minus, qty, plus  |  Row 2: delete + view-cart */
   body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-minus { order: 1; }
   body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty { order: 2; }
