@@ -14,12 +14,12 @@
 
 // Fallback static data (only when WooCommerce is not active or no categories selected)
 $fallback_cats = [
-  ['name' => 'سرویس خواب', 'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/hero-2.jpg'],
-  ['name' => 'تشک',       'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/cat-mattress.jpg'],
-  ['name' => 'تخت خواب',   'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/cat-bed.jpg'],
-  ['name' => 'مبل و مبلمان','img' => '<?php echo SENOOBAR_URI; ?>/assets/images/hero-1.jpg'],
-  ['name' => 'میز جلو مبلی','img' => '<?php echo SENOOBAR_URI; ?>/assets/images/cat-table.jpg'],
-  ['name' => 'کمد و باخاخت','img' => '<?php echo SENOOBAR_URI; ?>/assets/images/cat-wardrobe.jpg'],
+  ['name' => 'سرویس خواب', 'img' => SENOOBAR_URI . '/assets/images/hero-2.jpg'],
+  ['name' => 'تشک',       'img' => SENOOBAR_URI . '/assets/images/cat-mattress.jpg'],
+  ['name' => 'تخت خواب',   'img' => SENOOBAR_URI . '/assets/images/cat-bed.jpg'],
+  ['name' => 'مبل و مبلمان','img' => SENOOBAR_URI . '/assets/images/hero-1.jpg'],
+  ['name' => 'میز جلو مبلی','img' => SENOOBAR_URI . '/assets/images/cat-table.jpg'],
+  ['name' => 'کمد و باخاخت','img' => SENOOBAR_URI . '/assets/images/cat-wardrobe.jpg'],
 ];
 
 $display = [];
