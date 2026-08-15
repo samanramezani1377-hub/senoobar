@@ -510,8 +510,9 @@ final class Senoobar_Theme {
             if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search() || $is_cart_page || $is_checkout_page || $is_account_page)) {
                 wp_enqueue_style('senoobar-shop', SENOOBAR_URI . '/assets/css/shop.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
-            // Cart CSS
-            if ($is_cart_page) {
+            // Cart CSS — always load when WooCommerce is active (cart is reached via
+            // many paths; relying only on is_cart() caused it to be missed).
+            if (class_exists('WooCommerce')) {
                 wp_enqueue_style('senoobar-cart', SENOOBAR_URI . '/assets/css/cart.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // Checkout CSS
@@ -527,8 +528,9 @@ final class Senoobar_Theme {
                 'isRTL'   => is_rtl(),
                 'siteUrl' => home_url(),
             ]);
-            // Cart JS
-            if ($is_cart_page) {
+            // Cart JS — always load when WooCommerce is active (so the AJAX +/- /
+            // remove handlers are present regardless of how is_cart() resolves).
+            if (class_exists('WooCommerce')) {
                 wp_enqueue_script('senoobar-cart', SENOOBAR_URI . '/assets/js/cart.js', ['senoobar-app'], SENOOBAR_VERSION, true);
                 wp_localize_script('senoobar-cart', 'SenoobarCart', [
                     'ajaxUrl' => admin_url('admin-ajax.php'),
