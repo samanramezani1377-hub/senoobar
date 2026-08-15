@@ -497,5 +497,37 @@ $order_status = $order->get_status();
     .senoobar-thankyou-success h1 { font-size: 22px; }
     .senoobar-thankyou-actions { flex-direction: column; }
     .senoobar-btn { width: 100%; }
+
+    /* Order items table -> stacked product cards on mobile */
+    .senoobar-review-table thead { display: none; }
+    .senoobar-review-table,
+    .senoobar-review-table tbody,
+    .senoobar-review-table tr,
+    .senoobar-review-table td { display: block; width: 100%; }
+    .senoobar-review-table tr {
+        padding: 14px 0;
+        border-bottom: 1px solid #f0f1f0;
+    }
+    .senoobar-review-table tr:last-child { border-bottom: none; }
+    .senoobar-review-table td { padding: 6px 0; border: none; }
+
+    /* Product cell: full-width image + name in a row */
+    .senoobar-review-table .product-name { display: block; }
+    .senoobar-review-product { width: 100%; }
+
+    /* Quantity + price on one line under the name */
+    .senoobar-review-table .product-quantity,
+    .senoobar-review-table .product-total {
+        display: inline-block;
+        width: auto;
+        padding-inline-start: 64px;
+        padding-top: 2px;
+    }
+    .senoobar-review-table .product-total {
+        float: left;
+        padding-inline-start: 0;
+        font-weight: 700;
+        color: var(--senoobar-green);
+    }
 }
 </style>
