@@ -89,12 +89,20 @@ $cart = WC()->cart;
         </div>
         <?php endif; ?>
 
-        <?php if ( wc_coupons_enabled() ) : ?>
-        <div class="senoobar-summary-row">
-            <span>کوپن</span>
-            <strong><?php wc_cart_totals_coupon_html( WC()->cart->get_applied_coupons() ? current( WC()->cart->get_applied_coupons() ) : false ); ?></strong>
+        <?php
+        $applied_coupons = WC()->cart->get_applied_coupons();
+        if ( wc_coupons_enabled() && ! empty( $applied_coupons ) ) :
+            foreach ( $applied_coupons as $coupon_code ) :
+                $coupon = new WC_Coupon( $coupon_code );
+        ?>
+        <div class="senoobar-summary-row discount">
+            <span>کوپن (<?php echo esc_html( $coupon_code ); ?>)</span>
+            <strong>−<?php wc_cart_totals_coupon_html( $coupon ); ?></strong>
         </div>
-        <?php endif; ?>
+        <?php
+            endforeach;
+        endif;
+        ?>
 
         <?php if ( $cart->needs_shipping() && $cart->show_shipping() ) : ?>
         <div class="senoobar-summary-row">
