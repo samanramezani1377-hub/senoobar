@@ -363,17 +363,22 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 
 .header-action-btn {
   display: none;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: var(--radius-md, 8px);
   color: var(--color-gray-600);
-  transition: color var(--transition-fast);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
   position: relative;
   text-decoration: none;
+  line-height: 1;
 }
 
 @media (min-width: 768px) {
@@ -393,7 +398,8 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
 
 .header-action-btn .action-label {
   font-size: 0.65rem;
-  margin-top: 2px;
+  margin-top: 0;
+  line-height: 1;
 }
 
 .cart-badge.is-hidden {
@@ -416,21 +422,25 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
   padding: 0 4px;
 }
 
+/* Keep the notifications button identical to the other three header buttons */
 .push-action-btn {
-  background: rgba(30, 58, 47, 0.06);
-  border-radius: var(--radius-xl);
-  padding: 6px 12px;
-  gap: 6px;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  padding: 6px 10px !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 .push-action-btn:hover {
-  background: rgba(30, 58, 47, 0.12);
+  background: rgba(30, 58, 47, 0.06) !important;
   color: var(--color-brand);
 }
 
 .push-action-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 }
 
 .push-action-btn.push-btn--active {
