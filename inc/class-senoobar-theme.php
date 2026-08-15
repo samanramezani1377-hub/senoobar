@@ -445,12 +445,16 @@ final class Senoobar_Theme {
                 wp_enqueue_style('senoobar-rtl', SENOOBAR_URI . '/assets/css/rtl.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // Shop CSS
-            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search() || is_cart())) {
+            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search() || is_cart() || is_checkout())) {
                 wp_enqueue_style('senoobar-shop', SENOOBAR_URI . '/assets/css/shop.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // Cart CSS
             if (is_cart()) {
                 wp_enqueue_style('senoobar-cart', SENOOBAR_URI . '/assets/css/cart.css', ['senoobar-main'], SENOOBAR_VERSION);
+            }
+            // Checkout CSS
+            if (is_checkout()) {
+                wp_enqueue_style('senoobar-checkout', SENOOBAR_URI . '/assets/css/checkout.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // JS
             wp_enqueue_script('senoobar-app', SENOOBAR_URI . '/assets/js/app.js', [], SENOOBAR_VERSION, true);
@@ -480,6 +484,10 @@ final class Senoobar_Theme {
                 'isRTL'          => is_rtl(),
                 'siteUrl'        => home_url(),
             ]);
+            // Checkout JS
+            if (is_checkout()) {
+                wp_enqueue_script('senoobar-checkout', SENOOBAR_URI . '/assets/js/checkout.js', ['senoobar-app'], SENOOBAR_VERSION, true);
+            }
             // Shop filter JS
             if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag())) {
                 wp_enqueue_script('senoobar-shop-filters', SENOOBAR_URI . '/assets/js/shop-filters.js', ['senoobar-app'], SENOOBAR_VERSION, true);
