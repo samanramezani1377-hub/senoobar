@@ -75,9 +75,11 @@ add_filter('template_include', function ($template) {
 // login + coupon forms (hooked into woocommerce_checkout_login_form and
 // woocommerce_checkout_coupon_form) wrap content in their own <form>, which
 // nests inside our checkout form and breaks field submission.
-add_action( 'after_setup_theme', function () {
+add_action( 'init', function () {
     remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_login_form', 10 );
     remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10 );
+    remove_action( 'woocommerce_checkout_before_customer_details', 'woocommerce_checkout_login_form', 10 );
+    remove_action( 'woocommerce_checkout_before_customer_details', 'woocommerce_checkout_coupon_form', 10 );
 }, 20 );
 
 // ─── 2. Kill default Woo styles ─────────────
