@@ -135,19 +135,50 @@
     .snb-account-layout { grid-template-columns: 1fr !important; gap: 20px; }
     .snb-sidebar { order: -1; width: 100% !important; min-width: 0; }
     .snb-profile-card { display: none; }
-    .snb-nav { display: flex; flex-direction: row; overflow-x: auto; border-radius: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; width: 100%; }
-    .snb-nav::-webkit-scrollbar { display: none; }
-    .snb-nav-link { flex: 0 0 auto; border-bottom: none; border-inline-end: 1px solid var(--snb-border); white-space: nowrap; }
     .snb-main { min-width: 0; width: 100%; }
     .snb-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
     .snb-order-detail-grid { grid-template-columns: 1fr !important; }
     body .snb-account-wrap { overflow-x: hidden; }
 }
+
+/* ── Mobile account nav: 2-column tap grid (no hidden scroll) ── */
+@media (max-width: 960px) {
+    .snb-nav {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
+        width: 100%;
+    }
+    .snb-nav-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 16px 10px;
+        background: #fff;
+        border: 1px solid var(--snb-border);
+        border-radius: 14px;
+        box-shadow: var(--snb-shadow);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--snb-text);
+        text-align: center;
+        white-space: normal;
+    }
+    .snb-nav-link:hover { background: #fafbfa; }
+    .snb-nav-link.is-active { background: #eef4f0; border-color: var(--snb-brand); color: var(--snb-brand); }
+    .snb-nav-icon { font-size: 22px; opacity: 1; }
+    .snb-nav-link.snb-logout { color: #dc2626; grid-column: 1 / -1; }
+    .snb-nav-link.snb-logout:hover { background: #fef2f2; }
+}
 @media (max-width: 520px) {
     .snb-account { padding: 16px 12px 48px; }
     .snb-account-breadcrumb { font-size: 12px; flex-wrap: wrap; }
     .snb-dash-header h2 { font-size: 20px; }
-    .snb-nav-link { padding: 12px 16px; font-size: 13px; }
     .snb-form-grid { grid-template-columns: 1fr; }
     .snb-card { padding: 16px; }
     .snb-total-spent { flex-direction: column; align-items: flex-start; gap: 12px; }

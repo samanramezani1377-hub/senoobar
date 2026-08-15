@@ -93,7 +93,7 @@ get_header(); ?>
                     $account_url   = wc_get_page_permalink( 'myaccount' );
 
                     $nav_items = [
-                        'dashboard' => [ 'دارد', '🏠', $account_url ],
+                        'dashboard' => [ 'داشبورد', '🏠', $account_url ],
                         'orders'    => [ 'سفارش‌های من', '📦', wc_get_account_endpoint_url( 'orders' ) ],
                         'addresses' => [ 'آدرس‌های من', '📍', wc_get_account_endpoint_url( 'edit-address' ) ],
                         'profile'   => [ 'ویرایش پروفایل', '✏️', wc_get_account_endpoint_url( 'edit-account' ) ],
