@@ -132,14 +132,16 @@
 .snb-auth-sub { font-size: 13px; color: var(--snb-muted); margin: 0 0 20px; }
 .snb-auth-card .snb-field { margin-bottom: 16px; }
 @media (max-width: 960px) {
-    .snb-account-layout { grid-template-columns: 1fr; }
-    .snb-sidebar { order: -1; }
+    .snb-account-layout { grid-template-columns: 1fr !important; gap: 20px; }
+    .snb-sidebar { order: -1; width: 100% !important; min-width: 0; }
     .snb-profile-card { display: none; }
-    .snb-nav { display: flex; overflow-x: auto; border-radius: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .snb-nav { display: flex; flex-direction: row; overflow-x: auto; border-radius: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; width: 100%; }
     .snb-nav::-webkit-scrollbar { display: none; }
-    .snb-nav-link { flex-shrink: 0; border-bottom: none; border-inline-end: 1px solid var(--snb-border); white-space: nowrap; }
-    .snb-stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .snb-order-detail-grid { grid-template-columns: 1fr; }
+    .snb-nav-link { flex: 0 0 auto; border-bottom: none; border-inline-end: 1px solid var(--snb-border); white-space: nowrap; }
+    .snb-main { min-width: 0; width: 100%; }
+    .snb-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .snb-order-detail-grid { grid-template-columns: 1fr !important; }
+    body .snb-account-wrap { overflow-x: hidden; }
 }
 @media (max-width: 520px) {
     .snb-account { padding: 16px 12px 48px; }
@@ -183,3 +185,36 @@
 }
 .snb-stat--link .snb-stat-icon { transition: transform 0.15s; }
 .snb-stat--link:hover .snb-stat-icon { transform: scale(1.08); }
+
+/* ============================================
+   MOBILE SAFETY — prevent horizontal overflow
+   ============================================ */
+@media (max-width: 768px) {
+    .senoobar-account-wrap.container,
+    .snb-account-wrap {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        overflow-x: hidden !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    .senoobar-account-wrap.page-content {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    .snb-account {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    .snb-account-layout {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+    .snb-main {
+        overflow: hidden !important;
+    }
+    .snb-nav,
+    .snb-sidebar {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+}
