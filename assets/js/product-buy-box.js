@@ -90,6 +90,70 @@
       });
     }
 
+
+    // ── Fly-to-cart: animate a '+' from the button into the cart icon ──
+    function getCartTarget() {
+      var bottom = document.querySelector('[data-cart-fly="bottom"]');
+      var header = document.querySelector('[data-cart-fly="header"]');
+      var isMobile = window.innerWidth < 1024;
+
+      if (isMobile && bottom) {
+        var br = bottom.getBoundingClientRect();
+        if (br.width > 0 && br.height > 0) return bottom;
+      }
+      if (header) {
+        var hr = header.getBoundingClientRect();
+        if (hr.width > 0 && hr.height > 0) return header;
+      }
+      return bottom || header || null;
+    }
+
+    function flyToCart() {
+      var target = getCartTarget();
+      if (!target) return;
+
+      var startEl = stepper.style.display === 'none' ? btn : stepper;
+      var startRect = startEl.getBoundingClientRect();
+      var endRect = target.getBoundingClientRect();
+
+      var flyer = document.createElement('div');
+      flyer.className = 'pd-fly-item';
+      flyer.textContent = '+';
+
+      var sx = startRect.left + startRect.width / 2;
+      var sy = startRect.top + startRect.height / 2;
+      var ex = endRect.left + endRect.width / 2;
+      var ey = endRect.top + endRect.height / 2;
+
+      flyer.style.left = '0px';
+      flyer.style.top = '0px';
+      flyer.style.transform = 'translate(' + sx + 'px, ' + sy + 'px) scale(1)';
+      document.body.appendChild(flyer);
+
+      void flyer.offsetWidth; // force reflow
+
+      flyer.style.opacity = '0.4';
+      flyer.style.transform = 'translate(' + ex + 'px, ' + ey + 'px) scale(0.2)';
+
+      var badge = target.querySelector('.cart-badge, .mbn-badge');
+      var done = false;
+      var onDone = function () {
+        if (done) return;
+        done = true;
+        if (badge) {
+          badge.classList.remove('pd-badge-pop');
+          void badge.offsetWidth;
+          badge.classList.add('pd-badge-pop');
+        }
+        if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
+      };
+
+      flyer.addEventListener('transitionend', function (e) {
+        if (e.propertyName === 'transform') onDone();
+      });
+      setTimeout(onDone, 950);
+    }
+
     function addToCart(quantity) {
       var body = new URLSearchParams();
       body.set('product_id', productId);
@@ -138,6 +202,7 @@
         showStepper();
         applyFragments(data && data.fragments);
         triggerCartAnimation();
+        flyToCart();
       }).catch(function () {
         btn.disabled = false;
         form.submit();
@@ -147,12 +212,12 @@
     minusBtn.addEventListener('click', function () {
       if (qty <= 1) return;
       setQty(qty - 1);
-      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); triggerCartAnimation(); });
+      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); triggerCartAnimation(); flyToCart(); });
     });
 
     plusBtn.addEventListener('click', function () {
       setQty(qty + 1);
-      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); triggerCartAnimation(); });
+      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); triggerCartAnimation(); flyToCart(); });
     });
 
     removeBtn.addEventListener('click', function () {
