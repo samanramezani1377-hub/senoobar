@@ -130,7 +130,7 @@ function senoobar_wishlist_render_handler() {
             'id'       => $pid,
             'name'     => $product->get_name(),
             'permalink'=> get_permalink( $pid ),
-            'image'    => $image_id ? wp_get_attachment_image_url( $image_id, 'medium_large' ) : wc_placeholder_img_src(),
+            'image'    => $image_id ? wp_get_attachment_image_url( $image_id, 'woocommerce_single' ) : wc_placeholder_img_src(),
             'price'    => $product->get_price(),
             'regular_price' => $product->get_regular_price(),
             'sale_price'    => $product->get_sale_price(),

@@ -83,10 +83,9 @@
 
 .snb-wish-img-wrap { display: block; position: relative; overflow: hidden; }
 .snb-wish-img-wrap img {
-    width: 100%; height: 210px; object-fit: contain; background: #f6f7f5; display: block;
-    transition: transform 0.5s;
+    width: 100%; height: 210px; object-fit: contain; background: #fff; display: block;
 }
-.snb-wish-item:hover .snb-wish-img-wrap img { transform: scale(1.05); }
+/* no hover zoom — image stays natural, not zoomed */
 
 .snb-wish-nostock-badge {
     position: absolute; top: 10px; right: 10px; z-index: 2;
