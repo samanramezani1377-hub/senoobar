@@ -263,43 +263,59 @@
     refresh();
   }
 
-  // ── Product page heart button toggle ────────────────
-  async function initHeartButtons() {
-    const btns = $$('[data-wishlist-btn]');
-    if (!btns.length) return;
-
-    const ids = await getIds();
-
+  // ── Product/card heart button toggle ────────────────
+  // Uses document-level delegation so it keeps working after AJAX filter /
+  // infinite-scroll replace the product cards.
+  function initHeartButtons() {
     async function paint(btn) {
-      const id = Number(btn.dataset.wishlistBtn);
-      const inList = isLoggedIn() ? (await getIds()).includes(id) : getLocal().includes(id);
+      const id = Number(btn.getAttribute('data-wishlist-btn'));
+      const inList = isLoggedIn()
+        ? (await getIds()).includes(id)
+        : getLocal().includes(id);
       btn.classList.toggle('is-active', inList);
       const label = btn.querySelector('[data-wishlist-label]');
       if (label) label.textContent = inList ? 'در علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی';
     }
 
-    for (const btn of btns) {
-      // remove any previous handler by cloning
-      const clone = btn.cloneNode(true);
-      btn.replaceWith(clone);
-      paint(clone);
-      clone.addEventListener('click', async (e) => {
-        // Stop the click from bubbling up to the product link (the heart sits
-        // inside the product <a>), and prevent any default navigation.
-        e.preventDefault();
-        e.stopPropagation();
-        await toggle(Number(clone.dataset.wishlistBtn));
-        paint(clone);
+    // Paint hearts that already exist on the page.
+    $$('[data-wishlist-btn]').forEach(paint);
+
+    // Delegated click handler (runs once, survives DOM replacement).
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('[data-wishlist-btn]');
+      if (!btn) return;
+
+      // Don't let the click reach the wrapping product link.
+      e.preventDefault();
+      e.stopPropagation();
+
+      const id = Number(btn.getAttribute('data-wishlist-btn'));
+      const nowActive = await toggle(id);
+
+      // Reflect the new state immediately.
+      btn.classList.toggle('is-active', nowActive);
+      const label = btn.querySelector('[data-wishlist-label]');
+      if (label) label.textContent = nowActive ? 'در علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی';
+
+      // Also update any other heart with the same product id in the DOM.
+      $$('[data-wishlist-btn="' + id + '"]').forEach((b) => {
+        if (b !== btn) {
+          b.classList.toggle('is-active', nowActive);
+          const l = b.querySelector('[data-wishlist-label]');
+          if (l) l.textContent = nowActive ? 'در علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی';
+        }
       });
-    }
-    void ids;
+    });
   }
 
   // ── Boot ───────────────────────────────────────────
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { initPage(); initHeartButtons(); });
-  } else {
+  function boot() {
     initPage();
     initHeartButtons();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
   }
 })();

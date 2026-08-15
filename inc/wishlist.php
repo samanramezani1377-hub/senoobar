@@ -180,7 +180,7 @@ add_action( 'wp_ajax_nopriv_senoobar_add_to_cart', 'senoobar_wishlist_add_to_car
  * 6. Heart button on product cards (shop / archive loops)
  * ────────────────────────────────────────────────────────────── */
 
-add_action( 'woocommerce_before_shop_loop_item_title', function () {
+add_action( 'woocommerce_after_shop_loop_item', function () {
     global $product;
     if ( ! is_a( $product, 'WC_Product' ) ) {
         return;
