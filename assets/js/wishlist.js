@@ -355,10 +355,17 @@
     del.innerHTML = '&#128465;';
     del.setAttribute('aria-label', 'حذف از سبد');
 
+    // "View cart" button — shown beside the stepper.
+    const view = document.createElement('a');
+    view.href = (window.senoobarData && senoobarData.cartUrl) || '/cart/';
+    view.className = 'snb-card-view';
+    view.textContent = 'مشاهده سبد خرید';
+
     wrap.appendChild(minus);
     wrap.appendChild(qty);
     wrap.appendChild(plus);
     wrap.appendChild(del);
+    wrap.appendChild(view);
 
     return { wrap, qty };
   }

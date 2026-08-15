@@ -308,7 +308,7 @@ body .shop-main ul.products li.product {
   position: relative !important;
   list-style: none !important;
   list-style-type: none !important;
-  padding-bottom: 58px !important; /* room for the cart button / qty stepper */
+  padding-bottom: 92px !important; /* room for the cart button + qty stepper + view-cart */
 }
 body .shop-main ul.products li.product::marker {
   content: none !important;
@@ -491,8 +491,10 @@ body .shop-main ul.products li.product .snb-card-stepper {
   position: absolute !important;
   bottom: 14px !important;
   left: 14px !important;
+  right: 14px !important;
   display: flex !important;
   align-items: center !important;
+  flex-wrap: wrap !important;
   gap: 6px !important;
   background: #fff !important;
   border: 1px solid #e5e7eb !important;
@@ -500,6 +502,8 @@ body .shop-main ul.products li.product .snb-card-stepper {
   padding: 4px !important;
   z-index: 20 !important;
   box-shadow: 0 2px 8px rgba(30,58,47,0.18) !important;
+  width: fit-content !important;
+  max-width: calc(100% - 28px) !important;
 }
 body .shop-main ul.products li.product .snb-card-stepper button {
   width: 30px !important;
@@ -535,6 +539,27 @@ body .shop-main ul.products li.product .snb-card-stepper .snb-card-del {
 }
 body .shop-main ul.products li.product .snb-card-stepper .snb-card-del:hover {
   background: #fee2e2 !important;
+}
+/* "View cart" link beside the stepper */
+body .shop-main ul.products li.product .snb-card-stepper .snb-card-view {
+  height: 30px !important;
+  padding: 0 12px !important;
+  border-radius: 15px !important;
+  background: #1e3a2f !important;
+  color: #fff !important;
+  font-size: 0.74rem !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+  border: none !important;
+  transition: background 0.15s !important;
+}
+body .shop-main ul.products li.product .snb-card-stepper .snb-card-view:hover {
+  background: #162e24 !important;
 }
 
 
@@ -688,6 +713,7 @@ body .shop-main.list-view ul.products li.product a.button {
 body .shop-main.list-view ul.products li.product .snb-card-stepper {
   bottom: 14px !important;
   left: 14px !important;
+  right: auto !important;
 }
 body .shop-main.list-view ul.products li.product .add_to_cart_button::after,
 body .shop-main.list-view ul.products li.product .button::after,
