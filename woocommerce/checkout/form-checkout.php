@@ -15,6 +15,19 @@ if ( ! isset( $checkout ) || ! is_object( $checkout ) ) {
     $checkout = WC()->checkout();
 }
 
+// Order received / thank-you view: after payment WooCommerce redirects to
+// .../order-received/{id}/?key=... on the same checkout page. Render the
+// thank-you template instead of the checkout form.
+if ( is_wc_endpoint_url( 'order-received' ) ) {
+    $order_id = absint( get_query_var( 'order-received' ) );
+    get_header();
+    echo '<main id="primary" class="site-main"><div class="container page-content">';
+    wc_get_template( 'checkout/thankyou.php', array( 'order' => wc_get_order( $order_id ) ) );
+    echo '</div></main>';
+    get_footer();
+    return;
+}
+
 get_header(); ?>
 
 <main id="primary" class="site-main">

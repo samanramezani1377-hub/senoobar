@@ -8,7 +8,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$order = wc_get_order( $order_id );
+if ( ! isset( $order ) || ! is_object( $order ) ) {
+    // Fallback when loaded via the WooCommerce thankyou hook: build from order id.
+    $order_id = absint( isset( $order_id ) ? $order_id : get_query_var( 'order-received' ) );
+    $order = wc_get_order( $order_id );
+}
 
 if ( ! $order ) {
     return;
@@ -30,8 +34,11 @@ $order_status = $order->get_status();
                     <path d="M9 12l2 2 4-4"/>
                 </svg>
             </div>
-            <h1>سفارش شما ثبت شد</h1>
-            <p>متشکریم از خرید شما. شماره سفارش: <strong><?php echo esc_html( $order->get_order_number() ); ?></strong></p>
+            <h1>سفارش شما با موفقیت ثبت شد 🎉</h1>
+            <p>از خرید شما سپاسگزاریم. سفارش شما دریافت و در حال بررسی است.</p>
+            <div class="senoobar-order-number-chip">
+                شماره سفارش: <strong>#<?php echo esc_html( $order->get_order_number() ); ?></strong>
+            </div>
         </div>
 
         <!-- Order Details -->
@@ -80,7 +87,7 @@ $order_status = $order->get_status();
             </section>
 
             <section class="senoobar-form-card">
-                <h2 class="senoobar-section-title">آدرس صورتحساب</h2>
+                <h2 class="senoobar-section-title">اطلاعات گیرنده سفارش</h2>
 
                 <address class="senoobar-address">
                     <?php
@@ -261,8 +268,36 @@ $order_status = $order->get_status();
     align-items: center;
     justify-content: center;
     color: var(--senoobar-green);
+    position: relative;
     animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+.senoobar-success-icon::before,
+.senoobar-success-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--senoobar-green);
+    opacity: 0;
+    animation: ripple 2s ease-out infinite;
+}
+.senoobar-success-icon::after { animation-delay: 1s; }
+@keyframes ripple {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
+.senoobar-order-number-chip {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 10px 22px;
+    background: #fff;
+    border: 1px dashed var(--senoobar-green);
+    border-radius: 12px;
+    color: var(--checkout-muted);
+    font-size: 14px;
+}
+.senoobar-order-number-chip strong { color: var(--senoobar-green); font-size: 16px; }
+
 @keyframes popIn {
     from { transform: scale(0); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
