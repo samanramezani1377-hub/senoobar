@@ -67,6 +67,9 @@
   height: 22px;
 }
 
+.mbn-badge.is-hidden {
+  display: none;
+}
 .mbn-badge {
   position: absolute;
   top: -6px;

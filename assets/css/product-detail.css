@@ -1048,3 +1048,37 @@
     width: 100%;
   }
 }
+
+/* ─── Hide back-to-top on product page (mobile/tablet) ── */
+@media (max-width: 1023px) {
+  .back-to-top {
+    display: none !important;
+  }
+}
+
+/* ─── Refined, slightly smaller add-to-cart button ───── */
+.pd-buy-box .single_add_to_cart_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: var(--pd-radius, 12px);
+  background: linear-gradient(135deg, var(--pd-brand, #1e3a2f) 0%, var(--pd-brand-light, #2d5a47) 100%);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(30, 58, 47, 0.22);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.pd-buy-box .single_add_to_cart_button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(30, 58, 47, 0.30);
+  opacity: 1;
+}
+.pd-buy-box .single_add_to_cart_button:active {
+  transform: translateY(0);
+}

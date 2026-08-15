@@ -55,13 +55,25 @@
     function showButton() { stepper.style.display = 'none'; btn.style.display = ''; }
     function showStepper() { btn.style.display = 'none'; stepper.style.display = 'inline-flex'; }
 
-    // ── AJAX: use WooCommerce's own add_to_cart ajax endpoint ──
+    // Apply WooCommerce fragments (updates the header + bottom-nav badges now)
+    function applyFragments(fragments) {
+      if (!fragments) return;
+      Object.keys(fragments).forEach(function (selector) {
+        var el = document.querySelector(selector);
+        if (el) {
+          el.outerHTML = fragments[selector];
+        }
+      });
+      if (window.jQuery) {
+        jQuery(document.body).trigger('wc_fragments_refreshed');
+      }
+    }
+
     function addToCart(quantity) {
       var body = new URLSearchParams();
       body.set('product_id', productId);
       body.set('quantity', String(quantity));
 
-      // variable products: append selected attributes
       form.querySelectorAll('select[name^="attribute_"]').forEach(function (sel) {
         if (sel.value) body.set(sel.name, sel.value);
       });
@@ -78,10 +90,21 @@
       }).then(function (r) { return r.json(); });
     }
 
-    function refreshCartBadge() {
-      if (window.jQuery && typeof jQuery(document.body).trigger === 'function') {
-        jQuery(document.body).trigger('wc_fragments_refreshed');
-      }
+    function removeFromCart() {
+      var variationId = form.querySelector('input.variation_id');
+      var vid = (variationId && variationId.value && variationId.value !== '0') ? variationId.value : 0;
+
+      return fetch(senoobarData.ajaxUrl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: new URLSearchParams({
+          action: 'senoobar_cart_remove_by_product',
+          nonce: senoobarData.nonce,
+          product_id: productId,
+          variation_id: vid
+        }).toString()
+      }).then(function (r) { return r.json(); });
     }
 
     btn.addEventListener('click', function (e) {
@@ -90,16 +113,9 @@
       btn.disabled = true;
       addToCart(1).then(function (data) {
         btn.disabled = false;
-        if (data && data.error === undefined && data.fragments !== undefined) {
-          setQty(1);
-          showStepper();
-          refreshCartBadge();
-        } else if (data && data.error) {
-          form.submit(); // fallback to normal submit
-        } else {
-          showStepper();
-          refreshCartBadge();
-        }
+        setQty(1);
+        showStepper();
+        applyFragments(data && data.fragments);
       }).catch(function () {
         btn.disabled = false;
         form.submit();
@@ -109,18 +125,31 @@
     minusBtn.addEventListener('click', function () {
       if (qty <= 1) return;
       setQty(qty - 1);
-      addToCart(qty).then(refreshCartBadge);
+      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); });
     });
 
     plusBtn.addEventListener('click', function () {
       setQty(qty + 1);
-      addToCart(qty).then(refreshCartBadge);
+      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); });
     });
 
     removeBtn.addEventListener('click', function () {
-      // Navigate to cart where the item can be removed, or remove directly.
-      // Simplest reliable behavior: go to the cart page.
-      window.location.href = (senoobarData && senoobarData.cartUrl) ? senoobarData.cartUrl : '/cart/';
+      removeBtn.disabled = true;
+      removeFromCart().then(function (data) {
+        removeBtn.disabled = false;
+        setQty(1);
+        showButton();
+        // Refresh fragments so badges drop to the correct count immediately.
+        fetch(senoobarData.ajaxUrl + '?wc-ajax=get_refreshed_fragments', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          applyFragments(d && d.fragments);
+        });
+      }).catch(function () {
+        removeBtn.disabled = false;
+      });
     });
   }
 })();

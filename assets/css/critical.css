@@ -395,6 +395,9 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
   margin-top: 2px;
 }
 
+.cart-badge.is-hidden {
+  display: none;
+}
 .cart-badge {
   position: absolute;
   top: -6px;

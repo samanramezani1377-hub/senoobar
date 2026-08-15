@@ -205,6 +205,36 @@ function senoobar_cart_remove_item(): void {
 }
 
 // ---- Apply Coupon ----
+add_action('wp_ajax_senoobar_cart_remove_by_product', 'senoobar_cart_remove_by_product');
+add_action('wp_ajax_nopriv_senoobar_cart_remove_by_product', 'senoobar_cart_remove_by_product');
+
+/**
+ * Remove ALL cart items for a given product_id (used by the product page
+ * buy-box "حذف" button, where we only know the product id, not the cart key).
+ */
+function senoobar_cart_remove_by_product(): void {
+    check_ajax_referer('senoobar_cart_nonce', 'nonce');
+
+    $product_id = absint($_POST['product_id'] ?? 0);
+    $variation_id = absint($_POST['variation_id'] ?? 0);
+
+    if (! $product_id) {
+        wp_send_json_error(['message' => 'Invalid product']);
+    }
+
+    $cart = WC()->cart;
+    foreach ($cart->get_cart() as $key => $item) {
+        $pid = $item['product_id'] ?? 0;
+        $vid = $item['variation_id'] ?? 0;
+        if ($pid === $product_id && ($variation_id === 0 || $vid === $variation_id)) {
+            $cart->remove_cart_item($key);
+        }
+    }
+    $cart->calculate_totals();
+
+    wp_send_json_success(['cart_count' => $cart->get_cart_contents_count()]);
+}
+
 add_action('wp_ajax_senoobar_apply_coupon', 'senoobar_apply_coupon');
 add_action('wp_ajax_nopriv_senoobar_apply_coupon', 'senoobar_apply_coupon');
 

@@ -351,23 +351,46 @@ add_filter('woocommerce_get_stock_html', function ($html, $product) {
     return $html;
 }, 20, 2);
 
-// Currency: show "ت" instead of "تومان".
+// Currency: render a lightweight, styled "تومان" label.
 add_filter('woocommerce_currency_symbol', function ($symbol, $currency) {
-    if ($symbol === 'تومان' || mb_strtolower($symbol) === 'toman') {
-        return 'ت';
+    if ($symbol === 'تومان' || mb_strtolower($symbol) === 'toman' || $symbol === 'ت') {
+        return '<span class="pd-currency">تومان</span>';
     }
     return $symbol;
 }, 20, 2);
 
-// Replace literal "تومان" in any price string with "ت" (covers price suffixes).
+// Replace literal "تومان" with the styled label (covers any text emission).
 add_filter('gettext', function ($translated, $text, $domain) {
     if ($domain === 'woocommerce' && $text === 'تومان') {
-        return 'ت';
+        return '<span class="pd-currency">تومان</span>';
     }
     return $translated;
 }, 30, 3);
 
-// Strip a "تومان" price suffix (some Persian plugins append literal تومان).
+// Price suffix: wrap تومان in the styled label.
 add_filter('woocommerce_get_price_suffix', function ($suffix, $product) {
-    return str_replace('تومان', 'ت', $suffix);
+    return str_replace('تومان', '<span class="pd-currency">تومان</span>', $suffix);
 }, 20, 2);
+
+
+/* ─── Live cart badge fragments ─────────────────────── */
+// Keep the header + bottom-nav cart badges in sync after any AJAX add/remove.
+add_filter('woocommerce_add_to_cart_fragments', function ($fragments) {
+    $count = WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
+
+    // Header badge
+    $fragments['.cart-badge[data-cart-count]'] = sprintf(
+        '<span class="cart-badge%s" data-cart-count>%d</span>',
+        $count > 0 ? '' : ' is-hidden',
+        $count
+    );
+
+    // Bottom nav badge
+    $fragments['.mbn-badge[data-cart-count]'] = sprintf(
+        '<span class="mbn-badge%s" data-cart-count>%d</span>',
+        $count > 0 ? '' : ' is-hidden',
+        $count
+    );
+
+    return $fragments;
+});
