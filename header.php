@@ -170,6 +170,38 @@ if (class_exists('WooCommerce') && $snb_sec_enabled['categories']) {
     }
 }
 
+// Recursive category renderer (supports unlimited nesting levels)
+function senoobar_render_menu_cat( $term, $children_map, $depth = 0 ) {
+    $kids = isset( $children_map[ $term->term_id ] ) ? $children_map[ $term->term_id ] : [];
+    if ( $kids ) {
+        usort( $kids, function( $a, $b ) {
+            $oa = (int) get_theme_mod( "senoobar_menu_cat_{$a->term_id}_order", 99 );
+            $ob = (int) get_theme_mod( "senoobar_menu_cat_{$b->term_id}_order", 99 );
+            return $oa <=> $ob;
+        });
+    }
+    $is_top  = ( $depth === 0 );
+    $has_kids = ! empty( $kids );
+    $cls = $is_top ? 'mobile-cat-link' : 'mobile-cat-child';
+    ?>
+    <div class="<?php echo $is_top ? 'mobile-cat-group' : 'mobile-subcat-group'; ?>">
+        <a href="<?php echo esc_url( get_term_link( $term ) ); ?>" class="<?php echo esc_attr( $cls ); ?>">
+            <span><?php echo esc_html( $term->name ); ?></span>
+            <?php if ( $is_top ): ?>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            <?php endif; ?>
+        </a>
+        <?php if ( $has_kids ): ?>
+            <div class="mobile-cat-children">
+                <?php foreach ( $kids as $kid ): ?>
+                    <?php senoobar_render_menu_cat( $kid, $children_map, $depth + 1 ); ?>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+    <?php
+}
+
 // Quick links
 $snb_account_url = get_permalink(get_option('woocommerce_myaccount_page_id'));
 $snb_cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/cart/');
@@ -245,20 +277,7 @@ $snb_newsletter_nonce = wp_create_nonce('senoobar_newsletter_nonce');
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                     </a>
                     <?php foreach ($snb_cat_tree as $cat): ?>
-                        <?php $kids = isset($snb_children_map[$cat->term_id]) ? $snb_children_map[$cat->term_id] : []; ?>
-                        <div class="mobile-cat-group">
-                            <a href="<?php echo esc_url(get_term_link($cat)); ?>" class="mobile-cat-link">
-                                <span><?php echo esc_html($cat->name); ?></span>
-                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-                            </a>
-                            <?php if ($kids): ?>
-                                <div class="mobile-cat-children">
-                                    <?php foreach ($kids as $child): ?>
-                                        <a href="<?php echo esc_url(get_term_link($child)); ?>" class="mobile-cat-child"><?php echo esc_html($child->name); ?></a>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
+                        <?php senoobar_render_menu_cat( $cat, $snb_children_map, 0 ); ?>
                     <?php endforeach; ?>
                 </nav>
             <?php endif; ?>

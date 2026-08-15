@@ -613,12 +613,13 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
 }
 
 .mobile-cat-children {
-  padding: 0 8px 4px;
+  padding: 4px 8px 4px 12px;
+  border-inline-start: 2px solid var(--color-gray-100);
 }
 
 .mobile-cat-child {
   display: block;
-  padding: 9px 14px 9px 14px;
+  padding: 9px 12px;
   font-size: 0.86rem;
   color: var(--color-gray-600);
   border-radius: 10px;
@@ -628,6 +629,39 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
 .mobile-cat-child:hover {
   background: var(--color-gray-50);
   color: var(--color-brand);
+}
+
+/* Nested subcategory group (level 3+) */
+.mobile-subcat-group {
+  margin: 2px 0;
+}
+
+.mobile-subcat-group .mobile-cat-child {
+  font-size: 0.82rem;
+  color: var(--color-gray-500);
+  padding: 8px 12px 8px 26px;
+  position: relative;
+}
+
+.mobile-subcat-group .mobile-cat-child::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-gray-200);
+}
+
+.mobile-subcat-group .mobile-cat-child:hover {
+  background: var(--color-gray-50);
+  color: var(--color-brand);
+}
+
+.mobile-subcat-group .mobile-cat-children {
+  border-inline-start: none;
 }
 
 /* Quick links */
