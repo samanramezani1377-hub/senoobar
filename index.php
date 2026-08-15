@@ -15,7 +15,7 @@ get_header();
     <?php get_template_part('template-parts/blog-section'); ?>
     <?php get_template_part('template-parts/newsletter'); ?>
 <?php elseif (is_shop() || is_product_category()) : ?>
-    <div class="container page-content"><?php woocommerce_content(); ?></div>
+    <div class="container page-content"><?php if (function_exists('woocommerce_content')) { woocommerce_content(); } else { do_action('woocommerce_content'); } ?></div>
 <?php elseif (is_single()) : ?>
     <div class="container page-content"><?php get_template_part('template-parts/content', 'single'); ?></div>
 <?php elseif (is_page()) : ?>

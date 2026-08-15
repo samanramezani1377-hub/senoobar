@@ -20,9 +20,15 @@ get_header();
 
         <?php
         /**
-         * Hook: woocommerce_content.
+         * Render the actual WooCommerce content.
+         * woocommerce_content() renders the product loop on shop/archive pages
+         * and the product detail on single-product pages.
          */
-        do_action( 'woocommerce_content' );
+        if ( function_exists( 'woocommerce_content' ) ) {
+            woocommerce_content();
+        } else {
+            do_action( 'woocommerce_content' );
+        }
         ?>
 
         <?php
