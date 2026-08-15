@@ -57,7 +57,7 @@ if ( ! is_user_logged_in() && $checkout->is_registration_required() ) {
 
         <?php wc_print_notices(); ?>
 
-        <form name="checkout" method="post" class="checkout woocommerce-checkout" enctype="multipart/form-data" novalidate>
+        <form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data" novalidate>
 
             <?php do_action( 'woocommerce_checkout_before_customer_details' ); ?>
 
