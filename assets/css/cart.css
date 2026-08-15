@@ -240,6 +240,7 @@
 
 .senoobar-cart-product-info {
     min-width: 0;
+    flex: 1 1 auto;
 
     display: flex;
     flex-direction: column;
@@ -248,14 +249,20 @@
 }
 
 .senoobar-cart-product-name {
+    display: block;
+
     color: #171a18;
 
     font-size: 14px;
     font-weight: 700;
 
-    line-height: 1.8;
+    line-height: 1.6;
 
     text-decoration: none;
+
+    /* Long product names must wrap, never push the layout out of frame */
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 a.senoobar-cart-product-name:hover {
@@ -813,6 +820,15 @@ a.senoobar-cart-product-name:hover {
 
     .senoobar-cart-product {
         grid-column: 1 / -1;
+
+        /* Reserve space for the absolute remove button in the corner so a
+           long product name never runs underneath it. */
+        padding-inline-end: 44px;
+        align-items: flex-start;
+    }
+
+    .senoobar-cart-product-info {
+        min-width: 0;
     }
 
     .senoobar-cart-price,
@@ -841,8 +857,10 @@ a.senoobar-cart-product-name:hover {
     .senoobar-cart-remove {
         position: absolute;
 
-        left: 14px;
-        top: 14px;
+        left: 12px;
+        top: 12px;
+
+        z-index: 2;
     }
 
     .senoobar-cart-item {
