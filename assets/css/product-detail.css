@@ -883,16 +883,21 @@
   z-index: 60;
 }
 
-/* Desktop: normal (non-sticky) box inside the info column */
+/* Desktop: sticky card pinned near the customer's read line in the info
+   column — follows the scroll without overlapping anything. The duplicate
+   price inside the box is hidden (the main .pd-price above is the only one). */
 @media (min-width: 1024px) {
   .pd-buy-box {
+    position: sticky;
+    top: 16px;
     margin: 16px 0;
-    padding: 12px;
+    padding: 14px 16px;
     border: 1px solid var(--pd-gray-100, #f7f5f2);
     border-radius: var(--pd-radius-xl, 16px);
+    box-shadow: var(--pd-shadow-md, 0 4px 12px rgba(0,0,0,0.08));
   }
   .pd-buy-box__price {
-    margin-bottom: 10px;
+    display: none; /* avoid a second price on desktop */
   }
 }
 
@@ -905,19 +910,31 @@
     bottom: 62px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    flex-wrap: nowrap;
+    gap: 10px;
     padding: 8px 12px;
     padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     background: #fff;
     border-top: 1px solid var(--pd-gray-200, #e5e7eb);
     box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
   }
+  /* Compact, smaller price on the slim mobile bar */
   .pd-buy-box__price {
     flex: 0 0 auto;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .pd-buy-box__price .pd-price--sale,
+  .pd-buy-box__price .pd-price--current {
+    font-size: 0.85rem;
+  }
+  .pd-buy-box__price .pd-price--regular {
+    font-size: 0.7rem;
   }
   /* Make the add-to-cart form fill the remaining space in one row */
   .pd-buy-box form.cart {
     flex: 1 1 auto;
+    min-width: 0;
     margin: 0 !important;
     display: flex;
     align-items: center;
@@ -928,7 +945,30 @@
   }
   .pd-buy-box .single_add_to_cart_button {
     flex: 1 1 auto;
+    min-width: 0;
+    font-size: 0.82rem;
+    padding: 0 12px;
     white-space: nowrap;
+  }
+}
+
+/* Very narrow phones: shrink further so nothing overflows */
+@media (max-width: 380px) {
+  .pd-buy-box {
+    gap: 6px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .pd-buy-box__price .pd-price--sale,
+  .pd-buy-box__price .pd-price--current {
+    font-size: 0.78rem;
+  }
+  .pd-buy-box .quantity .qty {
+    width: 36px;
+  }
+  .pd-buy-box .quantity .minus,
+  .pd-buy-box .quantity .plus {
+    width: 30px;
   }
 }
 
