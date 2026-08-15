@@ -9,6 +9,7 @@ require_once SENOOBAR_DIR . '/inc/woocommerce-setup.php';
 require_once SENOOBAR_DIR . '/inc/cart-page-setup.php';
 require_once SENOOBAR_DIR . '/inc/newsletter-handlers.php';
 require_once SENOOBAR_DIR . '/inc/push-handlers.php';
+require_once SENOOBAR_DIR . '/inc/wishlist-page-setup.php';
 
 function senoobar_init() {
     Senoobar_Theme::get_instance()->init();

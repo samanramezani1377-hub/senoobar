@@ -515,6 +515,9 @@ final class Senoobar_Theme {
             if (class_exists('WooCommerce')) {
                 wp_enqueue_style('senoobar-cart', SENOOBAR_URI . '/assets/css/cart.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
+
+            // Mobile bottom navigation (always loaded; hidden on desktop via CSS).
+            wp_enqueue_style('senoobar-bottom-nav', SENOOBAR_URI . '/assets/css/bottom-nav.css', ['senoobar-main'], SENOOBAR_VERSION);
             // Checkout CSS
             if ($is_checkout_page) {
                 wp_enqueue_style('senoobar-checkout', SENOOBAR_URI . '/assets/css/checkout.css', ['senoobar-main'], SENOOBAR_VERSION);
