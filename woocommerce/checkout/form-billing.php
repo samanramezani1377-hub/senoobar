@@ -63,9 +63,15 @@ $fields = $checkout->get_checkout_fields( 'billing' );
 
             <?php else : ?>
 
+                <?php
+                $maxlength = isset( $field['maxlength'] ) ? (int) $field['maxlength'] : 0;
+                $input_class = isset( $field['input_class'] ) ? implode( ' ', $field['input_class'] ) : '';
+                ?>
+
                 <input type="<?php echo esc_attr( $type ); ?>" name="<?php echo esc_attr( $key ); ?>" id="<?php echo esc_attr( $key ); ?>"
-                    class="senoobar-form-input" value="<?php echo esc_attr( $value ); ?>"
+                    class="senoobar-form-input <?php echo esc_attr( $input_class ); ?>" value="<?php echo esc_attr( $value ); ?>"
                     placeholder="<?php echo esc_attr( $placeholder ); ?>"
+                    <?php echo $maxlength ? 'maxlength="' . $maxlength . '"' : ''; ?>
                     <?php echo $required ? 'required' : ''; ?>>
 
             <?php endif; ?>

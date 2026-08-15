@@ -475,6 +475,16 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
             'priority'    => 40,
             'options'     => senoobar_iran_provinces(),
         ],
+        'billing_postcode' => [
+            'type'        => 'text',
+            'label'       => 'کد پستی',
+            'placeholder' => 'کد پستی ۱۰ رقمی',
+            'required'    => true,
+            'class'       => ['form-row-wide', 'senoobar-field'],
+            'priority'    => 45,
+            'input_class' => ['senoobar-input'],
+            'maxlength'   => 10,
+        ],
         'billing_address_1' => [
             'type'        => 'textarea',
             'label'       => 'آدرس',
