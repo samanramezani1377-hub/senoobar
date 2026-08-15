@@ -116,8 +116,20 @@ add_action( 'wp_ajax_nopriv_senoobar_wishlist_get', 'senoobar_wishlist_get_handl
  * ────────────────────────────────────────────────────────────── */
 
 function senoobar_wishlist_render_handler() {
-    $ids = isset( $_POST['ids'] ) ? array_map( 'absint', (array) $_POST['ids'] ) : [];
-    $ids = array_values( array_unique( array_filter( $ids ) ) );
+    // Accept both ids[]=100&ids[]=101 (array) and ids=100,101 (string) forms.
+    $raw = $_POST['ids'] ?? [];
+    if ( ! is_array( $raw ) ) {
+        $raw = [ $raw ];
+    }
+    $ids = [];
+    foreach ( $raw as $entry ) {
+        // A single entry may itself be a comma/space separated list.
+        foreach ( preg_split( '/[,\s]+/', (string) $entry ) as $part ) {
+            $part = absint( $part );
+            if ( $part ) { $ids[] = $part; }
+        }
+    }
+    $ids = array_values( array_unique( $ids ) );
 
     $items = [];
     foreach ( $ids as $pid ) {

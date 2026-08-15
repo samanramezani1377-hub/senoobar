@@ -48,7 +48,14 @@
   // ── Network ─────────────────────────────────────────
   async function post(action, data) {
     const body = new FormData();
-    for (const k in data) body.append(k, data[k]);
+    for (const k in data) {
+      const v = data[k];
+      if (Array.isArray(v)) {
+        v.forEach((item) => body.append(k + '[]', item));
+      } else {
+        body.append(k, v);
+      }
+    }
     body.append('action', action);
     const res = await fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body });
     return res.json();
