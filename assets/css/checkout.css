@@ -62,7 +62,7 @@
 /* Layout */
 .senoobar-checkout-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 365px;
+    grid-template-columns: minmax(0, 1fr) 430px;
     gap: 22px;
     align-items: start;
 }

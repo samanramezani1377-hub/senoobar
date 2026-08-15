@@ -76,11 +76,35 @@ $gateway_count = count( $available_gateways );
 <script>
 (function() {
     'use strict';
-    // Ensure payment method radio styling updates on change
-    document.querySelectorAll('.senoobar-payment-method input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            document.querySelectorAll('.senoobar-payment-method').forEach(m => m.classList.remove('selected'));
-            this.closest('.senoobar-payment-method')?.classList.add('selected');
+    var methods = document.querySelectorAll('.senoobar-payment-method');
+
+    function markSelected(container) {
+        methods.forEach(function (m) { m.classList.remove('selected'); });
+        if (container) { container.classList.add('selected'); }
+    }
+
+    methods.forEach(function (container) {
+        var radio = container.querySelector('input[type="radio"]');
+        if (!radio) { return; }
+
+        function select() {
+            radio.checked = true;
+            markSelected(container);
+            // Fire a change event so any WooCommerce listeners also react.
+            var evt = new Event('change', { bubbles: true });
+            radio.dispatchEvent(evt);
+        }
+
+        // Clicking anywhere on the card selects that payment method.
+        container.addEventListener('click', function (e) {
+            // Ignore clicks on the radio itself (handled natively) to avoid double toggling.
+            if (e.target === radio) { return; }
+            select();
+        });
+
+        // Keep state in sync if the radio changes directly (e.g. keyboard).
+        radio.addEventListener('change', function () {
+            if (radio.checked) { markSelected(container); }
         });
     });
 })();

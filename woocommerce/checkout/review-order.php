@@ -176,12 +176,14 @@ $cart = WC()->cart;
 }
 .senoobar-review-table td { padding: 16px; border-bottom: 1px solid #f0f1f0; vertical-align: middle; }
 .senoobar-review-table tr:last-child td { border-bottom: none; }
+.senoobar-review-table td.product-name { width: auto; }
+.senoobar-review-table td.product-total { width: 1%; white-space: nowrap; text-align: left; }
 
-.senoobar-review-product { display: flex; align-items: center; gap: 12px; }
-.senoobar-review-thumb { width: 56px; height: 56px; flex: 0 0 56px; border-radius: 10px; overflow: hidden; background: #f4f5f4; }
+.senoobar-review-product { display: flex; align-items: flex-start; gap: 12px; }
+.senoobar-review-thumb { width: 52px; height: 52px; flex: 0 0 52px; border-radius: 10px; overflow: hidden; background: #f4f5f4; }
 .senoobar-review-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.senoobar-review-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.senoobar-review-name { font-weight: 600; font-size: 13px; color: #171a18; text-decoration: none; line-height: 1.5; }
+.senoobar-review-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+.senoobar-review-name { font-weight: 600; font-size: 13px; color: #171a18; text-decoration: none; line-height: 1.7; word-break: break-word; overflow-wrap: anywhere; }
 .senoobar-review-name:hover { color: #1e3a2f; }
 .senoobar-review-info .variation { font-size: 11px; color: #8a908c; margin: 0; }
 .senoobar-review-info .variation dt, .senoobar-review-info .variation dd { display: inline; }
