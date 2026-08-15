@@ -628,6 +628,21 @@ body .shop-main.list-view ul.products {
   gap: 16px !important;
 }
 
+/* ── Smooth grid <-> list transition ── */
+body .shop-main ul.products li.product {
+  transition: opacity 0.22s ease, transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+body .shop-main ul.products li.product a.woocommerce-LoopProduct-link,
+body .shop-main ul.products li.product img {
+  transition: opacity 0.22s ease, transform 0.25s ease !important;
+}
+
+body .shop-main.view-animating ul.products li.product {
+  opacity: 0 !important;
+  transform: translateY(10px) scale(0.98) !important;
+  pointer-events: none !important;
+}
+
 body .shop-main.list-view ul.products li.product {
   display: flex !important;
   flex-direction: row !important;
