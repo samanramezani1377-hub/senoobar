@@ -1112,10 +1112,20 @@ body .shop-main.list-view ul.products li.product .snb-card-heart {
     padding-bottom: 8px !important;
   }
 
-  /* Row 1: minus, qty, plus  |  Row 2: delete + view-cart */
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-minus { order: 1; }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty { order: 2; }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-plus { order: 3; }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-del { order: 4; flex: 1 1 auto; }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-view { order: 5; flex: 1 1 auto; height: 38px !important; border-radius: 19px !important; font-size: 0.8rem !important; }
+  /* Force exactly 2 rows using grid (never wraps to 3 lines) */
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper {
+    display: grid !important;
+    flex-wrap: nowrap !important;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "minus qty plus"
+      "del del view";
+    row-gap: 6px;
+    column-gap: 6px;
+  }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-minus { grid-area: minus; order: 0; justify-self: center; }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty { grid-area: qty; order: 0; justify-self: center; align-self: center; }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-plus { grid-area: plus; order: 0; justify-self: center; }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-del { grid-area: del; border-radius: 19px !important; height: 38px !important; width: 100% !important; }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-view { grid-area: view; height: 38px !important; border-radius: 19px !important; font-size: 0.8rem !important; width: 100% !important; }
 }
