@@ -1078,73 +1078,50 @@ body .shop-main.list-view ul.products li.product .snb-card-heart {
 }
 
 
-/* ─── Home loop: clean 2-row stepper on mobile (in-flow, grid-locked) ─── */
+/* ─── Home loop (mobile only): after adding, show ONLY a full-width
+       "مشاهده سبد خرید" button. Hide the qty/remove controls. ─── */
 @media (max-width: 767px) {
   body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper {
     position: static !important;
     width: 100% !important;
     max-width: 100% !important;
     margin: 4px 0 0 !important;
-    padding: 6px !important;
+    padding: 0 !important;
     box-sizing: border-box !important;
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-areas:
-      "minus qty plus"
-      "del del view";
-    row-gap: 6px !important;
-    column-gap: 6px !important;
-    gap: 6px !important;
-    align-items: center !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+    align-items: stretch !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper button {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    border: none !important;
+  /* Hide minus / qty / plus / delete — only the view-cart button remains */
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-minus,
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty,
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-plus,
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-del {
+    display: none !important;
+  }
+
+  /* Full-width, touch-friendly "مشاهده سبد خرید" button */
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-view {
     display: flex !important;
+    width: 100% !important;
+    height: 40px !important;
+    border-radius: 20px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    padding: 0 8px !important;
+    background: #1e3a2f !important;
+    color: #fff !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    font-size: 1.25rem !important;
-    line-height: 1 !important;
+    text-decoration: none !important;
   }
 
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-minus {
-    grid-area: minus;
-    justify-self: center !important;
-    border-radius: 50% !important;
-  }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-plus {
-    grid-area: plus;
-    justify-self: center !important;
-    border-radius: 50% !important;
-  }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty {
-    grid-area: qty;
-    justify-self: center !important;
-    align-self: center !important;
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-  }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-del {
-    grid-area: del;
-    width: 100% !important;
-    height: 40px !important;
-    border-radius: 20px !important;
-  }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-view {
-    grid-area: view;
-    width: 100% !important;
-    height: 40px !important;
-    border-radius: 20px !important;
-    font-size: 0.8rem !important;
-    padding: 0 8px !important;
-  }
-
-  /* Card ends right below the in-flow stepper */
+  /* Card ends right below the in-flow button */
   body .shop-main[data-home-loop] ul.products li.product,
   body .shop-main[data-home-loop] ul.products li.product:has(.snb-card-stepper) {
     padding-bottom: 8px !important;
