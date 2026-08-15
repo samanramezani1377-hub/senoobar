@@ -1078,54 +1078,75 @@ body .shop-main.list-view ul.products li.product .snb-card-heart {
 }
 
 
-/* ─── Home loop: bigger, touch-friendly stepper on mobile (2 rows, in-flow) ─── */
+/* ─── Home loop: clean 2-row stepper on mobile (in-flow, grid-locked) ─── */
 @media (max-width: 767px) {
   body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper {
-    position: static !important;   /* in-flow — never overlaps price */
+    position: static !important;
     width: 100% !important;
     max-width: 100% !important;
-    margin-top: 4px !important;
-    gap: 6px !important;
+    margin: 4px 0 0 !important;
     padding: 6px !important;
-    border-radius: 14px !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    align-items: center !important;
     box-sizing: border-box !important;
-  }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper button {
-    width: 38px !important;
-    height: 38px !important;
-    border-radius: 50% !important;
-    font-size: 1.2rem !important;
-    flex: 0 0 auto !important;
-  }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty {
-    min-width: 26px !important;
-    font-size: 1rem !important;
-    flex: 0 0 auto !important;
-  }
-  /* Since the stepper is in-flow, remove the extra bottom padding reserved for
-     the absolutely-positioned cart button so the card ends right below it. */
-  body .shop-main[data-home-loop] ul.products li.product,
-  body .shop-main[data-home-loop] ul.products li.product:has(.snb-card-stepper) {
-    padding-bottom: 8px !important;
-  }
-
-  /* Force exactly 2 rows using grid (never wraps to 3 lines) */
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper {
     display: grid !important;
-    flex-wrap: nowrap !important;
     grid-template-columns: repeat(3, 1fr);
     grid-template-areas:
       "minus qty plus"
       "del del view";
-    row-gap: 6px;
-    column-gap: 6px;
+    row-gap: 6px !important;
+    column-gap: 6px !important;
+    gap: 6px !important;
+    align-items: center !important;
   }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-minus { grid-area: minus; order: 0; justify-self: center; }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty { grid-area: qty; order: 0; justify-self: center; align-self: center; }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-plus { grid-area: plus; order: 0; justify-self: center; }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-del { grid-area: del; border-radius: 19px !important; height: 38px !important; width: 100% !important; }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-view { grid-area: view; height: 38px !important; border-radius: 19px !important; font-size: 0.8rem !important; width: 100% !important; }
+
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper button {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 1.25rem !important;
+    line-height: 1 !important;
+  }
+
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-minus {
+    grid-area: minus;
+    justify-self: center !important;
+    border-radius: 50% !important;
+  }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-plus {
+    grid-area: plus;
+    justify-self: center !important;
+    border-radius: 50% !important;
+  }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty {
+    grid-area: qty;
+    justify-self: center !important;
+    align-self: center !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+  }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-del {
+    grid-area: del;
+    width: 100% !important;
+    height: 40px !important;
+    border-radius: 20px !important;
+  }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-view {
+    grid-area: view;
+    width: 100% !important;
+    height: 40px !important;
+    border-radius: 20px !important;
+    font-size: 0.8rem !important;
+    padding: 0 8px !important;
+  }
+
+  /* Card ends right below the in-flow stepper */
+  body .shop-main[data-home-loop] ul.products li.product,
+  body .shop-main[data-home-loop] ul.products li.product:has(.snb-card-stepper) {
+    padding-bottom: 8px !important;
+  }
 }
