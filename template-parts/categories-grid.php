@@ -14,12 +14,12 @@
 
 // Fallback static data (only when WooCommerce is not active or no categories selected)
 $fallback_cats = [
-  ['name' => 'سرویس خواب', 'img' => 'https://images.unsplash.com/photo-1696762932825-2737db830bbe?w=120&h=90&fit=crop&auto=format'],
-  ['name' => 'تشک',       'img' => 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=120&h=90&fit=crop&auto=format'],
-  ['name' => 'تخت خواب',   'img' => 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=120&h=90&fit=crop&auto=format'],
-  ['name' => 'مبل و مبلمان','img' => 'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=120&h=90&fit=crop&auto=format'],
-  ['name' => 'میز جلو مبلی','img' => 'https://images.unsplash.com/photo-1628744876497-eb30460be9f6?w=120&h=90&fit=crop&auto=format'],
-  ['name' => 'کمد و باخاخت','img' => 'https://images.unsplash.com/photo-1642541070065-3912f347e7c6?w=120&h=90&fit=crop&auto=format'],
+  ['name' => 'سرویس خواب', 'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/hero-2.jpg'],
+  ['name' => 'تشک',       'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/cat-mattress.jpg'],
+  ['name' => 'تخت خواب',   'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/cat-bed.jpg'],
+  ['name' => 'مبل و مبلمان','img' => '<?php echo SENOOBAR_URI; ?>/assets/images/hero-1.jpg'],
+  ['name' => 'میز جلو مبلی','img' => '<?php echo SENOOBAR_URI; ?>/assets/images/cat-table.jpg'],
+  ['name' => 'کمد و باخاخت','img' => '<?php echo SENOOBAR_URI; ?>/assets/images/cat-wardrobe.jpg'],
 ];
 
 $display = [];
