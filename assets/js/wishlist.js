@@ -390,11 +390,12 @@
     const existing = card.querySelector('.snb-card-stepper');
     if (existing) return existing;
 
-    // Hide the round cart button + WooCommerce "view cart" link if present.
+    // Hide the round cart button + remove WooCommerce's "view cart" link so it
+    // can never flash during layout/reflow.
     const btn = card.querySelector('.add_to_cart_button') || card.querySelector('a.button[data-product_id]');
     if (btn) btn.classList.add('added');
     const viewLink = card.querySelector('a.added_to_cart');
-    if (viewLink) viewLink.style.display = 'none';
+    if (viewLink) viewLink.remove();
 
     const qty0 = stepperQty[productId] || 1;
     const { wrap, qty } = buildStepper(productId, qty0);
@@ -414,11 +415,10 @@
       if (r && r.success) {
         delete stepperQty[productId];
         wrap.remove();
-        // Restore the round add-to-cart button.
+        // Restore the round add-to-cart button (the .added_to_cart link stays
+        // removed; WooCommerce may re-add it on the next AJAX update).
         const b = card.querySelector('.add_to_cart_button') || card.querySelector('a.button[data-product_id]');
         if (b) b.classList.remove('added');
-        const vl = card.querySelector('a.added_to_cart');
-        if (vl) vl.style.display = '';
         if (window.jQuery) window.jQuery(document.body).trigger('wc_fragment_refresh');
       }
     };
@@ -441,42 +441,32 @@
   }
 
   function initCardCartStepper() {
-    // Attach a stepper right after WooCommerce confirms the add. This fires
-    // immediately after the AJAX add completes (no extra delay), so the icon ->
-    // stepper swap feels like one continuous motion.
-    function showStepperForButton(btn) {
-      if (!btn) return;
-      const card = findCardContainer(btn);
-      const pid = Number(btn.getAttribute('data-product_id') || 0);
-      if (card && pid) ensureStepper(card, pid);
-    }
-
-    if (window.jQuery) {
-      window.jQuery(document.body).on('added_to_cart', function () {
-        // The button that just got added is the last one marked .added.
-        const added = $$('.add_to_cart_button.added');
-        if (added.length) showStepperForButton(added[0]);
-      });
-    }
-
-    // Fallback for non-AJAX add (page may navigate) or when jQuery is missing:
-    // after a click, if WooCommerce hasn't fired the event in a tick, show it.
+    // Direct, reliable approach: on click, start fading the icon out right away,
+    // then Morph it into the qty stepper once the short AJAX add completes. We
+    // read the product id straight off the button — no reliance on the
+    // 'added_to_cart' event or the '.added' class (both proved unreliable).
     document.addEventListener('click', (e) => {
       const addBtn = e.target.closest('.add_to_cart_button');
       if (!addBtn) return;
       const card = findCardContainer(addBtn);
       const pid = Number(addBtn.getAttribute('data-product_id') || 0);
       if (!pid || !card) return;
-      // Give the AJAX add a brief moment; if the button got the .added class,
-      // ensureStepper is idempotent (no double-stepper) and runs at once.
-      setTimeout(() => {
-        if (addBtn.classList.contains('added')) showStepperForButton(addBtn);
-      }, 120);
+
+      // Start fading the round icon out immediately for a continuous morph.
+      addBtn.classList.add('added');
+
+      // Wait for the AJAX add to complete, then build the stepper (idempotent).
+      setTimeout(() => ensureStepper(card, pid), 220);
     });
 
-    // On page load, any card already "added" (e.g. after reload) gets a stepper.
+    // On page load, any card already "added" (e.g. after an AJAX refresh or a
+    // non-AJAX reload) gets a stepper.
     document.addEventListener('DOMContentLoaded', () => {
-      $$('.add_to_cart_button.added').forEach(showStepperForButton);
+      $$('.add_to_cart_button.added').forEach((btn) => {
+        const card = findCardContainer(btn);
+        const pid = Number(btn.getAttribute('data-product_id') || 0);
+        if (card && pid) ensureStepper(card, pid);
+      });
     });
   }
 

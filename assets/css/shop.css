@@ -308,7 +308,7 @@ body .shop-main ul.products li.product {
   position: relative !important;
   list-style: none !important;
   list-style-type: none !important;
-  padding-bottom: 48px !important; /* room for the round cart button */
+  padding-bottom: 44px !important; /* room for the round cart button */
 }
 body .shop-main ul.products li.product::marker {
   content: none !important;
@@ -413,10 +413,10 @@ body .shop-main ul.products li.product .add_to_cart_button,
 body .shop-main ul.products li.product .button,
 body .shop-main ul.products li.product a.button {
   position: absolute !important;
-  bottom: 10px !important;
-  left: 14px !important;
-  width: 42px !important;
-  height: 42px !important;
+  bottom: 6px !important;
+  left: 12px !important;
+  width: 38px !important;
+  height: 38px !important;
   padding: 0 !important;
   border-radius: 50% !important;
   background: var(--color-primary, #1e3a2f) !important;
@@ -445,8 +445,8 @@ body .shop-main ul.products li.product .button::after,
 body .shop-main ul.products li.product a.button::after {
   content: '';
   display: block;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   background: currentColor;
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Ccircle cx='9' cy='21' r='1'/%3E%3Ccircle cx='20' cy='21' r='1'/%3E%3Cpath d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'/%3E%3C/svg%3E");
   mask-size: contain;
@@ -487,14 +487,20 @@ body .shop-main ul.products li.product a.button.added {
 }
 body .shop-main ul.products li.product a.added_to_cart {
   display: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
 }
 
 /* Card qty stepper (shown once the product is in the cart) */
 body .shop-main ul.products li.product .snb-card-stepper {
   position: absolute !important;
-  bottom: 8px !important;
-  left: 14px !important;
-  right: 14px !important;
+  bottom: 6px !important;
+  left: 12px !important;
+  right: 12px !important;
   display: flex !important;
   align-items: center !important;
   flex-wrap: nowrap !important;
@@ -633,7 +639,7 @@ body .shop-main.list-view ul.products {
 
 /* Extra bottom room only while the qty stepper is shown */
 body .shop-main ul.products li.product:has(.snb-card-stepper) {
-  padding-bottom: 60px !important;
+  padding-bottom: 56px !important;
 }
 
 /* ── Add-to-cart -> stepper morph animation (single continuous motion) ── */
@@ -665,6 +671,12 @@ body .shop-main.view-animating ul.products li.product {
   opacity: 0 !important;
   transform: translateY(6px) scale(0.99) !important;
   pointer-events: none !important;
+}
+body .shop-main.view-animating ul.products li.product .snb-card-stepper {
+  opacity: 0 !important;
+}
+body .shop-main.view-animating ul.products li.product .add_to_cart_button {
+  opacity: 0 !important;
 }
 
 body .shop-main.list-view ul.products li.product {
