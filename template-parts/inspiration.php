@@ -5,10 +5,10 @@
 $title = get_theme_mod('senoobar_section_gallery_title', 'ایده‌هایی برای خانه شما');
 
 $ideas = [
-    ['label' => 'اتاق نشیمن مدرن',     'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/hero-1.jpg'],
-    ['label' => 'اتاق خواب آرامش‌بخش',  'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/hero-2.jpg'],
-    ['label' => 'ناهارخوری شیک',       'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/featured-dining.jpg'],
-    ['label' => 'پذیرایی مینیمال',     'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/inspiration-living.jpg'],
+    ['label' => 'اتاق نشیمن مدرن',     'img' => SENOOBAR_URI . '/assets/images/hero-1.jpg'],
+    ['label' => 'اتاق خواب آرامش‌بخش',  'img' => SENOOBAR_URI . '/assets/images/hero-2.jpg'],
+    ['label' => 'ناهارخوری شیک',       'img' => SENOOBAR_URI . '/assets/images/featured-dining.jpg'],
+    ['label' => 'پذیرایی مینیمال',     'img' => SENOOBAR_URI . '/assets/images/inspiration-living.jpg'],
 ];
 
 // Try gallery images from customizer
