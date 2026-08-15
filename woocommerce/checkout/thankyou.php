@@ -73,8 +73,8 @@ $order_status = $order->get_status();
                         </span>
                     </div>
                     <div class="senoobar-detail-row">
-                        <span class="senoobar-detail-label">ایمیل</span>
-                        <span class="senoobar-detail-value"><?php echo esc_html( $order->get_billing_email() ); ?></span>
+                        <span class="senoobar-detail-label">شماره موبایل</span>
+                        <span class="senoobar-detail-value" dir="ltr"><?php echo esc_html( $order->get_billing_phone() ); ?></span>
                     </div>
                 </div>
 
@@ -94,15 +94,14 @@ $order_status = $order->get_status();
                     $address_parts = array_filter([
                         $order->get_formatted_billing_full_name(),
                         $order->get_billing_address_1(),
-                        $order->get_billing_address_2(),
-                        $order->get_billing_city(),
                         $order->get_billing_state(),
                         $order->get_billing_postcode(),
-                        $order->get_billing_country(),
-                        $order->get_billing_phone(),
-                        $order->get_billing_email(),
                     ]);
                     echo implode('<br>', array_map('esc_html', $address_parts));
+
+                    if ( $order->get_billing_phone() ) {
+                        echo '<div class="senoobar-recipient-phone">📞 <span dir="ltr">' . esc_html( $order->get_billing_phone() ) . '</span></div>';
+                    }
                     ?>
                 </address>
             </section>
@@ -343,6 +342,13 @@ $order_status = $order->get_status();
 
 /* Address */
 .senoobar-address { font-style: normal; line-height: 2; color: var(--checkout-muted); font-size: 13px; }
+.senoobar-recipient-phone {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--checkout-border);
+    font-weight: 600;
+    color: var(--checkout-text);
+}
 
 /* Table */
 .senoobar-review-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
