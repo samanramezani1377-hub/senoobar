@@ -9,7 +9,6 @@
 defined( 'ABSPATH' ) || exit;
 
 $cart = WC()->cart;
-$totals = $cart->get_totals();
 ?>
 
 <div class="senoobar-order-review" id="order_review">
@@ -76,50 +75,61 @@ $totals = $cart->get_totals();
 
     <div class="senoobar-order-totals">
         <?php
-        foreach ( $totals as $total_key => $total ) {
-            if ( $total_key === 'cart_subtotal' ) {
-                ?>
-                <div class="senoobar-summary-row">
-                    <span><?php echo esc_html( $total['label'] ); ?></span>
-                    <strong><?php echo wp_kses_post( $total['value'] ); ?></strong>
-                </div>
-                <?php
-            } elseif ( $total_key === 'discount' ) {
-                ?>
-                <div class="senoobar-summary-row discount">
-                    <span><?php echo esc_html( $total['label'] ); ?></span>
-                    <strong>−<?php echo wp_kses_post( $total['value'] ); ?></strong>
-                </div>
-                <?php
-            } elseif ( $total_key === 'shipping' ) {
-                ?>
-                <div class="senoobar-summary-row">
-                    <span><?php echo esc_html( $total['label'] ); ?></span>
-                    <strong><?php echo wp_kses_post( $total['value'] ); ?></strong>
-                </div>
-                <?php
-            } elseif ( $total_key === 'order_total' ) {
-                ?>
-                <div class="senoobar-summary-total">
-                    <span><?php echo esc_html( $total['label'] ); ?></span>
-                    <strong><?php echo wp_kses_post( $total['value'] ); ?></strong>
-                </div>
-                <?php
-            } else {
-                ?>
-                <div class="senoobar-summary-row">
-                    <span><?php echo esc_html( $total['label'] ); ?></span>
-                    <strong><?php echo wp_kses_post( $total['value'] ); ?></strong>
-                </div>
-                <?php
-            }
-        }
-
-        if ( WC()->cart->needs_shipping() && WC()->cart->show_shipping() ) {
-            do_action( 'woocommerce_review_order_before_shipping' );
-            do_action( 'woocommerce_review_order_after_shipping' );
-        }
+        // Subtotal
         ?>
+        <div class="senoobar-summary-row">
+            <span>جمع جزء</span>
+            <strong><?php echo wc_price( $cart->get_subtotal() ); ?></strong>
+        </div>
+
+        <?php if ( $cart->get_cart_discount_total() > 0 ) : ?>
+        <div class="senoobar-summary-row discount">
+            <span>تخفیف</span>
+            <strong>−<?php echo wc_price( $cart->get_cart_discount_total() ); ?></strong>
+        </div>
+        <?php endif; ?>
+
+        <?php if ( wc_coupons_enabled() ) : ?>
+        <div class="senoobar-summary-row">
+            <span>کوپن</span>
+            <strong><?php wc_cart_totals_coupon_html( WC()->cart->get_applied_coupons() ? current( WC()->cart->get_applied_coupons() ) : false ); ?></strong>
+        </div>
+        <?php endif; ?>
+
+        <?php if ( $cart->needs_shipping() && $cart->show_shipping() ) : ?>
+        <div class="senoobar-summary-row">
+            <span>ارسال</span>
+            <strong><?php wc_cart_totals_shipping_html(); ?></strong>
+        </div>
+        <?php endif; ?>
+
+        <?php foreach ( WC()->cart->get_fees() as $fee ) : ?>
+        <div class="senoobar-summary-row">
+            <span><?php echo esc_html( $fee->name ); ?></span>
+            <strong><?php wc_cart_totals_fee_html( $fee ); ?></strong>
+        </div>
+        <?php endforeach; ?>
+
+        <?php if ( wc_tax_enabled() && ! WC()->cart->display_prices_including_tax() ) : ?>
+            <?php if ( 'itemized' === get_option( 'woocommerce_tax_total_display' ) ) : ?>
+                <?php foreach ( WC()->cart->get_tax_totals() as $code => $tax ) : ?>
+                <div class="senoobar-summary-row">
+                    <span><?php echo esc_html( $tax->label ); ?></span>
+                    <strong><?php echo wp_kses_post( $tax->formatted_amount ); ?></strong>
+                </div>
+                <?php endforeach; ?>
+            <?php else : ?>
+            <div class="senoobar-summary-row">
+                <span><?php echo esc_html( WC()->countries->tax_or_vat() ); ?></span>
+                <strong><?php wc_cart_totals_taxes_total_html(); ?></strong>
+            </div>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <div class="senoobar-summary-total">
+            <span>جمع کل</span>
+            <strong><?php wc_cart_totals_order_total_html(); ?></strong>
+        </div>
     </div>
 
     <div class="senoobar-payment-section">
