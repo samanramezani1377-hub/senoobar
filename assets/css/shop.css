@@ -528,6 +528,11 @@ body .shop-main ul.products li.product span.onsale,
 }
 
 /* ── List View ── */
+/* The WooCommerce card wraps image+title+price inside a single
+   <a class="woocommerce-LoopProduct-link">. So list view must restructure the
+   INNER <a> (not the <li>) to put the image on the left and text on the right,
+   while keeping the absolute cart/heart/sale elements anchored to the <li>. */
+
 body .shop-main.list-view ul.products {
   display: flex !important;
   flex-direction: column !important;
@@ -535,16 +540,16 @@ body .shop-main.list-view ul.products {
 }
 
 body .shop-main.list-view ul.products li.product {
-  display: grid !important;
-  grid-template-columns: 200px minmax(0, 1fr) !important;
-  gap: 20px !important;
-  align-items: center !important;
-  padding: 16px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  padding: 0 !important;
   background: #fff !important;
   border-radius: 12px !important;
   border: 1px solid #e5e7eb !important;
   transition: box-shadow 0.2s !important;
   overflow: hidden !important;
+  position: relative !important;
 }
 
 body .shop-main.list-view ul.products li.product:hover {
@@ -552,34 +557,60 @@ body .shop-main.list-view ul.products li.product:hover {
   transform: none !important;
 }
 
+/* The single product link becomes a 2-column grid: image | text */
+body .shop-main.list-view ul.products li.product a.woocommerce-LoopProduct-link {
+  display: grid !important;
+  grid-template-columns: 200px minmax(0, 1fr) !important;
+  grid-template-areas:
+    "img title"
+    "img price"
+    "img ." !important;
+  gap: 0 20px !important;
+  align-items: center !important;
+  flex: 1 1 auto !important;
+  padding: 16px 16px 60px !important; /* extra bottom room for the cart button */
+  overflow: visible !important;
+  border-radius: 0 !important;
+}
+
 body .shop-main.list-view ul.products li.product img {
-  width: 100% !important;
+  grid-area: img !important;
+  width: 200px !important;
   height: auto !important;
+  max-width: 100% !important;
   aspect-ratio: 4/3 !important;
   object-fit: cover !important;
   border-radius: 8px !important;
-}
-
-body .shop-main.list-view ul.products li.product .woocommerce-loop-product__title {
-  font-size: 1.1rem !important;
-  padding: 0 !important;
   margin: 0 !important;
 }
 
+body .shop-main.list-view ul.products li.product .woocommerce-loop-product__title {
+  grid-area: title !important;
+  font-size: 1.1rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: right !important;
+  align-self: end !important;
+}
+
 body .shop-main.list-view ul.products li.product .price {
+  grid-area: price !important;
   padding: 8px 0 0 !important;
   font-size: 1rem !important;
   flex-direction: row !important;
   gap: 10px !important;
   align-items: center !important;
   color: #111827 !important;
+  align-self: start !important;
 }
 
-/* List-view button — full text, not round */
+/* List-view add-to-cart — full text button anchored bottom-right of the card */
 body .shop-main.list-view ul.products li.product .add_to_cart_button,
 body .shop-main.list-view ul.products li.product .button,
 body .shop-main.list-view ul.products li.product a.button {
-  position: static !important;
+  position: absolute !important;
+  bottom: 16px !important;
+  left: 16px !important;
   width: fit-content !important;
   height: auto !important;
   padding: 10px 20px !important;
@@ -587,20 +618,22 @@ body .shop-main.list-view ul.products li.product a.button {
   font-size: 0.82rem !important;
   opacity: 1 !important;
   transform: none !important;
-  margin: 8px 0 0 !important;
+  margin: 0 !important;
 }
 body .shop-main.list-view ul.products li.product .add_to_cart_button::after,
 body .shop-main.list-view ul.products li.product .button::after,
 body .shop-main.list-view ul.products li.product a.button::after {
-  display: none;
+  display: none !important;
 }
 
-body .shop-main.list-view ul.products li.product:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
-  transform: none !important;
+/* Keep the wishlist heart anchored top-left over the image */
+body .shop-main.list-view ul.products li.product .snb-card-heart {
+  top: 10px !important;
+  left: 10px !important;
+  z-index: 5 !important;
 }
 
-/* ── Grid-view card responsive ── */
+/* ── Grid-view card responsive (unchanged) ── */
 @media (max-width: 991px) {
   body .shop-main ul.products li.product a.woocommerce-LoopProduct-link img {
     aspect-ratio: 16 / 9 !important;
@@ -627,7 +660,6 @@ body .shop-main.list-view ul.products li.product:hover {
   body .shop-main ul.products li.product {
     border-radius: 10px !important;
   }
-  /* Wider, shorter image on single-column mobile */
   body .shop-main ul.products li.product a.woocommerce-LoopProduct-link img {
     aspect-ratio: 16 / 9 !important;
   }
@@ -670,49 +702,37 @@ body .shop-main.list-view ul.products li.product:hover {
   }
 }
 
-body .shop-main.list-view ul.products li.product img {
-  width: 100% !important;
-  height: auto !important;
-  aspect-ratio: 4/3 !important;
-  object-fit: cover !important;
-  border-radius: 8px !important;
-}
-
-body .shop-main.list-view ul.products li.product .woocommerce-loop-product__title {
-  font-size: 1.1rem !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-body .shop-main.list-view ul.products li.product .price {
-  padding: 8px 0 0 !important;
-  font-size: 1rem !important;
-}
-
-body .shop-main.list-view ul.products li.product .add_to_cart_button,
-body .shop-main.list-view ul.products li.product .button {
-  margin: 8px 0 0 !important;
-  width: fit-content !important;
-}
-
 /* List-view responsive: tablet */
 @media (max-width: 991px) {
-  body .shop-main.list-view ul.products li.product {
+  body .shop-main.list-view ul.products li.product a.woocommerce-LoopProduct-link {
     grid-template-columns: 150px minmax(0, 1fr) !important;
-    gap: 14px !important;
+    gap: 0 14px !important;
     padding: 12px !important;
   }
+  body .shop-main.list-view ul.products li.product img {
+    width: 150px !important;
+  }
 }
+
 
 /* List-view responsive: mobile */
 @media (max-width: 599px) {
-  body .shop-main.list-view ul.products li.product {
-    grid-template-columns: 120px minmax(0, 1fr) !important;
-    gap: 10px !important;
+  body .shop-main.list-view ul.products li.product a.woocommerce-LoopProduct-link {
+    grid-template-columns: 110px minmax(0, 1fr) !important;
+    gap: 0 10px !important;
     padding: 10px !important;
   }
+  body .shop-main.list-view ul.products li.product img {
+    width: 110px !important;
+  }
   body .shop-main.list-view ul.products li.product .woocommerce-loop-product__title {
-    font-size: 0.95rem !important;
+    font-size: 0.92rem !important;
+  }
+  body .shop-main.list-view ul.products li.product .add_to_cart_button,
+  body .shop-main.list-view ul.products li.product .button,
+  body .shop-main.list-view ul.products li.product a.button {
+    bottom: 10px !important;
+    padding: 8px 14px !important;
   }
 }
 
