@@ -31,9 +31,23 @@ $current_cat_slug = is_product_category() ? get_queried_object()->slug : '';
   <!-- ─── Page Header ─────────────────────────── -->
   <section class="shop-header">
     <div class="container">
+      <!-- Breadcrumb -->
+      <nav class="shop-breadcrumb" aria-label="مسیر صفحه">
+        <a href="<?php echo esc_url(home_url('/')); ?>">خانه</a>
+        <span class="shop-breadcrumb__sep">/</span>
+        <?php if (is_product_category()): ?>
+          <a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop'))); ?>">فروشگاه</a>
+          <span class="shop-breadcrumb__sep">/</span>
+          <span class="shop-breadcrumb__current"><?php echo esc_html(get_queried_object()->name); ?></span>
+        <?php else: ?>
+          <span class="shop-breadcrumb__current">فروشگاه</span>
+        <?php endif; ?>
+      </nav>
+
       <h1 class="shop-title">
         <?php woocommerce_page_title(); ?>
       </h1>
+
       <p class="shop-desc">
         <?php 
         if (is_product_category()) {
