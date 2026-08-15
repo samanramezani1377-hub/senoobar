@@ -42,20 +42,30 @@ $order_status = $order->get_status();
         </div>
 
         <?php
-        // If the order is attached to a customer account (auto-created for
-        // guest checkout), nudge the customer to set up their login.
-        if ( $order->get_customer_id() && $order->get_billing_phone() ) :
+        // If a customer account was auto-created for this guest order, surface
+        // the login credentials (mobile = username + temporary password) so the
+        // customer can log in later and track the order.
+        $senoobar_temp_password = get_post_meta( $order->get_id(), '_senoobar_temp_password', true );
+        if ( $senoobar_temp_password && $order->get_billing_phone() ) :
         ?>
         <div class="senoobar-account-hint">
             <div class="senoobar-account-hint-icon">🔐</div>
             <div class="senoobar-account-hint-body">
                 <strong>حساب کاربری شما ساخته شد</strong>
                 <p>
-                    برای پیگیری سفارش، با شماره موبایل
-                    <span dir="ltr"><?php echo esc_html( $order->get_billing_phone() ); ?></span>
-                    وارد «حساب کاربری» شوید. در صورت نیاز، از گزینه «رمز عبور را فراموش کرده‌اید» یک رمز جدید بسازید.
+                    با مشخصات زیر می‌توانید وارد «حساب کاربری» شوید و سفارش‌هایتان را پیگیری کنید. پس از اولین ورود، رمز عبور را تغییر دهید.
                 </p>
-                <a href="<?php echo esc_url( wc_get_account_endpoint_url( 'dashboard' ) ); ?>" class="senoobar-account-hint-link">ورود به حساب کاربری ←</a>
+                <div class="senoobar-account-creds">
+                    <div class="senoobar-cred-row">
+                        <span class="senoobar-cred-label">شماره موبایل</span>
+                        <span class="senoobar-cred-value" dir="ltr"><?php echo esc_html( $order->get_billing_phone() ); ?></span>
+                    </div>
+                    <div class="senoobar-cred-row senoobar-cred-password">
+                        <span class="senoobar-cred-label">رمز عبور موقت</span>
+                        <span class="senoobar-cred-value" dir="ltr"><?php echo esc_html( $senoobar_temp_password ); ?></span>
+                    </div>
+                </div>
+                <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="senoobar-btn senoobar-btn-primary" style="margin-top:14px;">ورود به حساب کاربری</a>
             </div>
         </div>
         <?php endif; ?>
@@ -346,6 +356,39 @@ $order_status = $order->get_status();
 .senoobar-account-hint-body p span { font-weight: 700; color: var(--senoobar-green); }
 .senoobar-account-hint-link { display: inline-block; color: var(--senoobar-green); font-size: 13px; font-weight: 700; text-decoration: none; }
 .senoobar-account-hint-link:hover { text-decoration: underline; }
+
+/* Account credentials (mobile + temp password) */
+.senoobar-account-creds {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 6px 0 12px;
+    padding: 12px 14px;
+    background: #fafbfa;
+    border: 1px dashed var(--checkout-border);
+    border-radius: 10px;
+}
+.senoobar-cred-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+}
+.senoobar-cred-label { color: var(--checkout-muted); }
+.senoobar-cred-value {
+    font-weight: 700;
+    color: #171a18;
+    background: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: .5px;
+}
+.senoobar-cred-password .senoobar-cred-value {
+    color: var(--senoobar-green);
+    font-family: monospace;
+    letter-spacing: 1px;
+}
 
 /* Grid */
 .senoobar-thankyou-grid {

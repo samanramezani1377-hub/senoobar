@@ -227,9 +227,10 @@ add_action( 'woocommerce_checkout_order_processed', function ( $order_id, $poste
         $user_id = $existing_id;
     } else {
         // 2) Create a new customer account with a random password.
+        $temp_password = wp_generate_password( 10, false, false ); // readable (letters+digits)
         $user_id = wp_insert_user( [
             'user_login'   => $phone,
-            'user_pass'    => wp_generate_password( 14, true, false ),
+            'user_pass'    => $temp_password,
             'user_email'   => senoobar_phone_email( $phone ),
             'first_name'   => $first,
             'last_name'    => $last,
@@ -242,6 +243,12 @@ add_action( 'woocommerce_checkout_order_processed', function ( $order_id, $poste
         }
 
         update_user_meta( $user_id, 'mobile', $phone );
+
+        // Store the temp password on the order so the thank-you page can show
+        // it to this customer exactly once (right after checkout).
+        if ( $order ) {
+            update_post_meta( $order_id, '_senoobar_temp_password', $temp_password );
+        }
     }
 
     // 3) Persist billing details onto the (new or existing) account.
