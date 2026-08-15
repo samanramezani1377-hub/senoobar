@@ -41,6 +41,25 @@ $order_status = $order->get_status();
             </div>
         </div>
 
+        <?php
+        // If the order is attached to a customer account (auto-created for
+        // guest checkout), nudge the customer to set up their login.
+        if ( $order->get_customer_id() && $order->get_billing_phone() ) :
+        ?>
+        <div class="senoobar-account-hint">
+            <div class="senoobar-account-hint-icon">🔐</div>
+            <div class="senoobar-account-hint-body">
+                <strong>حساب کاربری شما ساخته شد</strong>
+                <p>
+                    برای پیگیری سفارش، با شماره موبایل
+                    <span dir="ltr"><?php echo esc_html( $order->get_billing_phone() ); ?></span>
+                    وارد «حساب کاربری» شوید. در صورت نیاز، از گزینه «رمز عبور را فراموش کرده‌اید» یک رمز جدید بسازید.
+                </p>
+                <a href="<?php echo esc_url( wc_get_account_endpoint_url( 'dashboard' ) ); ?>" class="senoobar-account-hint-link">ورود به حساب کاربری ←</a>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <!-- Order Details -->
         <div class="senoobar-thankyou-grid">
 
@@ -304,6 +323,29 @@ $order_status = $order->get_status();
 }
 .senoobar-thankyou-success h1 { margin: 0 0 12px; font-size: 28px; font-weight: 800; color: #171a18; }
 .senoobar-thankyou-success p { margin: 0; color: var(--checkout-muted); font-size: 15px; }
+
+/* Account hint */
+.senoobar-account-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    max-width: 640px;
+    margin: 0 auto 24px;
+    padding: 18px 20px;
+    background: #fff;
+    border: 1px solid var(--checkout-border);
+    border-right: 4px solid var(--senoobar-green);
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(22, 35, 28, .035);
+    text-align: right;
+}
+.senoobar-account-hint-icon { font-size: 24px; line-height: 1; }
+.senoobar-account-hint-body { flex: 1; }
+.senoobar-account-hint-body strong { display: block; margin-bottom: 6px; color: #171a18; font-size: 14px; }
+.senoobar-account-hint-body p { margin: 0 0 10px; color: var(--checkout-muted); font-size: 13px; line-height: 1.7; }
+.senoobar-account-hint-body p span { font-weight: 700; color: var(--senoobar-green); }
+.senoobar-account-hint-link { display: inline-block; color: var(--senoobar-green); font-size: 13px; font-weight: 700; text-decoration: none; }
+.senoobar-account-hint-link:hover { text-decoration: underline; }
 
 /* Grid */
 .senoobar-thankyou-grid {

@@ -184,3 +184,92 @@ add_filter( 'template_include', function ( $template ) {
     }
     return $template;
 }, 100 );
+
+
+/* ── 7. Auto-create account on checkout (guest checkout => account) ── */
+// When a guest places an order, create a customer account keyed on the mobile
+// number (username = normalized phone, synthetic email). If an account for
+// that phone already exists, link the order to it instead of creating a new
+// one. Password is auto-generated; the customer can recover it via the
+// "forgot password" flow using their mobile number.
+add_action( 'woocommerce_checkout_order_processed', function ( $order_id, $posted_data, $order ) {
+
+    // Only auto-create accounts for guests.
+    if ( is_user_logged_in() ) {
+        return;
+    }
+
+    $phone = isset( $posted_data['billing_phone'] ) ? senoobar_normalize_phone( $posted_data['billing_phone'] ) : '';
+
+    // If we can't resolve a valid mobile, bail (let WooCommerce handle it).
+    if ( strlen( $phone ) !== 11 || substr( $phone, 0, 2 ) !== '09' ) {
+        return;
+    }
+
+    // 1) Look for an existing account with this phone.
+    $existing_id = 0;
+    $by_user  = get_user_by( 'login', $phone );
+    $by_email = get_user_by( 'email', senoobar_phone_email( $phone ) );
+    $by_meta  = get_users( [ 'meta_key' => 'mobile', 'meta_value' => $phone, 'number' => 1, 'fields' => 'ID' ] );
+
+    if ( $by_user ) {
+        $existing_id = $by_user->ID;
+    } elseif ( $by_email ) {
+        $existing_id = $by_email->ID;
+    } elseif ( ! empty( $by_meta ) ) {
+        $existing_id = (int) $by_meta[0];
+    }
+
+    $first = isset( $posted_data['billing_first_name'] ) ? sanitize_text_field( $posted_data['billing_first_name'] ) : '';
+    $last  = isset( $posted_data['billing_last_name'] ) ? sanitize_text_field( $posted_data['billing_last_name'] ) : '';
+
+    if ( $existing_id ) {
+        $user_id = $existing_id;
+    } else {
+        // 2) Create a new customer account with a random password.
+        $user_id = wp_insert_user( [
+            'user_login'   => $phone,
+            'user_pass'    => wp_generate_password( 14, true, false ),
+            'user_email'   => senoobar_phone_email( $phone ),
+            'first_name'   => $first,
+            'last_name'    => $last,
+            'display_name' => trim( $first . ' ' . $last ) !== '' ? trim( $first . ' ' . $last ) : $phone,
+            'role'         => 'customer',
+        ] );
+
+        if ( is_wp_error( $user_id ) ) {
+            return;
+        }
+
+        update_user_meta( $user_id, 'mobile', $phone );
+    }
+
+    // 3) Persist billing details onto the (new or existing) account.
+    update_user_meta( $user_id, 'billing_phone', $phone );
+    if ( $first !== '' ) { update_user_meta( $user_id, 'billing_first_name', $first ); }
+    if ( $last !== '' )  { update_user_meta( $user_id, 'billing_last_name', $last ); }
+    update_user_meta( $user_id, 'billing_email', senoobar_phone_email( $phone ) );
+
+    foreach ( [ 'billing_state', 'billing_postcode', 'billing_address_1' ] as $key ) {
+        if ( isset( $posted_data[ $key ] ) && $posted_data[ $key ] !== '' ) {
+            update_user_meta( $user_id, $key, sanitize_text_field( wp_unslash( $posted_data[ $key ] ) ) );
+        }
+    }
+
+    // 4) Link the order to this account.
+    if ( $order ) {
+        $order->set_customer_id( $user_id );
+        // Preserve guest billing but also ensure the customer id persists.
+        try {
+            $order->save();
+        } catch ( Exception $e ) {
+            // Non-critical: order is already created.
+        }
+    }
+
+    // 5) Mark account-created flag so the thank-you page can show a hint.
+    if ( ! $existing_id ) {
+        WC()->session->set( 'senoobar_account_created', $phone );
+    }
+
+}, 10, 3 );
