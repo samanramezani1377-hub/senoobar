@@ -431,7 +431,8 @@ a.senoobar-cart-product-name:hover {
     padding: 24px;
 
     position: sticky;
-    top: 20px;
+    /* Keep below the sticky site header (--header-height) + breathing room */
+    top: calc(var(--header-height, 88px) + 20px);
 }
 
 .senoobar-summary-card h2 {

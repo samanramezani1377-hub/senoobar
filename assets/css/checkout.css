@@ -203,7 +203,8 @@
 .senoobar-order-summary-card {
     padding: 24px;
     position: sticky;
-    top: 20px;
+    /* Keep below the sticky site header (--header-height) + breathing room */
+    top: calc(var(--header-height, 88px) + 20px);
 }
 .senoobar-order-summary-card h2 {
     margin: 0 0 20px;
