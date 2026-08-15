@@ -19,10 +19,18 @@ $fields = $checkout->get_checkout_fields( 'billing' );
     <?php foreach ( $fields as $key => $field ) : ?>
 
         <?php
-        // Skip the hidden email field — it must exist in the DOM for core
-        // validation but is filled automatically on submit.
+        // Hidden fields (email + country) — they must exist in the DOM for
+        // core validation but are auto-filled / fixed on submit.
         if ( 'billing_email' === $key ) {
-            echo '<input type="hidden" name="billing_email" id="billing_email" value="">';
+            echo '<input type="hidden" name="billing_email" id="billing_email" value="' . esc_attr( $checkout->get_value( 'billing_email' ) ) . '">';
+            continue;
+        }
+        if ( 'billing_country' === $key ) {
+            $country_val = $checkout->get_value( 'billing_country' );
+            if ( empty( $country_val ) ) {
+                $country_val = 'IR';
+            }
+            echo '<input type="hidden" name="billing_country" id="billing_country" value="' . esc_attr( $country_val ) . '">';
             continue;
         }
 

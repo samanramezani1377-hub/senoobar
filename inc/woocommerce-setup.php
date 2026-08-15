@@ -70,6 +70,16 @@ add_filter('template_include', function ($template) {
     return $template;
 }, 100);
 
+// ─── 1c. Remove login/coupon forms that render their own <form> tags ──
+// The theme renders its own styled checkout form. The default WooCommerce
+// login + coupon forms (hooked into woocommerce_checkout_login_form and
+// woocommerce_checkout_coupon_form) wrap content in their own <form>, which
+// nests inside our checkout form and breaks field submission.
+add_action( 'after_setup_theme', function () {
+    remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_login_form', 10 );
+    remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10 );
+}, 20 );
+
 // ─── 2. Kill default Woo styles ─────────────
 add_filter('woocommerce_enqueue_styles', '__return_empty_array');
 
@@ -531,6 +541,17 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
             'class'       => ['form-row-wide', 'senoobar-field'],
             'priority'    => 50,
         ],
+    ];
+
+    // Country is required by core for address (state/postcode) validation.
+    // We hide it and force it to IR (Iran).
+    $billing['billing_country'] = [
+        'type'        => 'hidden',
+        'label'       => '',
+        'required'    => false,
+        'default'     => 'IR',
+        'class'       => ['form-row-wide', 'senoobar-hidden-field'],
+        'priority'    => 55,
     ];
 
     // Email is required by core but we hide it from the UI and auto-fill it
