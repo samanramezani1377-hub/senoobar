@@ -517,13 +517,14 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
             'input_class' => ['senoobar-input'],
         ],
         'billing_state' => [
-            'type'        => 'select',
+            'type'        => 'state',
             'label'       => 'استان',
             'placeholder' => 'انتخاب استان',
             'required'    => true,
             'class'       => ['form-row-wide', 'senoobar-field'],
             'priority'    => 40,
             'options'     => senoobar_iran_provinces(),
+            'country'     => 'IR',
         ],
         'billing_postcode' => [
             'type'        => 'text',

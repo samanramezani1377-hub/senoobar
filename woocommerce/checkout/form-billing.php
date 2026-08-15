@@ -51,7 +51,7 @@ $fields = $checkout->get_checkout_fields( 'billing' );
                 <?php if ( $required ) : ?><span class="required">*</span><?php endif; ?>
             </label>
 
-            <?php if ( 'select' === $type ) : ?>
+            <?php if ( 'select' === $type || 'state' === $type || 'country' === $type ) : ?>
 
                 <select name="<?php echo esc_attr( $key ); ?>" id="<?php echo esc_attr( $key ); ?>" class="senoobar-form-select"
                     <?php echo $required ? 'required' : ''; ?>>
