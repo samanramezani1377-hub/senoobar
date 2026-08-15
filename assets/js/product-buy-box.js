@@ -77,6 +77,22 @@
       }).then(function (r) { return r.json(); });
     }
 
+    // Extract fragments from a response regardless of whether it is a flat
+    // object or wrapped in wp_send_json_success's { success, data } shape.
+    function getFragments(resp) {
+      if (!resp) return null;
+      if (resp.fragments) return resp.fragments;
+      if (resp.data && resp.data.fragments) return resp.data.fragments;
+      return null;
+    }
+
+    function getCount(resp) {
+      if (!resp) return null;
+      if (typeof resp.cart_count === 'number') return resp.cart_count;
+      if (resp.data && typeof resp.data.cart_count === 'number') return resp.data.cart_count;
+      return null;
+    }
+
     // Apply badge fragments so the number updates instantly.
     function applyFragments(fragments) {
       if (!fragments) return;
@@ -85,6 +101,15 @@
         if (el) el.outerHTML = fragments[selector];
       });
       if (window.jQuery) jQuery(document.body).trigger('wc_fragments_refreshed');
+    }
+
+    // Update every cart badge count directly (robust fallback).
+    function forceUpdateBadges(count) {
+      document.querySelectorAll('.cart-badge[data-cart-count], .mbn-badge[data-cart-count]').forEach(function (el) {
+        el.textContent = String(count);
+        if (count > 0) el.classList.remove('is-hidden');
+        else el.classList.add('is-hidden');
+      });
     }
 
     // ── Cart actions ────────────────────────────
@@ -204,7 +229,9 @@
         btn.disabled = false;
         setQty(1);
         showStepper();
-        if (data && data.fragments) applyFragments(data.fragments);
+        applyFragments(getFragments(data));
+        var c = getCount(data);
+        if (typeof c === 'number') forceUpdateBadges(c);
         cartBump();
         flyToCart();
       }).catch(function () {
@@ -217,14 +244,18 @@
       if (qty <= 1) return;
       setQty(qty - 1);
       setCartQuantity(qty).then(function (data) {
-        if (data && data.fragments) applyFragments(data.fragments);
+        applyFragments(getFragments(data));
+        var c = getCount(data);
+        if (typeof c === 'number') forceUpdateBadges(c);
       });
     });
 
     plusBtn.addEventListener('click', function () {
       setQty(qty + 1);
       setCartQuantity(qty).then(function (data) {
-        if (data && data.fragments) applyFragments(data.fragments);
+        applyFragments(getFragments(data));
+        var c = getCount(data);
+        if (typeof c === 'number') forceUpdateBadges(c);
         cartBump();
         flyToCart();
       });
@@ -236,14 +267,9 @@
         removeBtn.disabled = false;
         setQty(1);
         showButton();
-        if (data && data.fragments) {
-          applyFragments(data.fragments);
-        } else {
-          applyFragments({
-            '.cart-badge[data-cart-count]': '<span class="cart-badge is-hidden" data-cart-count>0</span>',
-            '.mbn-badge[data-cart-count]': '<span class="mbn-badge is-hidden" data-cart-count>0</span>'
-          });
-        }
+        applyFragments(getFragments(data));
+        var c = getCount(data);
+        if (typeof c === 'number') forceUpdateBadges(c);
       }).catch(function () {
         removeBtn.disabled = false;
       });
