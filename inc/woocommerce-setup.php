@@ -394,3 +394,134 @@ add_filter('woocommerce_add_to_cart_fragments', function ($fragments) {
 
     return $fragments;
 });
+
+
+/* ══════════════════════════════════════════════════════
+   CHECKOUT — minimal fields (name, phone, province, address)
+══════════════════════════════════════════════════════ */
+
+// Iran provinces (state field options) + a default, ordering-friendly list.
+function senoobar_iran_provinces() {
+    return [
+        'تهران' => 'تهران',
+        'البرز' => 'البرز',
+        'اصفهان' => 'اصفهان',
+        'فارس' => 'فارس',
+        'خراسان رضوی' => 'خراسان رضوی',
+        'خراسان شمالی' => 'خراسان شمالی',
+        'خراسان جنوبی' => 'خراسان جنوبی',
+        'آذربایجان شرقی' => 'آذربایجان شرقی',
+        'آذربایجان غربی' => 'آذربایجان غربی',
+        'اردبیل' => 'اردبیل',
+        'ایلام' => 'ایلام',
+        'بوشهر' => 'بوشهر',
+        'چهارمحال و بختیاری' => 'چهارمحال و بختیاری',
+        'خوزستان' => 'خوزستان',
+        'زنجان' => 'زنجان',
+        'سمنان' => 'سمنان',
+        'سیستان و بلوچستان' => 'سیستان و بلوچستان',
+        'قزوین' => 'قزوین',
+        'قم' => 'قم',
+        'کردستان' => 'کردستان',
+        'کرمان' => 'کرمان',
+        'کرمانشاه' => 'کرمانشاه',
+        'کهگیلویه و بویراحمد' => 'کهگیلویه و بویراحمد',
+        'گلستان' => 'گلستان',
+        'گیلان' => 'گیلان',
+        'لرستان' => 'لرستان',
+        'مازندران' => 'مازندران',
+        'مرکزی' => 'مرکزی',
+        'هرمزگان' => 'هرمزگان',
+        'همدان' => 'همدان',
+        'یزد' => 'یزد',
+    ];
+}
+
+add_filter('woocommerce_checkout_fields', function ($fields) {
+
+    // ── Billing: keep only name, last name, phone, province, address ──
+    $billing = [
+        'billing_first_name' => [
+            'type'        => 'text',
+            'label'       => 'نام',
+            'placeholder' => 'نام شما',
+            'required'    => true,
+            'class'       => ['form-row-first', 'senoobar-field'],
+            'priority'    => 10,
+        ],
+        'billing_last_name' => [
+            'type'        => 'text',
+            'label'       => 'نام خانوادگی',
+            'placeholder' => 'نام خانوادگی شما',
+            'required'    => true,
+            'class'       => ['form-row-last', 'senoobar-field'],
+            'priority'    => 20,
+        ],
+        'billing_phone' => [
+            'type'        => 'tel',
+            'label'       => 'شماره موبایل',
+            'placeholder' => '۰۹۱۲ ۳۴۵ ۶۷۸۹',
+            'required'    => true,
+            'class'       => ['form-row-wide', 'senoobar-field'],
+            'priority'    => 30,
+            'input_class' => ['senoobar-input'],
+        ],
+        'billing_state' => [
+            'type'        => 'select',
+            'label'       => 'استان',
+            'placeholder' => 'انتخاب استان',
+            'required'    => true,
+            'class'       => ['form-row-wide', 'senoobar-field'],
+            'priority'    => 40,
+            'options'     => senoobar_iran_provinces(),
+        ],
+        'billing_address_1' => [
+            'type'        => 'textarea',
+            'label'       => 'آدرس',
+            'placeholder' => 'آدرس کامل پستی شما',
+            'required'    => true,
+            'class'       => ['form-row-wide', 'senoobar-field'],
+            'priority'    => 50,
+        ],
+    ];
+
+    // Email is required by core but we hide it from the UI and auto-fill it
+    // from the phone number when the order is created (see below).
+    $billing['billing_email'] = [
+        'type'        => 'hidden',
+        'label'       => '',
+        'required'    => false,
+        'class'       => ['form-row-wide', 'senoobar-hidden-field'],
+        'priority'    => 60,
+    ];
+
+    $fields['billing'] = $billing;
+
+    // ── Shipping: mirror billing, same minimal set ──
+    if (isset($fields['shipping'])) {
+        $fields['shipping'] = $billing;
+        foreach ($fields['shipping'] as $k => &$f) {
+            $f['label'] = 'آدرس ارسال';
+        }
+        unset($f);
+    }
+
+    // ── Account: drop the optional account section on checkout ──
+    if (isset($fields['account'])) {
+        $fields['account'] = [];
+    }
+
+    return $fields;
+}, 30);
+
+// Auto-fill a synthetic email from the phone so core order checks pass even
+// though the customer never sees or types an email.
+add_action('woocommerce_checkout_process', function () {
+    if (empty($_POST['billing_email'])) {
+        $phone = sanitize_text_field($_POST['billing_phone'] ?? '');
+        $phone = preg_replace('/\D+/', '', $phone);
+        if ($phone !== '') {
+            $_POST['billing_email'] = $phone . '@senoobar.local';
+        }
+    }
+}, 10);
