@@ -1078,41 +1078,8 @@ body .shop-main.list-view ul.products li.product .snb-card-heart {
 }
 
 
-/* ─── Home loops (all sizes): after adding, show ONLY the "مشاهده سبد خرید"
-       button. Hide the qty/remove controls entirely. ─── */
-
-/* Hide minus / qty / plus / delete on every home card */
-body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-minus,
-body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty,
-body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-plus,
-body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-del {
-  display: none !important;
-}
-
-/* The stepper wrapper becomes transparent and just holds the view-cart pill */
-body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-
-/* A clean "مشاهده سبد خرید" pill */
-body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-view {
-  display: flex !important;
-  height: 40px !important;
-  border-radius: 20px !important;
-  font-size: 0.85rem !important;
-  font-weight: 600 !important;
-  padding: 0 18px !important;
-  background: #1e3a2f !important;
-  color: #fff !important;
-  align-items: center !important;
-  justify-content: center !important;
-  text-decoration: none !important;
-}
-
-/* Mobile: keep the single pill in-flow and full width */
+/* ─── Home loop (MOBILE ONLY): after adding, show ONLY the "مشاهده سبد خرید"
+       button. Hide the qty/remove controls. Desktop is unchanged. ─── */
 @media (max-width: 767px) {
   body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper {
     position: static !important;
@@ -1121,10 +1088,36 @@ body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-ca
     margin: 4px 0 0 !important;
     box-sizing: border-box !important;
     display: flex !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
+
+  /* Hide minus / qty / plus / delete — only the view-cart button remains */
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-minus,
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty,
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-plus,
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-del {
+    display: none !important;
+  }
+
+  /* Full-width "مشاهده سبد خرید" pill */
   body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-view {
+    display: flex !important;
     width: 100% !important;
+    height: 40px !important;
+    border-radius: 20px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    padding: 0 8px !important;
+    background: #1e3a2f !important;
+    color: #fff !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
   }
+
   /* Card ends right below the in-flow button */
   body .shop-main[data-home-loop] ul.products li.product,
   body .shop-main[data-home-loop] ul.products li.product:has(.snb-card-stepper) {
