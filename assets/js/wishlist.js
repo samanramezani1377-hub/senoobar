@@ -26,8 +26,16 @@
   }
 
   function isLoggedIn() {
-    return !!(window.SENOOBAR_WISHLIST && window.SENOOBAR_WISHLIST.loggedIn)
-      || document.body.classList.contains('logged-in');
+    // Trust the server-side flag first (senoobarData.loggedIn =
+    // is_user_logged_in()). The body.logged-in class is unreliable because it
+    // is also added by the admin bar / other plugins for non-customers.
+    if (window.senoobarData && typeof senoobarData.loggedIn === 'boolean') {
+      return senoobarData.loggedIn;
+    }
+    if (window.SENOOBAR_WISHLIST && typeof SENOOBAR_WISHLIST.loggedIn === 'boolean') {
+      return SENOOBAR_WISHLIST.loggedIn;
+    }
+    return document.body.classList.contains('logged-in');
   }
 
   // Server-exposed wishlist ids for logged-in users (set by page-wishlist.php)

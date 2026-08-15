@@ -538,8 +538,9 @@ final class Senoobar_Theme {
                 'cartUrl' => class_exists('WooCommerce') ? wc_get_cart_url() : '',
                 'nonce'   => wp_create_nonce('senoobar_cart_nonce'),
                 'isRTL'   => is_rtl(),
-                'siteUrl' => home_url(),
-                'shopUrl' => class_exists('WooCommerce') ? get_permalink(wc_get_page_id('shop')) : home_url('/'),
+                'siteUrl'   => home_url(),
+                'shopUrl'   => class_exists('WooCommerce') ? get_permalink(wc_get_page_id('shop')) : home_url('/'),
+                'loggedIn'  => is_user_logged_in(),
             ]);
             // Cart JS — always load when WooCommerce is active (so the AJAX +/- /
             // remove handlers are present regardless of how is_cart() resolves).
