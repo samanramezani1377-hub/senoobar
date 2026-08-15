@@ -214,18 +214,7 @@
         title.appendChild(chev);
       }
 
-      // Determine if this group has an active selection -> open it by default.
-      const hasActiveCategory = body.querySelector('.category-filter-item.active');
-      const hasPrice = (() => {
-        const min = body.querySelector('#minPrice') || body.querySelector('input[name="min_price"]');
-        const max = body.querySelector('#maxPrice') || body.querySelector('input[name="max_price"]');
-        return (min && min.value !== '') || (max && max.value !== '');
-      })();
-
-      if (hasActiveCategory || hasPrice) {
-        group.classList.add('open');
-      }
-
+      // Always collapsed by default; open only on user click.
       title.addEventListener('click', () => {
         group.classList.toggle('open');
       });

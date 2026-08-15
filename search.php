@@ -70,6 +70,9 @@ $product_categories = get_terms([
               </button>
             </div>
             
+            <!-- Desktop-only "فیلتر" heading above the collapsible groups -->
+            <h3 class="filter-sidebar-title">فیلتر</h3>
+
             <!-- Category Filter -->
             <div class="filter-group" style="margin-bottom:24px;">
               <h4 class="filter-group-title" style="font-size:0.9rem;font-weight:700;color:#111827;margin:0 0 12px;">دسته‌بندی</h4>

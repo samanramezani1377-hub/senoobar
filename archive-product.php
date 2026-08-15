@@ -67,6 +67,9 @@ $current_cat_slug = is_product_category() ? get_queried_object()->slug : '';
           </button>
         </div>
 
+        <!-- Desktop-only "فیلتر" heading above the collapsible groups -->
+        <h3 class="filter-sidebar-title">فیلتر</h3>
+
         <!-- Category Filter -->
         <div class="filter-group">
           <h4 class="filter-group-title">دسته‌بندی</h4>

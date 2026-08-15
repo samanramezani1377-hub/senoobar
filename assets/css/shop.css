@@ -124,6 +124,20 @@
   .filter-overlay.open { display: block; }
 }
 
+/* ─── Sidebar filter heading (desktop) ─────── */
+.filter-sidebar-title {
+  display: none;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #171a18;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+@media (min-width: 768px) {
+  .filter-sidebar-title { display: block; }
+}
+
 /* ─── Filter Groups ────────────────────────── */
 .filter-group {
   margin-bottom: 14px;
