@@ -20,7 +20,6 @@ function senoobar_setup_cart_page(): void {
     }
 
     $pages = [
-        'shop'        => ['title' => 'فروشگاه',        'shortcode' => '[woocommerce_shop]',        'option' => 'woocommerce_shop_page_id'],
         'cart'        => ['title' => 'سبد خرید',        'shortcode' => '[woocommerce_cart]',        'option' => 'woocommerce_cart_page_id'],
         'checkout'    => ['title' => 'تسویه حساب',      'shortcode' => '[woocommerce_checkout]',    'option' => 'woocommerce_checkout_page_id'],
         'myaccount'   => ['title' => 'حساب کاربری',      'shortcode' => '[woocommerce_my_account]',  'option' => 'woocommerce_myaccount_page_id'],
@@ -61,9 +60,6 @@ function senoobar_setup_cart_page(): void {
         }
     }
 
-    // Flush rewrite rules once
-    flush_rewrite_rules();
-    
     // Mark as done
     update_option('senoobar_wc_pages_setup_done', true);
 }

@@ -503,12 +503,11 @@ final class Senoobar_Theme {
                 wp_enqueue_style('senoobar-rtl', SENOOBAR_URI . '/assets/css/rtl.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // Shop CSS
-            $is_shop_page = function_exists('wc_get_page_id') && is_page(wc_get_page_id('shop'));
             $is_cart_page = function_exists('wc_get_page_id') && is_page(wc_get_page_id('cart'));
             $is_checkout_page = function_exists('wc_get_page_id') && is_page(wc_get_page_id('checkout'));
             $is_account_page = function_exists('wc_get_page_id') && is_page(wc_get_page_id('myaccount'));
             
-            if (class_exists('WooCommerce') && ($is_shop_page || is_product_category() || is_product_tag() || is_search() || $is_cart_page || $is_checkout_page || $is_account_page)) {
+            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search() || $is_cart_page || $is_checkout_page || $is_account_page)) {
                 wp_enqueue_style('senoobar-shop', SENOOBAR_URI . '/assets/css/shop.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // Cart CSS
