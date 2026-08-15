@@ -168,10 +168,24 @@ wp_enqueue_style('senoobar-product-detail', get_template_directory_uri() . '/ass
                 </div>
                 <?php endif; ?>
 
+                <!-- Price -->
+                <div class="pd-price">
+                    <?php if ($product->is_on_sale()): ?>
+                        <span class="pd-price--sale"><?php echo wc_price($sale_price); ?></span>
+                        <span class="pd-price--regular"><?php echo wc_price($regular_price); ?></span>
+                    <?php else: ?>
+                        <span class="pd-price--current"><?php echo $product->get_price_html(); ?></span>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Short Description -->
+                <?php if ($short_desc): ?>
+                <div class="pd-short-desc"><?php echo wp_kses_post($short_desc); ?></div>
+                <?php endif; ?>
+
                 <!-- Sticky Buy Box (price + add-to-cart) -->
                 <div class="pd-buy-box">
-                    <!-- Price -->
-                    <div class="pd-price">
+                    <div class="pd-buy-box__price">
                         <?php if ($product->is_on_sale()): ?>
                             <span class="pd-price--sale"><?php echo wc_price($sale_price); ?></span>
                             <span class="pd-price--regular"><?php echo wc_price($regular_price); ?></span>
@@ -179,13 +193,6 @@ wp_enqueue_style('senoobar-product-detail', get_template_directory_uri() . '/ass
                             <span class="pd-price--current"><?php echo $product->get_price_html(); ?></span>
                         <?php endif; ?>
                     </div>
-
-                    <!-- Short Description -->
-                    <?php if ($short_desc): ?>
-                    <div class="pd-short-desc"><?php echo wp_kses_post($short_desc); ?></div>
-                    <?php endif; ?>
-
-                    <!-- Add to Cart Form -->
                     <?php woocommerce_template_single_add_to_cart(); ?>
                 </div>
 
