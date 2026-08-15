@@ -9,7 +9,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-<?php
 // When loaded directly via template_include, $checkout is not passed in the
 // way wc_get_template() normally would, so ensure it is always available.
 if ( ! isset( $checkout ) || ! is_object( $checkout ) ) {
