@@ -1078,44 +1078,37 @@ body .shop-main.list-view ul.products li.product .snb-card-heart {
 }
 
 
-/* ─── Home loop: bigger, touch-friendly stepper on mobile ─── */
+/* ─── Home loop: bigger, touch-friendly stepper on mobile (2 rows, in-flow) ─── */
 @media (max-width: 767px) {
   body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper {
+    position: static !important;   /* in-flow — never overlaps price */
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: 4px !important;
     gap: 6px !important;
-    padding: 4px !important;
-    border-radius: 22px !important;
-    left: 8px !important;
-    right: 8px !important;
-    max-width: none !important;
-    width: calc(100% - 16px) !important;
-    bottom: 6px !important;
+    padding: 6px !important;
+    border-radius: 14px !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
   }
   body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper button {
-    width: 40px !important;
-    height: 40px !important;
+    width: 38px !important;
+    height: 38px !important;
     border-radius: 50% !important;
-    font-size: 1.25rem !important;
+    font-size: 1.2rem !important;
     flex: 0 0 auto !important;
   }
   body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty {
-    min-width: 28px !important;
+    min-width: 26px !important;
     font-size: 1rem !important;
     flex: 0 0 auto !important;
   }
-  /* "View cart" becomes full-width on its own second row */
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-view {
-    flex: 1 1 100% !important;
-    height: 36px !important;
-    border-radius: 18px !important;
-    font-size: 0.8rem !important;
-    order: 99 !important;
-  }
-  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper {
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-  }
-  /* Extra bottom room so the taller stepper never overlaps the card text */
-  body .shop-main[data-home-loop] ul.products li.product:has(.snb-card-stepper) {
-    padding-bottom: 96px !important;
-  }
+  /* Row 1: minus, qty, plus  |  Row 2: delete + view-cart */
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-minus { order: 1; }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-qty { order: 2; }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-plus { order: 3; }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-del { order: 4; flex: 1 1 auto; }
+  body .shop-main[data-home-loop] ul.products li.product .snb-card-stepper .snb-card-view { order: 5; flex: 1 1 auto; height: 38px !important; border-radius: 19px !important; font-size: 0.8rem !important; }
 }
