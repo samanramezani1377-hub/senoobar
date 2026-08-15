@@ -1082,3 +1082,33 @@
 .pd-buy-box .single_add_to_cart_button:active {
   transform: translateY(0);
 }
+
+/* ─── Fly-to-cart animation ─────────────────────────── */
+.pd-fly-item {
+  position: fixed;
+  z-index: 9999;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--pd-brand, #1e3a2f);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(30, 58, 47, 0.35);
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.3, 1), opacity 0.8s ease;
+  will-change: transform, opacity;
+}
+
+/* Target badge "pop" when the item lands */
+@keyframes pd-badge-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.5); }
+  100% { transform: scale(1); }
+}
+.pd-badge-pop {
+  animation: pd-badge-pop 0.4s ease;
+}

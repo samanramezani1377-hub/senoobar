@@ -69,6 +69,27 @@
       }
     }
 
+    function triggerCartAnimation() {
+      // Find the header cart icon and the bottom-nav cart icon, bump them.
+      var headerBadge = document.querySelector('.cart-badge[data-cart-count]');
+      var navBadge = document.querySelector('.mbn-badge[data-cart-count]');
+
+      [headerBadge, navBadge].forEach(function (badge) {
+        if (!badge) return;
+        // The wrapping icon element (for header it's the parent div, for nav the .mbn-icon)
+        var wrap = badge.closest('.mbn-icon') || badge.parentElement;
+        if (!wrap) return;
+        wrap.classList.remove('cart-bump');
+        // force reflow so re-adding the class restarts the animation
+        void wrap.offsetWidth;
+        wrap.classList.add('cart-bump');
+        wrap.addEventListener('animationend', function handler() {
+          wrap.classList.remove('cart-bump');
+          wrap.removeEventListener('animationend', handler);
+        });
+      });
+    }
+
     function addToCart(quantity) {
       var body = new URLSearchParams();
       body.set('product_id', productId);
@@ -116,6 +137,7 @@
         setQty(1);
         showStepper();
         applyFragments(data && data.fragments);
+        triggerCartAnimation();
       }).catch(function () {
         btn.disabled = false;
         form.submit();
@@ -125,12 +147,12 @@
     minusBtn.addEventListener('click', function () {
       if (qty <= 1) return;
       setQty(qty - 1);
-      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); });
+      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); triggerCartAnimation(); });
     });
 
     plusBtn.addEventListener('click', function () {
       setQty(qty + 1);
-      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); });
+      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); triggerCartAnimation(); });
     });
 
     removeBtn.addEventListener('click', function () {

@@ -1601,3 +1601,29 @@ body .shop-main.list-view ul.products li.product {
   letter-spacing: 0.2px;
   white-space: nowrap;
 }
+
+/* ─── Cart bump animation (fires on add-to-cart) ────── */
+@keyframes senoobar-cart-bump {
+  0%   { transform: scale(1) rotate(0deg); }
+  25%  { transform: scale(1.25) rotate(-8deg); }
+  50%  { transform: scale(1.08) rotate(6deg); }
+  75%  { transform: scale(1.18) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.cart-bump {
+  animation: senoobar-cart-bump 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* Badge pulse — a quick grow + glow to draw the eye */
+@keyframes senoobar-badge-pop {
+  0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+  40%  { transform: scale(1.45); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  70%  { transform: scale(0.95); }
+  100% { transform: scale(1.15); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.cart-bump .cart-badge,
+.cart-bump .mbn-badge {
+  animation: senoobar-badge-pop 0.6s ease-out both;
+}
