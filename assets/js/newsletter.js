@@ -14,7 +14,7 @@
     });
 
     function initNewsletter() {
-        const forms = document.querySelectorAll('.newsletter-form');
+        const forms = document.querySelectorAll('.newsletter-form, .mobile-newsletter-form');
         if (!forms.length) return;
 
         forms.forEach(function (form) {
@@ -23,7 +23,7 @@
 
                 const submitBtn = form.querySelector('button[type="submit"]');
                 const emailInput = form.querySelector('input[type="email"]');
-                const messageBox = form.querySelector('.newsletter-message');
+                const messageBox = form.querySelector('.newsletter-message') || form.querySelector('.mobile-newsletter-message');
                 const nonce = form.dataset.nonce;
 
                 if (!emailInput || !emailInput.value.trim()) {
@@ -84,7 +84,11 @@
     function showMessage(element, message, type) {
         if (!element) return;
         element.textContent = message;
-        element.className = 'newsletter-message ' + type;
+        if (element.classList.contains('mobile-newsletter-message')) {
+            element.className = 'mobile-newsletter-message ' + type;
+        } else {
+            element.className = 'newsletter-message ' + type;
+        }
         element.style.display = 'block';
     }
 })();
