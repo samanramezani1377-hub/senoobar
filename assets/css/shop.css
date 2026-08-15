@@ -718,21 +718,29 @@ body .shop-main.list-view ul.products li.product .snb-card-heart {
 /* List-view responsive: mobile */
 @media (max-width: 599px) {
   body .shop-main.list-view ul.products li.product a.woocommerce-LoopProduct-link {
-    grid-template-columns: 110px minmax(0, 1fr) !important;
+    grid-template-columns: 100px minmax(0, 1fr) !important;
     gap: 0 10px !important;
-    padding: 10px !important;
+    padding: 10px 10px 52px !important; /* keep bottom room for the cart button */
   }
   body .shop-main.list-view ul.products li.product img {
-    width: 110px !important;
+    width: 100px !important;
   }
   body .shop-main.list-view ul.products li.product .woocommerce-loop-product__title {
-    font-size: 0.92rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.45 !important;
+  }
+  body .shop-main.list-view ul.products li.product .price {
+    font-size: 0.85rem !important;
+    padding-top: 4px !important;
   }
   body .shop-main.list-view ul.products li.product .add_to_cart_button,
   body .shop-main.list-view ul.products li.product .button,
   body .shop-main.list-view ul.products li.product a.button {
-    bottom: 10px !important;
-    padding: 8px 14px !important;
+    bottom: 8px !important;
+    left: 10px !important;
+    padding: 6px 12px !important;
+    font-size: 0.72rem !important;
+    border-radius: 6px !important;
   }
 }
 
