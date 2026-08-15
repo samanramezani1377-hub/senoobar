@@ -147,13 +147,16 @@
 /* Thumbnails */
 .pd-thumbnails {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-top: 12px;
+  justify-content: flex-start;
 }
 .pd-thumb {
-  flex: 1;
-  aspect-ratio: 1;
-  border-radius: var(--pd-radius-lg);
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--pd-radius-md, 10px);
   overflow: hidden;
   border: 2px solid transparent;
   background: transparent;
@@ -857,4 +860,32 @@
   color: var(--pd-gray-500);
   font-size: 0.75rem;
   margin: 2px 0 0 0;
+}
+
+/* ─── Sticky Buy Box ─────────────────────────────────── */
+.pd-buy-box {
+  background: #fff;
+  border: 1px solid var(--pd-gray-100, #f7f5f2);
+  border-radius: var(--pd-radius-xl, 16px);
+  padding: 16px;
+  margin: 16px 0;
+  z-index: 20;
+}
+
+/* Mobile: sticky to bottom — a persistent buy bar */
+@media (max-width: 1023px) {
+  .pd-buy-box {
+    position: sticky;
+    bottom: 72px;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+    border-radius: var(--pd-radius-xl, 16px);
+  }
+}
+
+/* Desktop: sticky within the info column so it scrolls with the page */
+@media (min-width: 1024px) {
+  .pd-buy-box {
+    position: sticky;
+    top: 16px;
+  }
 }
