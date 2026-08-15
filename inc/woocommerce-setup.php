@@ -181,6 +181,22 @@ add_action('wp_print_scripts', function () {
     }
 }, 100);
 
+// ─── 12b. Disable default Woo checkout/cart JS on our custom pages ──
+// The theme uses its own checkout/cart markup. The stock wc-checkout / wc-cart
+// scripts intercept the form and submit via AJAX against a non-standard form
+// structure, which loses the field values (validation says everything is
+// "required"). Dequeue them so the form submits natively with all fields intact.
+add_action( 'wp_enqueue_scripts', function () {
+    if ( is_checkout() ) {
+        wp_dequeue_script( 'wc-checkout' );
+        wp_deregister_script( 'wc-checkout' );
+    }
+    if ( is_cart() ) {
+        wp_dequeue_script( 'wc-cart' );
+        wp_deregister_script( 'wc-cart' );
+    }
+}, 100 );
+
 // ─── 13. Persian translations for ALL buttons & labels ───
 
 // Breadcrumbs
@@ -569,13 +585,11 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
     $fields['billing'] = $billing;
 
-    // ── Shipping: mirror billing, same minimal set ──
+    // ── Shipping: not collected (the bill-to address is the ship-to address).
+    // Removing the shipping fields entirely prevents WooCommerce from
+    // validating shipping address fields that our form never renders.
     if (isset($fields['shipping'])) {
-        $fields['shipping'] = $billing;
-        foreach ($fields['shipping'] as $k => &$f) {
-            $f['label'] = 'آدرس ارسال';
-        }
-        unset($f);
+        $fields['shipping'] = [];
     }
 
     // ── Account: drop the optional account section on checkout ──
@@ -585,6 +599,10 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
     return $fields;
 }, 30);
+
+// Force ship-to = bill-to so no separate shipping address is ever needed.
+add_filter( 'woocommerce_ship_to_different_address_checked', '__return_false' );
+add_filter( 'woocommerce_cart_needs_shipping_address', '__return_false' );
 
 // Auto-fill a synthetic email from the phone so core order checks pass even
 // though the customer never sees or types an email.
