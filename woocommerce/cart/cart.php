@@ -69,14 +69,6 @@ if ( ! $cart_page_id ) {
                     محصول در سبد خرید
                 </p>
             </div>
-
-            <a
-                href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"
-                class="senoobar-continue-shopping"
-            >
-                <span>←</span>
-                ادامه خرید
-            </a>
         </div>
 
         <!-- AJAX Message -->
