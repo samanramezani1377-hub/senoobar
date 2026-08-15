@@ -323,10 +323,173 @@
     });
   }
 
+  // ── Card qty stepper (replaces "view cart" after adding) ──
+  // After a product is added to the cart (WooCommerce 'added_to_cart'), show a
+  // compact [-] qty [+] [remove] control in place of the round cart button.
+  let stepperQty = {}; // product_id -> quantity (best-effort cache)
+
+  function buildStepper(productId, initialQty) {
+    const wrap = document.createElement('div');
+    wrap.className = 'snb-card-stepper';
+    wrap.setAttribute('data-card-stepper', productId);
+
+    const minus = document.createElement('button');
+    minus.type = 'button';
+    minus.className = 'snb-card-minus';
+    minus.innerHTML = '&minus;';
+    minus.setAttribute('aria-label', 'کاهش تعداد');
+
+    const qty = document.createElement('span');
+    qty.className = 'snb-card-qty';
+    qty.textContent = initialQty;
+
+    const plus = document.createElement('button');
+    plus.type = 'button';
+    plus.className = 'snb-card-plus';
+    plus.innerHTML = '+';
+    plus.setAttribute('aria-label', 'افزایش تعداد');
+
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'snb-card-del';
+    del.innerHTML = '&#128465;';
+    del.setAttribute('aria-label', 'حذف از سبد');
+
+    wrap.appendChild(minus);
+    wrap.appendChild(qty);
+    wrap.appendChild(plus);
+    wrap.appendChild(del);
+
+    return { wrap, qty };
+  }
+
+  async function cardCartPost(action, productId, quantity) {
+    const nonce = (window.senoobarData && senoobarData.nonce) || '';
+    const body = new FormData();
+    body.append('action', action);
+    body.append('nonce', nonce);
+    body.append('product_id', productId);
+    if (quantity != null) body.append('quantity', quantity);
+    const res = await fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body });
+    return res.json();
+  }
+
+  function findCardContainer(el) {
+    // The stepper lives inside the product <li>, so anchor it to that card.
+    return el.closest('li.product') || el.closest('.product');
+  }
+
+  async function ensureStepper(card, productId) {
+    const existing = card.querySelector('.snb-card-stepper');
+    if (existing) return existing;
+
+    // Hide the round cart button + WooCommerce "view cart" link if present.
+    const btn = card.querySelector('.add_to_cart_button') || card.querySelector('a.button[data-product_id]');
+    if (btn) btn.classList.add('added');
+    const viewLink = card.querySelector('a.added_to_cart');
+    if (viewLink) viewLink.style.display = 'none';
+
+    const qty0 = stepperQty[productId] || 1;
+    const { wrap, qty } = buildStepper(productId, qty0);
+    card.appendChild(wrap);
+
+    const setQty = async (newQty) => {
+      const r = await cardCartPost('senoobar_cart_set_quantity', productId, newQty);
+      if (r && r.success) {
+        qty.textContent = newQty;
+        stepperQty[productId] = newQty;
+        if (window.jQuery) window.jQuery(document.body).trigger('wc_fragment_refresh');
+      }
+    };
+
+    const remove = async () => {
+      const r = await cardCartPost('senoobar_cart_remove_by_product', productId);
+      if (r && r.success) {
+        delete stepperQty[productId];
+        wrap.remove();
+        // Restore the round add-to-cart button.
+        const b = card.querySelector('.add_to_cart_button') || card.querySelector('a.button[data-product_id]');
+        if (b) b.classList.remove('added');
+        const vl = card.querySelector('a.added_to_cart');
+        if (vl) vl.style.display = '';
+        if (window.jQuery) window.jQuery(document.body).trigger('wc_fragment_refresh');
+      }
+    };
+
+    wrap.querySelector('.snb-card-plus').addEventListener('click', () => {
+      const cur = parseInt(qty.textContent, 10) || 1;
+      setQty(cur + 1);
+    });
+    wrap.querySelector('.snb-card-minus').addEventListener('click', () => {
+      const cur = parseInt(qty.textContent, 10) || 1;
+      if (cur <= 1) {
+        remove();
+      } else {
+        setQty(cur - 1);
+      }
+    });
+    wrap.querySelector('.snb-card-del').addEventListener('click', remove);
+
+    return wrap;
+  }
+
+  function initCardCartStepper() {
+    // Delegated click on the round add-to-cart button: after WooCommerce fires
+    // 'added_to_cart', swap in our stepper for that specific card.
+    document.addEventListener('click', (e) => {
+      const addBtn = e.target.closest('.add_to_cart_button');
+      if (addBtn) {
+        const card = findCardContainer(addBtn);
+        const pid = Number(
+          addBtn.getAttribute('data-product_id')
+          || addBtn.getAttribute('data-quantity') // unlikely; fallback below
+        );
+        // data-product_id is the reliable source; if missing, read from link href.
+        let productId = pid;
+        if (!productId) {
+          const m = (addBtn.getAttribute('href') || '').match(/add-to-cart=(\d+)/);
+          productId = m ? Number(m[1]) : 0;
+        }
+        if (productId && card) {
+          // Wait for WooCommerce to finish adding, then show the stepper.
+          setTimeout(() => ensureStepper(card, productId), 400);
+        }
+      }
+    });
+
+    // Also handle the 'added_to_cart' jQuery event for robustness.
+    if (window.jQuery) {
+      window.jQuery(document.body).on('added_to_cart', function (e, frags, key, qty) {
+        // key is the cart item key; product id is embedded in it as 'product_id'.
+        // We have full fragments; find the most recent .add_to_cart_button.added
+        // and attach a stepper.
+        const addedButtons = $$('.add_to_cart_button.added');
+        if (addedButtons.length) {
+          const btn = addedButtons[0];
+          const card = findCardContainer(btn);
+          const pid = Number(btn.getAttribute('data-product_id') || 0);
+          if (card && pid) {
+            setTimeout(() => ensureStepper(card, pid), 50);
+          }
+        }
+      });
+    }
+
+    // On page load, any card already "added" (e.g. after reload) gets a stepper.
+    document.addEventListener('DOMContentLoaded', () => {
+      $$('.add_to_cart_button.added').forEach((btn) => {
+        const card = findCardContainer(btn);
+        const pid = Number(btn.getAttribute('data-product_id') || 0);
+        if (card && pid) ensureStepper(card, pid);
+      });
+    });
+  }
+
   // ── Boot ───────────────────────────────────────────
   function boot() {
     initPage();
     initHeartButtons();
+    initCardCartStepper();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
