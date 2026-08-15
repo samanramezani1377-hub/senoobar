@@ -97,7 +97,13 @@
             }
 
             if (data.cart_html) {
-                itemsContainer.outerHTML = data.cart_html;
+                // Re-query the container each time: after the first outerHTML
+                // replacement the old 'itemsContainer' reference points to a
+                // detached node, so subsequent renders would silently no-op.
+                const container = document.getElementById('senoobar-cart-items');
+                if (container) {
+                    container.outerHTML = data.cart_html;
+                }
             }
 
             updateTotals(data);
