@@ -188,6 +188,50 @@
     } catch (_) {}
   }
 
+  // ─── Accordion filter groups ──────────────────
+  function buildAccordion() {
+    $$('.filter-group').forEach(group => {
+      const title = group.querySelector(':scope > .filter-group-title');
+      if (!title || group.dataset.accordion) return;
+      group.dataset.accordion = '1';
+
+      // Wrap everything after the title into a collapsible body.
+      const body = document.createElement('div');
+      body.className = 'filter-group-content';
+      let node = title.nextElementSibling;
+      while (node) {
+        const next = node.nextElementSibling;
+        body.appendChild(node);
+        node = next;
+      }
+      group.appendChild(body);
+
+      // Chevron icon
+      if (!title.querySelector('.filter-chevron')) {
+        const chev = document.createElement('span');
+        chev.className = 'filter-chevron';
+        chev.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+        title.appendChild(chev);
+      }
+
+      // Determine if this group has an active selection -> open it by default.
+      const hasActiveCategory = body.querySelector('.category-filter-item.active');
+      const hasPrice = (() => {
+        const min = body.querySelector('#minPrice') || body.querySelector('input[name="min_price"]');
+        const max = body.querySelector('#maxPrice') || body.querySelector('input[name="max_price"]');
+        return (min && min.value !== '') || (max && max.value !== '');
+      })();
+
+      if (hasActiveCategory || hasPrice) {
+        group.classList.add('open');
+      }
+
+      title.addEventListener('click', () => {
+        group.classList.toggle('open');
+      });
+    });
+  }
+
   // ─── Mobile filter ─────────────────────────────
   function bindMobile() {
     const toggle = $('#filterToggle');
@@ -427,6 +471,7 @@
 
   // ─── Bind all interactive elements ─────────────
   function bindAll() {
+    buildAccordion();
     bindCategories();
     bindSort();
     bindPrice();

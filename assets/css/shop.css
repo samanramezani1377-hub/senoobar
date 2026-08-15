@@ -126,17 +126,50 @@
 
 /* ─── Filter Groups ────────────────────────── */
 .filter-group {
-  margin-bottom: 20px;
-  padding-bottom: 20px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
   border-bottom: 1px solid #f3f4f6;
 }
 .filter-group:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
+/* Accordion header */
 .filter-group-title {
   font-size: 0.9rem;
   font-weight: 700;
   color: #374151;
-  margin: 0 0 12px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 4px 10px 0;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+.filter-group-title:hover { color: var(--color-primary, #1e3a2f); }
+.filter-group-title .filter-chevron {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  color: #9ca3af;
+  transition: transform 0.25s ease;
+  transform: rotate(-90deg); /* closed: pointing left (rtl) */
+}
+/* Accordion body */
+.filter-group-content {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.25s ease;
+}
+.filter-group.open .filter-group-content {
+  max-height: 1200px; /* generous cap */
+  opacity: 1;
+  padding-top: 8px;
+}
+.filter-group.open .filter-group-title .filter-chevron {
+  transform: rotate(0deg); /* open: pointing down */
 }
 
 .category-filter-list {
