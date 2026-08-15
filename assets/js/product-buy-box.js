@@ -18,7 +18,11 @@
 
     var productId = 0;
     var pidInput = form.querySelector('input[name="add-to-cart"]');
-    if (pidInput) productId = pidInput.value;
+    if (pidInput && pidInput.value) productId = pidInput.value;
+    if (!productId) {
+      var pidBtn = form.querySelector('button[name="add-to-cart"]');
+      if (pidBtn && pidBtn.value) productId = pidBtn.value;
+    }
     if (!productId && form.dataset.product_id) productId = form.dataset.product_id;
 
     var qtyHidden = box.querySelector('#pdHiddenQty') || form.querySelector('input[name="quantity"]');

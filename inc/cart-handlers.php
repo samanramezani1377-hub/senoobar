@@ -224,6 +224,10 @@ function senoobar_cart_set_quantity(): void {
         wp_send_json_error(['message' => 'Invalid product']);
     }
 
+    if (! function_exists('WC') || ! WC()->cart) {
+        wp_send_json_error(['message' => 'Cart unavailable']);
+    }
+
     $cart = WC()->cart;
     $found = false;
 

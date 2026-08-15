@@ -18,6 +18,7 @@ echo wc_get_stock_html($product); // empty if filtered
 do_action('woocommerce_before_add_to_cart_form');
 ?>
 <form class="cart" method="post" enctype='multipart/form-data'>
+    <input type="hidden" name="add-to-cart" value="<?php echo esc_attr($product->get_id()); ?>" />
     <input type="hidden" name="quantity" id="pdHiddenQty" value="1" min="1" />
 
     <button type="submit"
