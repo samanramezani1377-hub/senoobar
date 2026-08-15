@@ -331,3 +331,43 @@ add_filter('gettext', function ($translated, $text, $domain) {
     }
     return $translated;
 }, 20, 3);
+
+
+/* ─── Product page: hide availability + compact currency ── */
+
+// Hide the "موجود / ناموجود" stock line on the single product page.
+add_filter('woocommerce_get_availability_text', function ($availability, $product) {
+    if (is_product()) {
+        return '';
+    }
+    return $availability;
+}, 20, 2);
+
+// Hide the stock HTML too (in case a plugin/template prints wc_get_stock_html).
+add_filter('woocommerce_get_stock_html', function ($html, $product) {
+    if (is_product()) {
+        return '';
+    }
+    return $html;
+}, 20, 2);
+
+// Currency: show "ت" instead of "تومان".
+add_filter('woocommerce_currency_symbol', function ($symbol, $currency) {
+    if ($symbol === 'تومان' || mb_strtolower($symbol) === 'toman') {
+        return 'ت';
+    }
+    return $symbol;
+}, 20, 2);
+
+// Replace literal "تومان" in any price string with "ت" (covers price suffixes).
+add_filter('gettext', function ($translated, $text, $domain) {
+    if ($domain === 'woocommerce' && $text === 'تومان') {
+        return 'ت';
+    }
+    return $translated;
+}, 30, 3);
+
+// Strip a "تومان" price suffix (some Persian plugins append literal تومان).
+add_filter('woocommerce_get_price_suffix', function ($suffix, $product) {
+    return str_replace('تومان', 'ت', $suffix);
+}, 20, 2);

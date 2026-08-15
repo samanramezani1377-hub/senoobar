@@ -560,6 +560,10 @@ final class Senoobar_Theme {
             if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag())) {
                 wp_enqueue_script('senoobar-shop-filters', SENOOBAR_URI . '/assets/js/shop-filters.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
+            // Product buy-box JS (single product: button -> stepper behavior)
+            if (class_exists('WooCommerce') && is_product()) {
+                wp_enqueue_script('senoobar-product-buy-box', SENOOBAR_URI . '/assets/js/product-buy-box.js', ['senoobar-app'], SENOOBAR_VERSION, true);
+            }
             // Newsletter JS
             wp_enqueue_script('senoobar-newsletter', SENOOBAR_URI . '/assets/js/newsletter.js', ['senoobar-app'], SENOOBAR_VERSION, true);
         });

@@ -979,3 +979,72 @@
     padding-bottom: 130px;
   }
 }
+
+/* ─── Buy Stepper (button → − 1 + حذف) ──────────────── */
+.pd-buy-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--pd-brand, #1e3a2f);
+  border-radius: var(--pd-radius, 12px);
+  padding: 4px 6px;
+  color: #fff;
+}
+.pd-step-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pd-step-btn:hover { background: rgba(255, 255, 255, 0.28); }
+.pd-step-qty {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.pd-step-remove {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #ff9e9e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+}
+.pd-step-remove:hover { color: #fff; background: rgba(255, 0, 0, 0.25); }
+
+/* ─── Mobile buy bar: price on LEFT, button on RIGHT ── */
+@media (max-width: 1023px) {
+  .pd-buy-box form.cart {
+    /* form (button/stepper) sits on the right in RTL */
+    margin-right: auto;
+  }
+  .pd-buy-box__price {
+    /* push price to the far left */
+    order: 2;
+  }
+  .pd-buy-box form.cart {
+    order: 1;
+  }
+}
+
+/* Make the lone add-to-cart button full-width in the buy box (desktop) */
+@media (min-width: 1024px) {
+  .pd-buy-box .single_add_to_cart_button {
+    width: 100%;
+  }
+}
