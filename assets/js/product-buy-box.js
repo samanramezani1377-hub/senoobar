@@ -46,6 +46,11 @@
 
     btn.parentNode.insertBefore(stepper, btn);
 
+    function variantId() {
+      var variationId = form.querySelector('input.variation_id');
+      return (variationId && variationId.value && variationId.value !== '0') ? variationId.value : 0;
+    }
+
     function setQty(n) {
       qty = Math.max(1, n);
       qtyShow.textContent = String(qty);
@@ -55,43 +60,55 @@
     function showButton() { stepper.style.display = 'none'; btn.style.display = ''; }
     function showStepper() { btn.style.display = 'none'; stepper.style.display = 'inline-flex'; }
 
-    // Apply WooCommerce fragments (updates the header + bottom-nav badges now)
+    function postAjax(action, data) {
+      var body = new URLSearchParams();
+      body.set('action', action);
+      body.set('nonce', senoobarData.nonce);
+      for (var k in data) body.set(k, data[k]);
+      return fetch(senoobarData.ajaxUrl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: body.toString()
+      }).then(function (r) { return r.json(); });
+    }
+
+    // Apply badge fragments so the number updates instantly.
     function applyFragments(fragments) {
       if (!fragments) return;
       Object.keys(fragments).forEach(function (selector) {
         var el = document.querySelector(selector);
-        if (el) {
-          el.outerHTML = fragments[selector];
-        }
+        if (el) el.outerHTML = fragments[selector];
       });
-      if (window.jQuery) {
-        jQuery(document.body).trigger('wc_fragments_refreshed');
-      }
+      if (window.jQuery) jQuery(document.body).trigger('wc_fragments_refreshed');
     }
 
-    function triggerCartAnimation() {
-      // Find the header cart icon and the bottom-nav cart icon, bump them.
-      var headerBadge = document.querySelector('.cart-badge[data-cart-count]');
-      var navBadge = document.querySelector('.mbn-badge[data-cart-count]');
-
-      [headerBadge, navBadge].forEach(function (badge) {
-        if (!badge) return;
-        // The wrapping icon element (for header it's the parent div, for nav the .mbn-icon)
-        var wrap = badge.closest('.mbn-icon') || badge.parentElement;
-        if (!wrap) return;
-        wrap.classList.remove('cart-bump');
-        // force reflow so re-adding the class restarts the animation
-        void wrap.offsetWidth;
-        wrap.classList.add('cart-bump');
-        wrap.addEventListener('animationend', function handler() {
-          wrap.classList.remove('cart-bump');
-          wrap.removeEventListener('animationend', handler);
-        });
+    // ── Cart actions ────────────────────────────
+    function setCartQuantity(quantity) {
+      return postAjax('senoobar_cart_set_quantity', {
+        product_id: productId,
+        variation_id: variantId(),
+        quantity: quantity,
+        attributes: collectAttributes()
       });
     }
 
+    function collectAttributes() {
+      var vars = {};
+      form.querySelectorAll('select[name^="attribute_"]').forEach(function (sel) {
+        if (sel.value) vars[sel.name] = sel.value;
+      });
+      return JSON.stringify(vars);
+    }
 
-    // ── Fly-to-cart: animate a '+' from the button into the cart icon ──
+    function removeFromCart() {
+      return postAjax('senoobar_cart_remove_by_product', {
+        product_id: productId,
+        variation_id: variantId()
+      });
+    }
+
+    // ── Fly-to-cart + badge pop helpers ─────────
     function getCartTarget() {
       var bottom = document.querySelector('[data-cart-fly="bottom"]');
       var header = document.querySelector('[data-cart-fly="header"]');
@@ -114,7 +131,11 @@
 
       var startEl = stepper.style.display === 'none' ? btn : stepper;
       var startRect = startEl.getBoundingClientRect();
-      var endRect = target.getBoundingClientRect();
+
+      // Aim precisely at the cart icon: use the inner SVG (or the badge's
+      // icon wrapper) so the item lands on the basket glyph, not its label.
+      var iconEl = target.querySelector('svg') || target;
+      var endRect = iconEl.getBoundingClientRect();
 
       var flyer = document.createElement('div');
       flyer.className = 'pd-fly-item';
@@ -130,14 +151,14 @@
       flyer.style.transform = 'translate(' + sx + 'px, ' + sy + 'px) scale(1)';
       document.body.appendChild(flyer);
 
-      void flyer.offsetWidth; // force reflow
+      void flyer.offsetWidth;
 
-      flyer.style.opacity = '0.4';
-      flyer.style.transform = 'translate(' + ex + 'px, ' + ey + 'px) scale(0.2)';
+      flyer.style.opacity = '0.35';
+      flyer.style.transform = 'translate(' + ex + 'px, ' + ey + 'px) scale(0.15)';
 
       var badge = target.querySelector('.cart-badge, .mbn-badge');
       var done = false;
-      var onDone = function () {
+      var land = function () {
         if (done) return;
         done = true;
         if (badge) {
@@ -147,61 +168,40 @@
         }
         if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
       };
-
       flyer.addEventListener('transitionend', function (e) {
-        if (e.propertyName === 'transform') onDone();
+        if (e.propertyName === 'transform') land();
       });
-      setTimeout(onDone, 950);
+      setTimeout(land, 950);
     }
 
-    function addToCart(quantity) {
-      var body = new URLSearchParams();
-      body.set('product_id', productId);
-      body.set('quantity', String(quantity));
-
-      form.querySelectorAll('select[name^="attribute_"]').forEach(function (sel) {
-        if (sel.value) body.set(sel.name, sel.value);
+    function cartBump() {
+      var headerBadge = document.querySelector('.cart-badge[data-cart-count]');
+      var navBadge = document.querySelector('.mbn-badge[data-cart-count]');
+      [headerBadge, navBadge].forEach(function (badge) {
+        if (!badge) return;
+        var wrap = badge.closest('.mbn-icon') || badge.parentElement;
+        if (!wrap) return;
+        wrap.classList.remove('cart-bump');
+        void wrap.offsetWidth;
+        wrap.classList.add('cart-bump');
+        wrap.addEventListener('animationend', function handler() {
+          wrap.classList.remove('cart-bump');
+          wrap.removeEventListener('animationend', handler);
+        });
       });
-      var variationId = form.querySelector('input.variation_id');
-      if (variationId && variationId.value && variationId.value !== '0') {
-        body.set('variation_id', variationId.value);
-      }
-
-      return fetch(senoobarData.ajaxUrl + '?wc-ajax=add_to_cart', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-        body: body.toString()
-      }).then(function (r) { return r.json(); });
     }
 
-    function removeFromCart() {
-      var variationId = form.querySelector('input.variation_id');
-      var vid = (variationId && variationId.value && variationId.value !== '0') ? variationId.value : 0;
-
-      return fetch(senoobarData.ajaxUrl, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-        body: new URLSearchParams({
-          action: 'senoobar_cart_remove_by_product',
-          nonce: senoobarData.nonce,
-          product_id: productId,
-          variation_id: vid
-        }).toString()
-      }).then(function (r) { return r.json(); });
-    }
-
+    // ── Handlers ────────────────────────────────
     btn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
       btn.disabled = true;
-      addToCart(1).then(function (data) {
+      setCartQuantity(1).then(function (data) {
         btn.disabled = false;
         setQty(1);
         showStepper();
-        applyFragments(data && data.fragments);
-        triggerCartAnimation();
+        if (data && data.fragments) applyFragments(data.fragments);
+        cartBump();
         flyToCart();
       }).catch(function () {
         btn.disabled = false;
@@ -212,12 +212,18 @@
     minusBtn.addEventListener('click', function () {
       if (qty <= 1) return;
       setQty(qty - 1);
-      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); triggerCartAnimation(); flyToCart(); });
+      setCartQuantity(qty).then(function (data) {
+        if (data && data.fragments) applyFragments(data.fragments);
+      });
     });
 
     plusBtn.addEventListener('click', function () {
       setQty(qty + 1);
-      addToCart(qty).then(function (data) { applyFragments(data && data.fragments); triggerCartAnimation(); flyToCart(); });
+      setCartQuantity(qty).then(function (data) {
+        if (data && data.fragments) applyFragments(data.fragments);
+        cartBump();
+        flyToCart();
+      });
     });
 
     removeBtn.addEventListener('click', function () {
@@ -226,14 +232,14 @@
         removeBtn.disabled = false;
         setQty(1);
         showButton();
-        // Refresh fragments so badges drop to the correct count immediately.
-        fetch(senoobarData.ajaxUrl + '?wc-ajax=get_refreshed_fragments', {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-        }).then(function (r) { return r.json(); }).then(function (d) {
-          applyFragments(d && d.fragments);
-        });
+        if (data && data.fragments) {
+          applyFragments(data.fragments);
+        } else {
+          applyFragments({
+            '.cart-badge[data-cart-count]': '<span class="cart-badge is-hidden" data-cart-count>0</span>',
+            '.mbn-badge[data-cart-count]': '<span class="mbn-badge is-hidden" data-cart-count>0</span>'
+          });
+        }
       }).catch(function () {
         removeBtn.disabled = false;
       });

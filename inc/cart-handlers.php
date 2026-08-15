@@ -205,6 +205,66 @@ function senoobar_cart_remove_item(): void {
 }
 
 // ---- Apply Coupon ----
+add_action('wp_ajax_senoobar_cart_set_quantity', 'senoobar_cart_set_quantity');
+add_action('wp_ajax_nopriv_senoobar_cart_set_quantity', 'senoobar_cart_set_quantity');
+
+/**
+ * SET the quantity (not add) for a product already in the cart, identified by
+ * product_id (and optional variation_id). Returns the new cart contents count
+ * plus refreshed fragments so badges update immediately.
+ */
+function senoobar_cart_set_quantity(): void {
+    check_ajax_referer('senoobar_cart_nonce', 'nonce');
+
+    $product_id = absint($_POST['product_id'] ?? 0);
+    $variation_id = absint($_POST['variation_id'] ?? 0);
+    $quantity = max(1, (int) ($_POST['quantity'] ?? 1));
+
+    if (! $product_id) {
+        wp_send_json_error(['message' => 'Invalid product']);
+    }
+
+    $cart = WC()->cart;
+    $found = false;
+
+    foreach ($cart->get_cart() as $key => $item) {
+        $pid = (int) ($item['product_id'] ?? 0);
+        $vid = (int) ($item['variation_id'] ?? 0);
+        if ($pid === $product_id && ($variation_id === 0 || $vid === $variation_id)) {
+            $cart->set_quantity($key, $quantity);
+            $found = true;
+            break;
+        }
+    }
+
+    if (! $found) {
+        // Not in cart yet — add it at the requested quantity.
+        $cart->add_to_cart($product_id, $quantity, $variation_id);
+    }
+
+    $cart->calculate_totals();
+
+    $count = $cart->get_cart_contents_count();
+
+    // Build refreshed fragments for the badges.
+    $fragments = [];
+    $fragments['.cart-badge[data-cart-count]'] = sprintf(
+        '<span class="cart-badge%s" data-cart-count>%d</span>',
+        $count > 0 ? '' : ' is-hidden',
+        $count
+    );
+    $fragments['.mbn-badge[data-cart-count]'] = sprintf(
+        '<span class="mbn-badge%s" data-cart-count>%d</span>',
+        $count > 0 ? '' : ' is-hidden',
+        $count
+    );
+
+    wp_send_json_success([
+        'cart_count' => $count,
+        'fragments'  => $fragments,
+    ]);
+}
+
 add_action('wp_ajax_senoobar_cart_remove_by_product', 'senoobar_cart_remove_by_product');
 add_action('wp_ajax_nopriv_senoobar_cart_remove_by_product', 'senoobar_cart_remove_by_product');
 
@@ -232,7 +292,23 @@ function senoobar_cart_remove_by_product(): void {
     }
     $cart->calculate_totals();
 
-    wp_send_json_success(['cart_count' => $cart->get_cart_contents_count()]);
+    $count = $cart->get_cart_contents_count();
+    $fragments = [];
+    $fragments['.cart-badge[data-cart-count]'] = sprintf(
+        '<span class="cart-badge%s" data-cart-count>%d</span>',
+        $count > 0 ? '' : ' is-hidden',
+        $count
+    );
+    $fragments['.mbn-badge[data-cart-count]'] = sprintf(
+        '<span class="mbn-badge%s" data-cart-count>%d</span>',
+        $count > 0 ? '' : ' is-hidden',
+        $count
+    );
+
+    wp_send_json_success([
+        'cart_count' => $count,
+        'fragments'  => $fragments,
+    ]);
 }
 
 add_action('wp_ajax_senoobar_apply_coupon', 'senoobar_apply_coupon');
