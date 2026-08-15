@@ -148,11 +148,12 @@ $order_status = $order->get_status();
                                             <span class="senoobar-review-name"><?php echo esc_html( $name ); ?></span>
                                         <?php endif; ?>
                                         <?php
-                                        $meta_data = $item->get_meta_data();
-                                        if ( $meta_data ) {
-                                            foreach ( $meta_data as $meta ) {
-                                                if ( ! $meta->key() || '_' === $meta->key()[0] ) continue;
-                                                echo '<div class="senoobar-review-meta">' . esc_html( $meta->display_key() ) . ': ' . esc_html( $meta->display_value() ) . '</div>';
+                                        // Use WC's own formatted meta (auto-skips hidden/internal
+                                        // keys) — safe across WooCommerce versions.
+                                        $formatted_meta = $item->get_formatted_meta_data( '_' );
+                                        if ( ! empty( $formatted_meta ) ) {
+                                            foreach ( $formatted_meta as $meta_id => $meta ) {
+                                                echo '<div class="senoobar-review-meta">' . esc_html( $meta->display_key ) . ': ' . wp_kses_post( $meta->display_value ) . '</div>';
                                             }
                                         }
                                         ?>
