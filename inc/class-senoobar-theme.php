@@ -503,9 +503,9 @@ final class Senoobar_Theme {
                 wp_enqueue_style('senoobar-rtl', SENOOBAR_URI . '/assets/css/rtl.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // Shop CSS
-            $is_cart_page = function_exists('wc_get_page_id') && is_page(wc_get_page_id('cart'));
-            $is_checkout_page = function_exists('wc_get_page_id') && is_page(wc_get_page_id('checkout'));
-            $is_account_page = function_exists('wc_get_page_id') && is_page(wc_get_page_id('myaccount'));
+            $is_cart_page = class_exists('WooCommerce') && is_cart();
+            $is_checkout_page = class_exists('WooCommerce') && is_checkout();
+            $is_account_page = class_exists('WooCommerce') && is_account_page();
             
             if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search() || $is_cart_page || $is_checkout_page || $is_account_page)) {
                 wp_enqueue_style('senoobar-shop', SENOOBAR_URI . '/assets/css/shop.css', ['senoobar-main'], SENOOBAR_VERSION);
@@ -547,7 +547,7 @@ final class Senoobar_Theme {
                 'siteUrl'        => home_url(),
             ]);
             // Checkout JS
-            $is_checkout_page = function_exists('wc_get_page_id') && is_page(wc_get_page_id('checkout'));
+            $is_checkout_page = class_exists('WooCommerce') && is_checkout();
             if ($is_checkout_page) {
                 wp_enqueue_script('senoobar-checkout', SENOOBAR_URI . '/assets/js/checkout.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
