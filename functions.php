@@ -11,6 +11,7 @@ require_once SENOOBAR_DIR . '/inc/newsletter-handlers.php';
 require_once SENOOBAR_DIR . '/inc/push-handlers.php';
 require_once SENOOBAR_DIR . '/inc/wishlist-page-setup.php';
 require_once SENOOBAR_DIR . '/inc/account.php';
+require_once SENOOBAR_DIR . '/inc/wishlist.php';
 
 function senoobar_init() {
     Senoobar_Theme::get_instance()->init();

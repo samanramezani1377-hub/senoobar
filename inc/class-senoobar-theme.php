@@ -526,6 +526,11 @@ final class Senoobar_Theme {
             if ($is_account_page) {
                 wp_enqueue_style('senoobar-account', SENOOBAR_URI . '/assets/css/account.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
+            // Wishlist CSS + JS (wishlist page + anywhere the heart button appears)
+            if (class_exists('WooCommerce')) {
+                wp_enqueue_style('senoobar-wishlist', SENOOBAR_URI . '/assets/css/wishlist.css', ['senoobar-main'], SENOOBAR_VERSION);
+                wp_enqueue_script('senoobar-wishlist', SENOOBAR_URI . '/assets/js/wishlist.js', ['senoobar-app'], SENOOBAR_VERSION, true);
+            }
             // JS
             wp_enqueue_script('senoobar-app', SENOOBAR_URI . '/assets/js/app.js', [], SENOOBAR_VERSION, true);
             wp_localize_script('senoobar-app', 'senoobarData', [
