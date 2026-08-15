@@ -47,10 +47,10 @@ $desc  = get_theme_mod('senoobar_section_featured_desc', 'بهترین انتخ�
             <div class="products-grid">
                 <?php
                 $fallback = [
-                    ['name' => 'مبل راحتی مگالنیتم فلورانس', 'price' => '۲۵,۹۰۰,۰۰۰', 'old' => '۳۲,۰۰۰,۰۰۰', 'discount' => '۱۰٪', 'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/featured-sofa.jpg'],
-                    ['name' => 'سرویس خواب ویتز',             'price' => '۶۷,۹۰۰,۰۰۰', 'old' => '۷۹,۰۰۰,۰۰۰', 'discount' => '۱۵٪', 'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/hero-2.jpg'],
-                    ['name' => 'میز ناهارخوری آریا',          'price' => '۲۸,۹۰۰,۰۰۰', 'old' => '۳۴,۰۰۰,۰۰۰', 'discount' => '۱۵٪', 'badge' => 'جدید', 'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/featured-dining.jpg'],
-                    ['name' => 'میز تلویزیون روما',           'price' => '۱۴,۶۰۰,۰۰۰', 'old' => '۱۷,۰۰۰,۰۰۰', 'discount' => '۴٪', 'img' => '<?php echo SENOOBAR_URI; ?>/assets/images/featured-tv-table.jpg'],
+                    ['name' => 'مبل راحتی مگالنیتم فلورانس', 'price' => '۲۵,۹۰۰,۰۰۰', 'old' => '۳۲,۰۰۰,۰۰۰', 'discount' => '۱۰٪', 'img' => SENOOBAR_URI . '/assets/images/featured-sofa.jpg'],
+                    ['name' => 'سرویس خواب ویتز',             'price' => '۶۷,۹۰۰,۰۰۰', 'old' => '۷۹,۰۰۰,۰۰۰', 'discount' => '۱۵٪', 'img' => SENOOBAR_URI . '/assets/images/hero-2.jpg'],
+                    ['name' => 'میز ناهارخوری آریا',          'price' => '۲۸,۹۰۰,۰۰۰', 'old' => '۳۴,۰۰۰,۰۰۰', 'discount' => '۱۵٪', 'badge' => 'جدید', 'img' => SENOOBAR_URI . '/assets/images/featured-dining.jpg'],
+                    ['name' => 'میز تلویزیون روما',           'price' => '۱۴,۶۰۰,۰۰۰', 'old' => '۱۷,۰۰۰,۰۰۰', 'discount' => '۴٪', 'img' => SENOOBAR_URI . '/assets/images/featured-tv-table.jpg'],
                 ];
                 foreach ($fallback as $p): ?>
                 <div class="woocommerce"><ul class="products"><li class="product">
