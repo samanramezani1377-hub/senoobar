@@ -10,6 +10,20 @@ body .shop-main[data-home-loop] ul.products {
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   gap: 10px !important;
 }
+
+/* Price + title align right (home loop card is centered by main.css) */
+body .shop-main[data-home-loop] ul.products li.product,
+body .shop-main[data-home-loop] ul.products li.product .woocommerce-loop-product__title,
+body .shop-main[data-home-loop] ul.products li.product .price {
+  text-align: right !important;
+  align-items: flex-start !important;
+}
+body .shop-main[data-home-loop] ul.products li.product .woocommerce-loop-product__title {
+  align-self: stretch !important;
+}
+body .shop-main[data-home-loop] ul.products li.product .price {
+  align-self: stretch !important;
+}
 @media (min-width: 640px) {
   body .shop-main[data-home-loop] ul.products {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
