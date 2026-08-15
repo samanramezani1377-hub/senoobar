@@ -623,7 +623,7 @@ final class Senoobar_Theme {
             $is_checkout_page = class_exists('WooCommerce') && is_checkout();
             $is_account_page = class_exists('WooCommerce') && is_account_page();
             
-            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search() || $is_cart_page || $is_checkout_page || $is_account_page)) {
+            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search() || is_front_page() || is_home() || $is_cart_page || $is_checkout_page || $is_account_page)) {
                 wp_enqueue_style('senoobar-shop', SENOOBAR_URI . '/assets/css/shop.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
             // Cart CSS — always load when WooCommerce is active (cart is reached via

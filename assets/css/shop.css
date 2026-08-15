@@ -3,6 +3,26 @@
    RTL | Mobile-First
    ============================================ */
 
+/* ─── Home loops (featured + bestsellers) ──────
+   Reuse the shop card styles (round add-to-cart, heart, stepper) but keep a
+   denser 4-column grid on desktop. */
+body .shop-main[data-home-loop] ul.products {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+@media (min-width: 640px) {
+  body .shop-main[data-home-loop] ul.products {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+  }
+}
+@media (min-width: 992px) {
+  body .shop-main[data-home-loop] ul.products {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+  }
+}
+
 /* ─── Shop Header ──────────────────────────── */
 .shop-header {
   background: linear-gradient(135deg, var(--color-primary, #1e3a2f) 0%, #2a5442 100%);

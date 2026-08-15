@@ -1,1 +1,42 @@
-<?php $title=get_theme_mod('senoobar_section_bestsellers_title','پرفروش‌ترین‌ها');$prods=[['name'=>'کمد لباس مالتی','price'=>'۳۹,۰۰۰,۰۰۰','img'=>'https://images.unsplash.com/photo-1642541070065-3912f347e7c6?w=260&h=200&fit=crop&auto=format'],['name'=>'میز جلو مبلی نیو','price'=>'۸,۹۰۰,۰۰۰','img'=>'https://images.unsplash.com/photo-1628744876497-eb30460be9f6?w=260&h=200&fit=crop&auto=format'],['name'=>'میز ناهارخوری ماهان','price'=>'۲۹,۹۰۰,۰۰۰','img'=>'https://images.unsplash.com/photo-1673300881006-3bd384aa1949?w=260&h=200&fit=crop&auto=format'],['name'=>'سرویس خواب لوزرو','price'=>'۷۴,۵۰۰,۰۰۰','img'=>'https://images.unsplash.com/photo-1750420556288-d0e32a6f517b?w=260&h=200&fit=crop&auto=format']];$has_wc=false;if(class_exists('WooCommerce')){$best=new WP_Query(['post_type'=>'product','posts_per_page'=>8,'meta_key'=>'total_sales','orderby'=>'meta_value_num','order'=>'DESC']);if($best->have_posts())$has_wc=true;}?><section class="bestsellers-section"><div class="container"><div class="flex-between mb-6"><h2 class="section__title" style="margin-bottom:0;"><?php echo esc_html($title);?></h2><?php if($has_wc):?><div class="slider-arrows"><button class="slider-arrow" id="sellerPrev" aria-label="قبلی"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></button><button class="slider-arrow" id="sellerNext" aria-label="بعدی"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button></div><?php endif;?></div><?php if($has_wc):?><div class="bestsellers-grid" id="bestsellersGrid"><?php while($best->have_posts()):$best->the_post();global $product;?><a href="<?php the_permalink();?>" class="bestseller-card"><?php if(has_post_thumbnail()):the_post_thumbnail('medium',['loading'=>'lazy']);else:?><img src="<?php echo wc_placeholder_img_src();?>" alt="<?php the_title_attribute();?>" loading="lazy"><?php endif;?><div class="bestseller-card__body"><h4 class="bestseller-card__title"><?php the_title();?></h4><p class="bestseller-card__price"><?php echo $product->get_price_html();?></p></div></a><?php endwhile;?></div><?php wp_reset_postdata();else:?><div class="bestsellers-grid"><?php foreach($prods as $p):?><a href="#" class="bestseller-card"><img src="<?php echo esc_url($p['img']);?>" alt="<?php echo esc_attr($p['name']);?>" loading="lazy"><div class="bestseller-card__body"><h4 class="bestseller-card__title"><?php echo esc_html($p['name']);?></h4><p class="bestseller-card__price"><?php echo esc_html($p['price']);?> <span>تومان</span></p></div></a><?php endforeach;?></div><?php endif;?></div></section>
+<?php
+/**
+ * Best Sellers — standard WooCommerce product cards (add-to-cart + wishlist).
+ */
+$title  = get_theme_mod('senoobar_section_bestsellers_title', 'پرفروش‌ترین‌ها');
+$has_wc = class_exists('WooCommerce');
+
+$best = null;
+if ($has_wc) {
+    $best = new WP_Query([
+        'post_type'      => 'product',
+        'posts_per_page' => 8,
+        'meta_key'       => 'total_sales',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'DESC',
+    ]);
+    $has_wc = $best->have_posts();
+}
+?>
+<section class="bestsellers-section">
+    <div class="container">
+        <div class="flex-between mb-6">
+            <div>
+                <h2 class="section__title" style="margin-bottom:0;"><?php echo esc_html($title); ?></h2>
+            </div>
+            <?php if ($has_wc): ?>
+            <a href="<?php echo get_permalink(wc_get_page_id('shop')); ?>" class="section-link">مشاهده همه</a>
+            <?php endif; ?>
+        </div>
+
+        <?php if ($has_wc): ?>
+            <div class="products-grid shop-main" data-home-loop="bestsellers">
+                <ul class="products columns-4">
+                <?php while ($best->have_posts()): $best->the_post(); ?>
+                    <?php wc_get_template_part('content', 'product'); ?>
+                <?php endwhile; ?>
+                </ul>
+            </div>
+            <?php wp_reset_postdata(); ?>
+        <?php endif; ?>
+    </div>
+</section>
