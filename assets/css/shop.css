@@ -474,6 +474,29 @@ body .shop-main ul.products li.product a.button:hover {
   box-shadow: 0 4px 14px rgba(30,58,47,0.35) !important;
 }
 
+/* ── After adding: flip the icon button into a "View cart" pill ──
+   WooCommerce adds the `.added` class and swaps the button text to
+   "View cart" (translated). Restore a readable font-size + auto width so the
+   label shows, and lift it above the wishlist heart. */
+body .shop-main ul.products li.product .add_to_cart_button.added,
+body .shop-main ul.products li.product .button.added,
+body .shop-main ul.products li.product a.button.added {
+  width: auto !important;
+  height: 42px !important;
+  padding: 0 16px !important;
+  border-radius: 21px !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  z-index: 20 !important; /* above the heart (5) */
+  opacity: 1 !important;
+  transform: none !important;
+}
+/* Hide the separate legacy "View cart" link to avoid duplication */
+body .shop-main ul.products li.product a.added_to_cart {
+  display: none !important;
+}
+
 /* Loading state */
 body .shop-main ul.products li.product .add_to_cart_button.loading {
   opacity: 1 !important;
@@ -620,16 +643,28 @@ body .shop-main.list-view ul.products li.product a.button {
   transform: none !important;
   margin: 0 !important;
 }
+/* List-view after-add: keep the pill at the bottom-left (smaller) */
+body .shop-main.list-view ul.products li.product .add_to_cart_button.added,
+body .shop-main.list-view ul.products li.product .button.added,
+body .shop-main.list-view ul.products li.product a.button.added {
+  bottom: 16px !important;
+  left: 16px !important;
+  height: auto !important;
+  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  font-size: 0.82rem !important;
+}
 body .shop-main.list-view ul.products li.product .add_to_cart_button::after,
 body .shop-main.list-view ul.products li.product .button::after,
 body .shop-main.list-view ul.products li.product a.button::after {
   display: none !important;
 }
 
-/* Keep the wishlist heart anchored top-left over the image */
+/* Keep the wishlist heart anchored over the image (right side in RTL) */
 body .shop-main.list-view ul.products li.product .snb-card-heart {
   top: 10px !important;
-  left: 10px !important;
+  left: auto !important;
+  right: 10px !important;
   z-index: 5 !important;
 }
 
