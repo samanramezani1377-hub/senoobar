@@ -698,12 +698,16 @@ final class Senoobar_Theme {
             wp_enqueue_script('senoobar-newsletter', SENOOBAR_URI . '/assets/js/newsletter.js', ['senoobar-app'], SENOOBAR_VERSION, true);
         });
 
-        // Vazirmatn font
+        // Vazirmatn font — non-blocking load (no render-blocking @import).
         add_action('wp_head', function () {
             echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
             echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';
-            // Using Google Fonts for Vazirmatn
-            echo '<style>@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap");</style>';
+            // Load the stylesheet asynchronously, then swap it in once ready.
+            // media="print" makes the browser treat it as non-blocking; the
+            // onload handler flips it to "all". This keeps the LCP element from
+            // waiting on Google Fonts before it can render.
+            echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" media="print" onload="this.media=\'all\'">';
+            echo '<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap"></noscript>';
         }, 1);
     }
 }
