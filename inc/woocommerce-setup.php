@@ -158,8 +158,19 @@ add_filter('woocommerce_output_related_products_args', function ($args) {
 });
 
 // ─── 10. AJAX add-to-cart ──────────────────
+// Force-enable AJAX add-to-cart on archives so the button always carries the
+// ajax_add_to_cart class + data-product_id, independent of the DB option
+// (woocommerce_enable_ajax_add_to_cart) which can drift/be disabled and then
+// WooCommerce falls back to a full-page reload.
+// 'pre_option_' short-circuits get_option so the value is ALWAYS 'yes' without
+// ever touching the database — the most reliable way to keep Ajax add-to-cart on.
+add_filter('pre_option_woocommerce_enable_ajax_add_to_cart', function () {
+    return 'yes';
+});
 add_filter('woocommerce_loop_add_to_cart_args', function ($args) {
-    $args['class'] .= ' ajax_add_to_cart';
+    if (strpos($args['class'], 'ajax_add_to_cart') === false) {
+        $args['class'] .= ' ajax_add_to_cart';
+    }
     return $args;
 });
 
