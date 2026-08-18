@@ -152,6 +152,20 @@ final class Senoobar_Theme {
             }
             return $t;
         }, 10, 2);
+
+        // Preload the hero image (LCP element) on the front page so the browser
+        // fetches it at the highest priority instead of waiting to discover it
+        // after CSS + HTML parse. Guards against a non-existent/unset image.
+        add_action('wp_head', function () {
+            if (!is_front_page()) return;
+            $hero_id = get_theme_mod('senoobar_hero_img1');
+            $img = $hero_id ? wp_get_attachment_image_src($hero_id, 'senoobar-hero') : null;
+            $src = $img ? $img[0] : SENOOBAR_URI . '/assets/images/hero-1.jpg';
+            // Prefer the smaller webp (if the helper ships one for the static asset).
+            $webp = senoobar_webp_of($src);
+            if ($webp) $src = $webp;
+            echo '<link rel="preload" as="image" href="' . esc_url($src) . '" fetchpriority="high">';
+        }, 1);
     }
 
     // ─── Customizer ───────────────────────────────

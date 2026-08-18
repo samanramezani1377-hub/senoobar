@@ -41,7 +41,7 @@ for ($i = 1; $i <= 4; $i++) {
         <div class="gallery-grid">
             <?php foreach ($ideas as $idea): ?>
             <div class="gallery-item">
-                <img src="<?php echo esc_url($idea['img']); ?>" alt="<?php echo esc_attr($idea['label']); ?>" loading="lazy">
+                <?php echo senoobar_img($idea['img'], ["alt"=>$idea['label'], "loading"=>"lazy"]); ?>
                 <div class="gallery-item__overlay"></div>
                 <div class="gallery-item__label"><?php echo esc_html($idea['label']); ?></div>
             </div>

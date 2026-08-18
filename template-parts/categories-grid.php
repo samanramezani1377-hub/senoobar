@@ -107,7 +107,7 @@ $cat_title    = get_theme_mod('senoobar_section_cats_title', '');
         <a href="<?php echo isset($c['link']) ? esc_url($c['link']) : '#'; ?>" class="cat-item">
           <div class="cat-item__thumb">
             <?php if (!empty($c['img'])): ?>
-              <img src="<?php echo esc_url($c['img']); ?>" alt="<?php echo esc_attr($c['name']); ?>" loading="lazy">
+              <?php echo senoobar_img($c['img'], ["alt"=>$c['name'], "loading"=>"lazy"]); ?>
             <?php else: ?>
               <div class="placeholder">🛋️</div>
             <?php endif; ?>
