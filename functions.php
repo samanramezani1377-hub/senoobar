@@ -1,5 +1,5 @@
 <?php
-define('SENOOBAR_VERSION', '2.0.0');
+define('SENOOBAR_VERSION', '2.0.1');
 define('SENOOBAR_DIR', get_template_directory());
 define('SENOOBAR_URI', get_template_directory_uri());
 
@@ -19,20 +19,9 @@ function senoobar_init() {
 add_action('after_setup_theme', 'senoobar_init');
 
 /**
- * Derive a .webp URL from a theme-static .jpg image path.
- * Returns '' when the URL is not a theme static asset (e.g. a
- * Customizer/attachment upload), so callers fall back to the .jpg.
- */
-function senoobar_webp_of($url) {
-    if (strpos($url, '/assets/images/') !== false && substr($url, -4) === '.jpg') {
-        return substr($url, 0, -4) . '.webp';
-    }
-    return '';
-}
-
-/**
- * Render an <img>, upgrading to <picture>+<source type="image/webp"> when a
- * matching theme-static .webp exists. Safe fallback to plain <img>.
+ * Render an <img> element. Images are served as optimized .jpg (theme statics
+ * are pre-resized/compressed at build time), so no <picture>/webp upgrade is
+ * needed. Callers pass alt, width, height and any extra attributes.
  *
  * @param string $src  Full image URL.
  * @param array  $attr Extra attributes (alt, width, height, loading, class...).
@@ -45,13 +34,6 @@ function senoobar_img($src, $attr = []) {
     foreach ($attr as $k => $v) {
         if (in_array($k, ['alt', 'width', 'height'], true)) continue;
         $extra .= ' ' . $k . '="' . esc_attr($v) . '"';
-    }
-    $webp = senoobar_webp_of($src);
-    if ($webp) {
-        return '<picture>'
-            . '<source srcset="' . esc_url($webp) . '" type="image/webp">'
-            . '<img src="' . esc_url($src) . '" alt="' . esc_attr($alt) . '"' . $width . $height . $extra . '>'
-            . '</picture>';
     }
     return '<img src="' . esc_url($src) . '" alt="' . esc_attr($alt) . '"' . $width . $height . $extra . '>';
 }
