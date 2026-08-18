@@ -679,10 +679,6 @@ final class Senoobar_Theme {
                     'ajaxUrl' => admin_url('admin-ajax.php'),
                     'nonce'   => wp_create_nonce('senoobar_cart_nonce'),
                 ]);
-                // Reliable AJAX add-to-cart on loop buttons (home/shop/archive),
-                // using the same plain-fetch mechanism as the product buy-box so
-                // it never depends on the WooCommerce ajax setting or jQuery.
-                wp_enqueue_script('senoobar-loop-cart', SENOOBAR_URI . '/assets/js/loop-add-to-cart.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
             // Push JS
             wp_enqueue_script('senoobar-push', SENOOBAR_URI . '/assets/js/push.js', ['senoobar-app'], SENOOBAR_VERSION, true);
