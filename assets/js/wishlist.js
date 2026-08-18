@@ -441,10 +441,12 @@
   }
 
   function initCardCartStepper() {
-    // Direct, reliable approach: on click, start fading the icon out right away,
-    // then Morph it into the qty stepper once the short AJAX add completes. We
-    // read the product id straight off the button — no reliance on the
-    // 'added_to_cart' event or the '.added' class (both proved unreliable).
+    // Fully self-contained add-to-cart + stepper for loop buttons (home/shop/
+    // archive). We do the AJAX add ourselves via the custom endpoint
+    // (senoobar_cart_set_quantity) with plain fetch() — exactly like the single-
+    // product buy-box — so it never depends on the WooCommerce ajax setting,
+    // jQuery, or wc-add-to-cart.js being present. The click is intercepted to
+    // prevent the full page reload that would otherwise follow the href.
     document.addEventListener('click', (e) => {
       const addBtn = e.target.closest('.add_to_cart_button');
       if (!addBtn) return;
@@ -452,11 +454,38 @@
       const pid = Number(addBtn.getAttribute('data-product_id') || 0);
       if (!pid || !card) return;
 
+      // Prevent navigation / page reload. Do NOT stopPropagation here so other
+      // handlers (e.g. any future analytics) still observe the click.
+      e.preventDefault();
+
       // Start fading the round icon out immediately for a continuous morph.
       addBtn.classList.add('added');
 
-      // Wait for the AJAX add to complete, then build the stepper (idempotent).
-      setTimeout(() => ensureStepper(card, pid), 220);
+      // Perform the add via our own endpoint (idempotent — sets qty 1 when the
+      // product is not yet in the cart), update the cart badge, then build the
+      // stepper.
+      cardCartPost('senoobar_cart_set_quantity', pid, 1)
+        .then((r) => {
+          if (r && r.success) {
+            stepperQty[pid] = 1;
+            // Refresh the header/bottom cart badge counts directly.
+            const count = (r && typeof r.cart_count === 'number')
+              ? r.cart_count
+              : (r.data && typeof r.data.cart_count === 'number' ? r.data.cart_count : null);
+            if (typeof count === 'number') {
+              document.querySelectorAll('.cart-badge[data-cart-count], .mbn-badge[data-cart-count]').forEach((b) => {
+                b.textContent = String(count);
+                if (count > 0) b.classList.remove('is-hidden');
+                else b.classList.add('is-hidden');
+              });
+            }
+          }
+          ensureStepper(card, pid);
+        })
+        .catch(() => {
+          // Fallback: let the browser follow the normal link.
+          if (addBtn.getAttribute('href')) window.location.href = addBtn.getAttribute('href');
+        });
     });
 
     // On page load, any card already "added" (e.g. after an AJAX refresh or a
