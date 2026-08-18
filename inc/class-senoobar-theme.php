@@ -751,7 +751,7 @@ final class Senoobar_Theme {
         // the woff2 subset files from Google Fonts.
         add_action('wp_head', function () {
             // Preload the primary body weight so the swap happens ASAP.
-            echo '<link rel="preload" as="font" type="font/woff2" crossorigin href="' . esc_url(SENOOBAR_URI . '/assets/fonts/vazirmatn-400.woff2') . '">';
+            echo '<link rel="preload" as="font" type="font/woff2" crossorigin href="' . esc_url(SENOOBAR_URI . '/assets/fonts/vazirmatn-arabic.woff2') . '">';
         }, 1);
     }
 }
