@@ -30,3 +30,16 @@
     window.addEventListener('scroll',function(){if(window.scrollY>10)h.classList.add('scrolled');else h.classList.remove('scrolled');},{passive:true});
   }
 })();
+
+// Register service worker (so PWA + push work). Wrapped in a guard so it
+// never throws on older browsers.
+(function () {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js').catch(function (err) {
+        // Non-fatal: the site works fine without cached assets.
+        console.warn('[SW] registration failed:', err);
+      });
+    });
+  }
+})();

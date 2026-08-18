@@ -505,6 +505,8 @@ body .shop-main ul.products li.product .price > * > * {
   color: #111827 !important;
 }
 /* Single price (no sale) */
+/* Safari < 15.4 fallback: the :has() below is ignored there, so also target
+   .price that has no .woocommerce-Price-amount del sibling via a generic rule. */
 body .shop-main ul.products li.product .price:not(:has(del)) {
   flex-direction: row !important;
   font-size: 1rem !important;
@@ -758,6 +760,10 @@ body .shop-main.list-view ul.products {
 }
 
 /* Extra bottom room only while the qty stepper is shown */
+/* Safari < 15.4 ignores :has(); keep the plain rule so spacing is preserved. */
+body .shop-main ul.products li.product {
+  padding-bottom: 50px !important;
+}
 body .shop-main ul.products li.product:has(.snb-card-stepper) {
   padding-bottom: 50px !important;
 }

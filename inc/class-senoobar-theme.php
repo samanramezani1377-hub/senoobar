@@ -698,16 +698,16 @@ final class Senoobar_Theme {
             wp_enqueue_script('senoobar-newsletter', SENOOBAR_URI . '/assets/js/newsletter.js', ['senoobar-app'], SENOOBAR_VERSION, true);
         });
 
-        // Vazirmatn font — non-blocking load (no render-blocking @import).
+        // Vazirmatn font — load with display=swap so text is never invisible.
+        // NOTE: the media="print" + onload swap trick is unreliable on iOS
+        // Safari (the stylesheet sometimes never swaps to "all", leaving the
+        // site unstyled / with a fallback font). A plain <link> with
+        // display=swap is the most reliable cross-browser approach and does
+        // not block rendering (text renders in fallback until Vazirmatn lands).
         add_action('wp_head', function () {
             echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
             echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';
-            // Load the stylesheet asynchronously, then swap it in once ready.
-            // media="print" makes the browser treat it as non-blocking; the
-            // onload handler flips it to "all". This keeps the LCP element from
-            // waiting on Google Fonts before it can render.
-            echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" media="print" onload="this.media=\'all\'">';
-            echo '<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap"></noscript>';
+            echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap">';
         }, 1);
     }
 }

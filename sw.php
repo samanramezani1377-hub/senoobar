@@ -128,7 +128,7 @@ self.addEventListener('fetch', event => {
   }
 
   // HTML: Network First with offline fallback
-  if (request.mode === 'navigate' || request.headers.get('Accept')?.includes('text/html')) {
+  if (request.mode === 'navigate' || (request.headers.get('Accept') || '').indexOf('text/html') !== -1) {
     event.respondWith(
       fetch(request).then(response => {
         const clone = response.clone();
@@ -211,7 +211,8 @@ self.addEventListener('push', event => {
 // Notification click
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  const url = event.notification.data?.url || '<?php echo esc_js($home_url); ?>';
+  var notifData = event.notification.data || {};
+  const url = notifData.url || '<?php echo esc_js($home_url); ?>';
   
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
