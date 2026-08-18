@@ -161,6 +161,11 @@ final class Senoobar_Theme {
             $hero_id = get_theme_mod('senoobar_hero_img1');
             $img = $hero_id ? wp_get_attachment_image_src($hero_id, 'senoobar-hero') : null;
             $src = $img ? $img[0] : SENOOBAR_URI . '/assets/images/hero-1.jpg';
+            // Preload the webp variant when using the theme's static hero, so
+            // the preload matches the <picture><source> actually rendered.
+            if (!$hero_id) {
+                $src = SENOOBAR_URI . '/assets/images/hero-1.webp';
+            }
             echo '<link rel="preload" as="image" href="' . esc_url($src) . '" fetchpriority="high">';
         }, 1);
     }
@@ -619,68 +624,92 @@ final class Senoobar_Theme {
     }
 
     // ─── Assets ───────────────────────────────────
+    // PERFORMANCE: CSS is now loaded conditionally per page type so that the
+    // home page (the most visited) only pulls the CSS it actually needs. The
+    // previous version loaded cart.css / account.css / wishlist.css / shop.css
+    // on EVERY page, which made ~79-98% of those files dead bytes on non-shop
+    // pages (confirmed via Lighthouse Code Coverage) and bloated first paint.
     private function assets() {
         add_action('wp_enqueue_scripts', function () {
-            // Critical CSS (inline)
+            $is_wc = class_exists('WooCommerce');
+
+            $is_shop_page = $is_wc && (is_shop() || is_product_category() || is_product_tag());
+            $is_search_page = is_search();
+            $is_product_page = $is_wc && is_product();
+            $is_cart_page = $is_wc && is_cart();
+            $is_checkout_page = $is_wc && is_checkout();
+            $is_account_page = $is_wc && is_account_page();
+            // Front page still renders product loops (featured / bestsellers),
+            // so it needs the shared shop card styles.
+            $is_home_loop = is_front_page() || is_home();
+
+            // ── Core (always) ──────────────────────────────
             wp_enqueue_style('senoobar-critical', SENOOBAR_URI . '/assets/css/critical.css', [], SENOOBAR_VERSION);
-            // Main CSS
             wp_enqueue_style('senoobar-main', SENOOBAR_URI . '/assets/css/main.css', ['senoobar-critical'], SENOOBAR_VERSION);
-            // RTL
             if (is_rtl()) {
                 wp_enqueue_style('senoobar-rtl', SENOOBAR_URI . '/assets/css/rtl.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
-            // Shop CSS
-            $is_cart_page = class_exists('WooCommerce') && is_cart();
-            $is_checkout_page = class_exists('WooCommerce') && is_checkout();
-            $is_account_page = class_exists('WooCommerce') && is_account_page();
-            
-            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search() || is_front_page() || is_home() || $is_cart_page || $is_checkout_page || $is_account_page)) {
+
+            // ── Shop card styles (only where product loops appear) ──
+            if ($is_wc && ($is_shop_page || $is_search_page || $is_home_loop || $is_cart_page || $is_checkout_page || $is_account_page)) {
                 wp_enqueue_style('senoobar-shop', SENOOBAR_URI . '/assets/css/shop.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
-            // Cart CSS — always load when WooCommerce is active (cart is reached via
-            // many paths; relying only on is_cart() caused it to be missed).
-            if (class_exists('WooCommerce')) {
+
+            // ── Cart styles (only on the cart page) ──
+            if ($is_cart_page) {
                 wp_enqueue_style('senoobar-cart', SENOOBAR_URI . '/assets/css/cart.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
 
-            // Mobile bottom navigation (always loaded; hidden on desktop via CSS).
-            wp_enqueue_style('senoobar-bottom-nav', SENOOBAR_URI . '/assets/css/bottom-nav.css', ['senoobar-main'], SENOOBAR_VERSION);
-            // Checkout CSS
+            // ── Checkout styles (only on checkout) ──
             if ($is_checkout_page) {
                 wp_enqueue_style('senoobar-checkout', SENOOBAR_URI . '/assets/css/checkout.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
-            // Account CSS — always load when WooCommerce is active (the account page
-            // is reached via template_include to senoobar-account.php, so relying on
-            // is_account_page() caused it to be missed and broke mobile layout).
-            if (class_exists('WooCommerce')) {
+
+            // ── Account styles (only on account pages) ──
+            if ($is_account_page) {
                 wp_enqueue_style('senoobar-account', SENOOBAR_URI . '/assets/css/account.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
-            // Wishlist CSS + JS (wishlist page + anywhere the heart button appears)
-            if (class_exists('WooCommerce')) {
+
+            // Mobile bottom navigation (tiny; always loaded, hidden on desktop).
+            wp_enqueue_style('senoobar-bottom-nav', SENOOBAR_URI . '/assets/css/bottom-nav.css', ['senoobar-main'], SENOOBAR_VERSION);
+
+            // ── Wishlist styles (wishlist page + pages w/ product cards) ──
+            // The heart button is rendered onto every product card, so this is
+            // needed wherever cards appear — but NOT on plain pages.
+            if ($is_wc && ($is_shop_page || $is_search_page || $is_home_loop || $is_product_page || is_page('wishlist'))) {
                 wp_enqueue_style('senoobar-wishlist', SENOOBAR_URI . '/assets/css/wishlist.css', ['senoobar-main'], SENOOBAR_VERSION);
-                wp_enqueue_script('senoobar-wishlist', SENOOBAR_URI . '/assets/js/wishlist.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
-            // JS
+
+            // ── Scripts ─────────────────────────────────────
             wp_enqueue_script('senoobar-app', SENOOBAR_URI . '/assets/js/app.js', [], SENOOBAR_VERSION, true);
             wp_localize_script('senoobar-app', 'senoobarData', [
-                'ajaxUrl' => admin_url('admin-ajax.php'),
-                'cartUrl' => class_exists('WooCommerce') ? wc_get_cart_url() : '',
-                'nonce'   => wp_create_nonce('senoobar_cart_nonce'),
-                'isRTL'   => is_rtl(),
-                'siteUrl'   => home_url(),
-                'shopUrl'   => class_exists('WooCommerce') ? get_permalink(wc_get_page_id('shop')) : home_url('/'),
-                'loggedIn'  => is_user_logged_in(),
+                'ajaxUrl'  => admin_url('admin-ajax.php'),
+                'cartUrl'  => $is_wc ? wc_get_cart_url() : '',
+                'nonce'    => wp_create_nonce('senoobar_cart_nonce'),
+                'isRTL'    => is_rtl(),
+                'siteUrl'  => home_url(),
+                'shopUrl'  => $is_wc ? get_permalink(wc_get_page_id('shop')) : home_url('/'),
+                'loggedIn' => is_user_logged_in(),
             ]);
-            // Cart JS — always load when WooCommerce is active (so the AJAX +/- /
-            // remove handlers are present regardless of how is_cart() resolves).
-            if (class_exists('WooCommerce')) {
+
+            // Wishlist JS — needed on the wishlist page AND anywhere the card
+            // heart button / add-to-cart stepper appears (shop, home, search,
+            // single product).
+            if ($is_wc && ($is_shop_page || $is_search_page || $is_home_loop || $is_product_page || is_page('wishlist'))) {
+                wp_enqueue_script('senoobar-wishlist', SENOOBAR_URI . '/assets/js/wishlist.js', ['senoobar-app'], SENOOBAR_VERSION, true);
+            }
+
+            // Cart JS — only where the cart UI can appear (cart page + the
+            // add-to-cart stepper on product cards needs the qty handlers).
+            if ($is_wc && ($is_cart_page || $is_shop_page || $is_search_page || $is_home_loop || $is_product_page)) {
                 wp_enqueue_script('senoobar-cart', SENOOBAR_URI . '/assets/js/cart.js', ['senoobar-app'], SENOOBAR_VERSION, true);
                 wp_localize_script('senoobar-cart', 'SenoobarCart', [
                     'ajaxUrl' => admin_url('admin-ajax.php'),
                     'nonce'   => wp_create_nonce('senoobar_cart_nonce'),
                 ]);
             }
-            // Push JS
+
+            // Push JS (subscribe button lives in header + bottom nav).
             wp_enqueue_script('senoobar-push', SENOOBAR_URI . '/assets/js/push.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             wp_localize_script('senoobar-push', 'senoobarPush', [
                 'ajaxUrl'        => admin_url('admin-ajax.php'),
@@ -691,34 +720,38 @@ final class Senoobar_Theme {
                 'isRTL'          => is_rtl(),
                 'siteUrl'        => home_url(),
             ]);
-            // Checkout JS
-            $is_checkout_page = class_exists('WooCommerce') && is_checkout();
+
+            // Checkout JS (only on checkout).
             if ($is_checkout_page) {
                 wp_enqueue_script('senoobar-checkout', SENOOBAR_URI . '/assets/js/checkout.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
-            // Shop filter JS (also on search results, so category/price filtering
-            // works there too)
-            if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag() || is_search())) {
+
+            // Shop filter JS (shop archive + search results).
+            if ($is_wc && ($is_shop_page || $is_search_page)) {
                 wp_enqueue_script('senoobar-shop-filters', SENOOBAR_URI . '/assets/js/shop-filters.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
-            // Product buy-box JS (single product: button -> stepper behavior)
-            if (class_exists('WooCommerce') && is_product()) {
+
+            // Product buy-box JS (single product page).
+            if ($is_product_page) {
                 wp_enqueue_script('senoobar-product-buy-box', SENOOBAR_URI . '/assets/js/product-buy-box.js', ['senoobar-app'], SENOOBAR_VERSION, true);
             }
-            // Newsletter JS
+
+            // Newsletter JS (newsletter form in mobile menu + footer).
             wp_enqueue_script('senoobar-newsletter', SENOOBAR_URI . '/assets/js/newsletter.js', ['senoobar-app'], SENOOBAR_VERSION, true);
         });
 
-        // Vazirmatn font — load with display=swap so text is never invisible.
-        // NOTE: the media="print" + onload swap trick is unreliable on iOS
-        // Safari (the stylesheet sometimes never swaps to "all", leaving the
-        // site unstyled / with a fallback font). A plain <link> with
-        // display=swap is the most reliable cross-browser approach and does
-        // not block rendering (text renders in fallback until Vazirmatn lands).
+        // Vazirmatn font — SELF-HOSTED + font-display:swap so text renders
+        // immediately in the fallback and swaps in once the font arrives. This
+        // avoids the extra third-party request to fonts.googleapis.com and the
+        // render-blocking behavior of a remote stylesheet.
+        //
+        // The font files are expected at assets/fonts/vazirmatn-*.woff2 and the
+        // @font-face rules live in critical.css (so they are discoverable before
+        // first paint). See the setup notes in README for how to (re)generate
+        // the woff2 subset files from Google Fonts.
         add_action('wp_head', function () {
-            echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
-            echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';
-            echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap">';
+            // Preload the primary body weight so the swap happens ASAP.
+            echo '<link rel="preload" as="font" type="font/woff2" crossorigin href="' . esc_url(SENOOBAR_URI . '/assets/fonts/vazirmatn-400.woff2') . '">';
         }, 1);
     }
 }

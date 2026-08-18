@@ -12,4 +12,15 @@ $img1_w='800'; $img1_h='1000';
 $img2_w='800'; $img2_h='1000';
 if($hero_img1){ $s1=wp_get_attachment_image_src($hero_img1,'senoobar-hero'); if($s1){$img1=$s1[0];$img1_w=$s1[1];$img1_h=$s1[2];} }
 if($hero_img2){ $s2=wp_get_attachment_image_src($hero_img2,'senoobar-hero'); if($s2){$img2=$s2[0];$img2_w=$s2[1];$img2_h=$s2[2];} }
-?><section class="hero"><div class="hero__grid"><div class="hero__image-wrap"><?php echo senoobar_img($img1, ['alt'=>'نشیمن مدرن','width'=>$img1_w,'height'=>$img1_h,'fetchpriority'=>'high','decoding'=>'async']); ?></div><div class="hero__image-wrap"><?php echo senoobar_img($img2, ['alt'=>'اتاق خواب','width'=>$img2_w,'height'=>$img2_h,'loading'=>'lazy','fetchpriority'=>'low','decoding'=>'async']); ?></div></div><div class="hero__content"><div class="hero__content-inner"><p class="hero__kicker">زیبایی در سادگی، کیفیت در جزئیات</p><h1 class="hero__title"><?php echo esc_html($hero_title); ?></h1><p class="hero__subtitle"><?php echo esc_html($hero_subtitle); ?></p><div class="hero__actions"><a href="<?php echo class_exists('WooCommerce')?get_permalink(wc_get_page_id('shop')):'#'; ?>" class="btn btn--primary">مشاهده محصولات</a><a href="#" class="hero__btn-outline">مشاهده مجموعه‌ها</a></div></div></div></section>
+/* webp sources: the theme ships pre-converted webp variants next to the jpg.
+   We only emit a <picture> when using the theme's own static images (Customizer
+   uploads already get optimized by the site's media pipeline /Converter plugin). */
+$img1_webp = !$hero_img1 ? str_replace('.jpg', '.webp', $img1) : '';
+$img2_webp = !$hero_img2 ? str_replace('.jpg', '.webp', $img2) : '';
+?><section class="hero"><div class="hero__grid"><div class="hero__image-wrap"><?php
+if($img1_webp){ echo '<picture><source type="image/webp" srcset="'.esc_url($img1_webp).'">'.senoobar_img($img1, ['alt'=>'نشیمن مدرن','width'=>$img1_w,'height'=>$img1_h,'fetchpriority'=>'high','decoding'=>'async']).'</picture>'; }
+else { echo senoobar_img($img1, ['alt'=>'نشیمن مدرن','width'=>$img1_w,'height'=>$img1_h,'fetchpriority'=>'high','decoding'=>'async']); }
+?></div><div class="hero__image-wrap"><?php
+if($img2_webp){ echo '<picture><source type="image/webp" srcset="'.esc_url($img2_webp).'">'.senoobar_img($img2, ['alt'=>'اتاق خواب','width'=>$img2_w,'height'=>$img2_h,'loading'=>'lazy','fetchpriority'=>'low','decoding'=>'async']).'</picture>'; }
+else { echo senoobar_img($img2, ['alt'=>'اتاق خواب','width'=>$img2_w,'height'=>$img2_h,'loading'=>'lazy','fetchpriority'=>'low','decoding'=>'async']); }
+?></div></div><div class="hero__content"><div class="hero__content-inner"><p class="hero__kicker">زیبایی در سادگی، کیفیت در جزئیات</p><h1 class="hero__title"><?php echo esc_html($hero_title); ?></h1><p class="hero__subtitle"><?php echo esc_html($hero_subtitle); ?></p><div class="hero__actions"><a href="<?php echo class_exists('WooCommerce')?get_permalink(wc_get_page_id('shop')):'#'; ?>" class="btn btn--primary">مشاهده محصولات</a><a href="#" class="hero__btn-outline">مشاهده مجموعه‌ها</a></div></div></div></section>
