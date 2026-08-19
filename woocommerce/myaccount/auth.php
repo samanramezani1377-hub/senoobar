@@ -83,6 +83,7 @@ $show_lost     = isset( $_GET['lostpassword'] );
                         <label for="otp_phone">شماره موبایل</label>
                         <input type="tel" id="otp_phone" placeholder="۰۹۱۲ ۳۴۵ ۶۷۸۹" required dir="ltr" style="text-align:right">
                     </div>
+                    <a href="#" id="snb-otp-edit-phone" style="display:none;font-size:12px;color:var(--snb-brand,#1e3a2f);text-decoration:underline;margin-top:-8px;margin-bottom:8px;">شماره اشتباه است؟ اصلاح شماره</a>
                     <div class="snb-field" id="snb-otp-code-wrap" style="display:none;">
                         <label for="otp_code">کد تأیید</label>
                         <input type="tel" id="otp_code" inputmode="numeric" maxlength="5" placeholder="کد ۵ رقمی" dir="ltr" style="text-align:right">

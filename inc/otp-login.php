@@ -292,6 +292,7 @@ function senoobar_otp_footer_js() {
         var msgEl    = document.getElementById('snb-otp-msg');
         var sendBtn  = document.getElementById('snb-otp-send');
         var verifyBtn= document.getElementById('snb-otp-verify');
+        var editPhoneEl = document.getElementById('snb-otp-edit-phone');
 
         function showMsg(text, ok) {
             msgEl.style.display = 'block';
@@ -327,6 +328,7 @@ function senoobar_otp_footer_js() {
                 if (res && res.success) {
                     codeWrap.style.display = 'block';
                     verifyBtn.style.display = 'block';
+                    if (editPhoneEl) { editPhoneEl.style.display = 'inline-block'; }
                     showMsg(res.data.message || 'کد ارسال شد.', true);
                 } else {
                     showMsg((res && res.data && res.data.message) || 'خطا در ارسال کد.', false);
@@ -337,6 +339,18 @@ function senoobar_otp_footer_js() {
                 showMsg('خطای شبکه. دوباره تلاش کن.', false);
             });
         });
+
+        if (editPhoneEl) {
+            editPhoneEl.addEventListener('click', function (e) {
+                e.preventDefault();
+                codeWrap.style.display = 'none';
+                verifyBtn.style.display = 'none';
+                editPhoneEl.style.display = 'none';
+                sendBtn.textContent = 'ارسال کد تأیید';
+                showMsg('شماره را اصلاح کنید و دوباره کد بگیرید.', false);
+                phoneEl.focus();
+            });
+        }
 
         verifyBtn.addEventListener('click', function () {
             var phone = normPhone(phoneEl.value);
