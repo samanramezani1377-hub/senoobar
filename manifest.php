@@ -1,33 +1,23 @@
 <?php
 /**
- * Senoobar PWA Manifest - Dynamic PHP Version
+ * Senoobar PWA Manifest - Dynamic PHP Version.
+ *
+ * SECURITY: This file MUST NOT load wp-load.php. It is only ever included from
+ * inc/class-senoobar-theme.php inside `template_redirect`, where the WordPress
+ * environment is already fully bootstrapped. Loading wp-load.php here (as the
+ * old code did, via a guessable relative path) was both fragile (it broke on
+ * any non-standard directory layout) and dangerous (a guessable include path).
+ *
+ * If WordPress is not loaded (direct access), bail out quietly.
  */
 
-// Load WordPress
-$wp_load_path = __DIR__ . '/../../../wp-load.php';
-if (!file_exists($wp_load_path)) {
-    $possible_paths = [
-        __DIR__ . '/../../../../wp-load.php',
-        __DIR__ . '/../../wp-load.php',
-    ];
-    foreach ($possible_paths as $path) {
-        if (file_exists($path)) {
-            $wp_load_path = $path;
-            break;
-        }
-    }
-}
-
-if (file_exists($wp_load_path)) {
-    require_once $wp_load_path;
-} else {
-    header('Content-Type: application/manifest+json');
-    echo json_encode(['error' => 'WordPress not loaded']);
+if ( ! defined( 'ABSPATH' ) ) {
+    http_response_code( 404 );
     exit;
 }
 
-header('Content-Type: application/manifest+json');
-header('Cache-Control: public, max-age=86400');
+header( 'Content-Type: application/manifest+json' );
+header( 'Cache-Control: public, max-age=86400' );
 
 $theme_uri = get_template_directory_uri();
 $home_url = home_url('/');

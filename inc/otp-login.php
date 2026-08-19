@@ -21,6 +21,12 @@ if ( ! class_exists( 'WooCommerce' ) ) {
     return;
 }
 
+// Maximum number of failed OTP-verification attempts before the code is
+// discarded and the user must request a fresh code.
+if ( ! defined( 'SENOOBAR_OTP_MAX_ATTEMPTS' ) ) {
+    define( 'SENOOBAR_OTP_MAX_ATTEMPTS', 5 );
+}
+
 /* ─── ۱. تنظیمات ملی‌پیامک در سفارشی‌سازی پوسته ─── */
 add_action( 'customize_register', 'senoobar_otp_customizer' );
 function senoobar_otp_customizer( $c ) {
@@ -136,14 +142,35 @@ function senoobar_otp_store( $phone, $code ) {
     set_transient( 'senoobar_otp_' . $phone, wp_hash( $code ), 2 * MINUTE_IN_SECONDS );
 }
 function senoobar_otp_verify( $phone, $code ) {
-    $stored = get_transient( 'senoobar_otp_' . $phone );
+    $key     = 'senoobar_otp_' . $phone;
+    $attempt = 'senoobar_otp_attempts_' . $phone;
+
+    $stored = get_transient( $key );
     if ( false === $stored ) {
         return new WP_Error( 'otp_expired', 'کد منقضی شده است. دوباره درخواست بده.' );
     }
+
     if ( ! hash_equals( $stored, wp_hash( $code ) ) ) {
-        return new WP_Error( 'otp_wrong', 'کد وارد شده اشتباه است.' );
+        // SECURITY: rate-limit verification attempts to prevent brute-forcing
+        // the 5-digit code. After 5 wrong tries the code is discarded, forcing a
+        // fresh "send" request (which is itself rate-limited per IP+phone).
+        $attempts = (int) get_transient( $attempt );
+        $attempts++;
+
+        if ( $attempts >= SENOOBAR_OTP_MAX_ATTEMPTS ) {
+            delete_transient( $key );
+            delete_transient( $attempt );
+            return new WP_Error( 'otp_locked', 'تعداد تلاش‌های ناموفق زیاد است. کد باطل شد؛ دوباره درخواست کد بده.' );
+        }
+
+        // Keep the counter alive for the same window as the code itself.
+        set_transient( $attempt, $attempts, 2 * MINUTE_IN_SECONDS );
+        $remaining = SENOOBAR_OTP_MAX_ATTEMPTS - $attempts;
+        return new WP_Error( 'otp_wrong', sprintf( 'کد وارد شده اشتباه است. %d تلاش دیگر باقی مانده.', $remaining ) );
     }
-    delete_transient( 'senoobar_otp_' . $phone );
+
+    delete_transient( $key );
+    delete_transient( $attempt );
     return true;
 }
 

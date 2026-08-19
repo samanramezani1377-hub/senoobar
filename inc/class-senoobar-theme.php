@@ -114,23 +114,38 @@ final class Senoobar_Theme {
             add_rewrite_rule('^sw\.js$', 'index.php?senoobar_sw=1', 'top');
             add_rewrite_rule('^manifest\.json$', 'index.php?senoobar_manifest=1', 'top');
         });
-        
+
+        // Flush rewrite rules on theme activation so the sw.js / manifest.json
+        // routes above actually take effect (otherwise they silently 404 until
+        // the admin manually re-saves permalinks).
+        add_action('after_switch_theme', function () {
+            flush_rewrite_rules();
+        });
+
         add_filter('query_vars', function ($vars) {
             $vars[] = 'senoobar_sw';
             $vars[] = 'senoobar_manifest';
             return $vars;
         });
-        
+
         add_action('template_redirect', function () {
             if (get_query_var('senoobar_sw') === '1') {
-                $sw_file = get_template_directory() . '/sw.php';
-                if (file_exists($sw_file)) {
-                    include $sw_file;
+                // Serve the service worker directly from the theme, with the
+                // correct JS headers so the browser always re-validates and
+                // picks up changes (Service-Worker-Allowed allows a root scope).
+                $sw_file = get_template_directory() . '/sw.js';
+                if (file_exists($sw_file) && is_readable($sw_file)) {
+                    header('Content-Type: application/javascript; charset=utf-8');
+                    header('Service-Worker-Allowed: /');
+                    header('Cache-Control: no-cache, no-store, must-revalidate');
+                    readfile($sw_file);
                     exit;
                 }
             }
-            
+
             if (get_query_var('senoobar_manifest') === '1') {
+                // manifest.php sets its own headers and only works inside a
+                // fully-bootstrapped WordPress context (which is the case here).
                 $manifest_file = get_template_directory() . '/manifest.php';
                 if (file_exists($manifest_file)) {
                     include $manifest_file;
@@ -683,13 +698,18 @@ final class Senoobar_Theme {
             // ── Scripts ─────────────────────────────────────
             wp_enqueue_script('senoobar-app', SENOOBAR_URI . '/assets/js/app.js', [], SENOOBAR_VERSION, true);
             wp_localize_script('senoobar-app', 'senoobarData', [
-                'ajaxUrl'  => admin_url('admin-ajax.php'),
-                'cartUrl'  => $is_wc ? wc_get_cart_url() : '',
-                'nonce'    => wp_create_nonce('senoobar_cart_nonce'),
-                'isRTL'    => is_rtl(),
-                'siteUrl'  => home_url(),
-                'shopUrl'  => $is_wc ? get_permalink(wc_get_page_id('shop')) : home_url('/'),
-                'loggedIn' => is_user_logged_in(),
+                'ajaxUrl'   => admin_url('admin-ajax.php'),
+                'cartUrl'   => $is_wc ? wc_get_cart_url() : '',
+                'nonce'     => wp_create_nonce('senoobar_cart_nonce'),
+                'isRTL'     => is_rtl(),
+                'siteUrl'   => home_url(),
+                'shopUrl'   => $is_wc ? get_permalink(wc_get_page_id('shop')) : home_url('/'),
+                'loggedIn'  => is_user_logged_in(),
+                // Service worker + theme asset base, derived from the live
+                // environment (never hardcoded) so the PWA keeps working on any
+                // domain / theme directory.
+                'swUrl'     => home_url('/sw.js'),
+                'themeBase' => SENOOBAR_URI,
             ]);
 
             // Wishlist JS — needed on the wishlist page AND anywhere the card
@@ -767,7 +787,7 @@ function senoobar_sanitize_enamad_code(string $input): string {
         return '';
     }
 
-    // Allow only specific safe tags and attributes for E-Namad embeds
+    // Allow only specific safe tags and attributes for the trust-badge embeds.
     $allowed_tags = [
         'a'      => ['href' => [], 'title' => [], 'target' => [], 'rel' => [], 'id' => [], 'class' => []],
         'img'    => ['src' => [], 'alt' => [], 'width' => [], 'height' => [], 'style' => [], 'id' => [], 'class' => []],
@@ -779,9 +799,101 @@ function senoobar_sanitize_enamad_code(string $input): string {
 
     $sanitized = wp_kses($input, $allowed_tags);
 
-    // Additional safety: ensure scripts/iframes only from trusted domains
-    // This is a basic check - in production, you might want more sophisticated validation
-    return $sanitized;
+    // SECURITY: the badges are supplied as raw <script>/<iframe>/<img> snippets
+    // and echoed into the footer, so a privileged-but-not-fully-trusted editor
+    // must not be able to inject arbitrary script/iframe sources. Strip any
+    // src/href that does NOT point at an allowed trust-badge domain. Only the
+    // official Iran e-Namad (enamad.ir / trustseal.enamad.ir) and Samandehi
+    // (samandehi.ir) domains are permitted.
+    return senoobar_restrict_badge_sources($sanitized);
+}
+
+/**
+ * Strip script src / iframe src / img src / a href whose host is not in the
+ * allowed trust-badge domain whitelist. Relative URLs (rare in these snippets)
+ * are dropped as well, since the official badges always use absolute URLs.
+ *
+ * @param string $html Sanitized HTML.
+ * @return string HTML with only whitelisted external sources.
+ */
+function senoobar_restrict_badge_sources(string $html): string {
+    if ('' === $html) {
+        return $html;
+    }
+
+    $allowed_hosts = [
+        'enamad.ir',
+        'trustseal.enamad.ir',
+        'www.enamad.ir',
+        'samandehi.ir',
+        'www.samandehi.ir',
+        'logo.samandehi.ir',
+    ];
+
+    $is_allowed_host = function (string $url) use ($allowed_hosts): bool {
+        $host = wp_parse_url($url, PHP_URL_HOST);
+        if (false === $host || null === $host) {
+            return false; // relative or unparsable — not allowed
+        }
+        $host = strtolower($host);
+        foreach ($allowed_hosts as $allowed) {
+            $suffix = '.' . $allowed;
+            if ($host === $allowed || substr($host, -strlen($suffix)) === $suffix) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // Regex fallback (when the DOM extension is unavailable). Matches the four
+    // element types whose open tag can carry a src/href. Delimiters and
+    // backreferences are written without relying on single-quote escaping.
+    if (!class_exists('DOMDocument')) {
+        $pattern = '#<(script|iframe|img|a)\b([^>]*)>#i';
+        return preg_replace_callback(
+            $pattern,
+            function ($m) use ($is_allowed_host) {
+                $tag   = strtolower($m[1]);
+                $attrs = $m[2];
+                $attr  = ('a' === $tag) ? 'href' : 'src';
+
+                $spot      = '#' . $attr . '\s*=\s*["\']([^"\']*)["\']#i';
+                if (preg_match($spot, $attrs, $am)) {
+                    if (!$is_allowed_host($am[1])) {
+                        return ''; // drop the whole element
+                    }
+                }
+                return $m[0];
+            },
+            $html
+        );
+    }
+
+    // Use DOMDocument to remove any element whose external source is not allowed.
+    $dom = new DOMDocument();
+    $prev = libxml_use_internal_errors(true);
+    $dom->loadHTML('<?xml encoding="utf-8" ?><html><body>' . $html . '</body></html>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    libxml_clear_errors();
+    libxml_use_internal_errors($prev);
+
+    $xpath = new DOMXPath($dom);
+    $nodes = $xpath->query('//script | //iframe | //img | //a');
+    $to_remove = [];
+    foreach ($nodes as $node) {
+        $attr = ('a' === $node->nodeName) ? 'href' : 'src';
+        if (!$node->hasAttribute($attr)) {
+            continue;
+        }
+        if (!$is_allowed_host($node->getAttribute($attr))) {
+            $to_remove[] = $node;
+        }
+    }
+    foreach ($to_remove as $node) {
+        $node->parentNode->removeChild($node);
+    }
+
+    $body = $dom->getElementsByTagName('body')->item(0);
+    return $body ? $dom->saveHTML($body) : $html;
 }
 
 /**

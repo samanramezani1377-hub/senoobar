@@ -36,7 +36,14 @@
 (function () {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('https://senoobar.ir/sw.js').catch(function (err) {
+      var d = window.senoobarData || {};
+      var swUrl = d.swUrl || '/sw.js';
+      // Pass the theme asset base to the worker so its precache + notification
+      // icon paths are correct on any domain / theme directory name.
+      if (d.themeBase) {
+        swUrl += (swUrl.indexOf('?') === -1 ? '?' : '&') + 'theme=' + encodeURIComponent(d.themeBase);
+      }
+      navigator.serviceWorker.register(swUrl).catch(function (err) {
         // Non-fatal: the site works fine without cached assets.
         console.warn('[SW] registration failed:', err);
       });

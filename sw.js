@@ -4,15 +4,37 @@
  * No HTML navigation interception -> no network error / redirect issues.
  */
 
-const CACHE_VERSION = 'senoobar-v2.2.0';
+const CACHE_VERSION = 'senoobar-v2.3.0';
 const STATIC_CACHE = CACHE_VERSION + '-static';
+
+// Origin + theme base path are derived at runtime so the worker keeps working
+// on any domain / theme directory name (the old hardcoded senoobar.ir / -main
+// paths broke the PWA the moment the site or theme slug changed).
+const ORIGIN = self.location.origin;
+
+// Theme asset base is passed as a `?theme=` query param at registration time
+// (see assets/js/app.js + the senoobarData.themeBase localization), so the
+// worker's precache + notification icon paths are correct on any domain or
+// theme directory name. If the param is missing (bare register('/sw.js')),
+// fall back to deriving the path from the worker's own URL.
+const THEME_BASE = (function () {
+  var p = new URL(self.location.href).searchParams.get('theme');
+  if (p) {
+    // Strip a trailing slash if present.
+    return p.replace(/\/+$/, '');
+  }
+  // Fallback: the worker is served from the theme dir or from /sw.js via a
+  // rewrite; in the latter case we cannot reliably detect the theme slug, so
+  // leave a relative-safe base (origin) and let the runtime push data override.
+  return ORIGIN;
+})();
 
 // Assets to pre-cache on install (all return 200)
 const PRECACHE_URLS = [
-  'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/css/critical.css',
-  'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/css/main.css',
-  'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/js/app.js',
-  'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/icons/icon-192.png'
+  THEME_BASE + '/assets/css/critical.css',
+  THEME_BASE + '/assets/css/main.css',
+  THEME_BASE + '/assets/js/app.js',
+  THEME_BASE + '/assets/icons/icon-192.png'
 ];
 
 // Install: precache static assets individually (one failure won't break the rest)
@@ -81,9 +103,9 @@ self.addEventListener('push', event => {
   let data = {
     title: 'فروشگاه صنوبر',
     body: 'جدیدترین محصولات را مشاهده کنید!',
-    icon: 'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/icons/icon-192.png',
-    badge: 'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/icons/badge-72.png',
-    data: { url: 'https://senoobar.ir/' }
+    icon: THEME_BASE + '/assets/icons/icon-192.png',
+    badge: THEME_BASE + '/assets/icons/badge-72.png',
+    data: { url: ORIGIN + '/' }
   };
 
   if (event.data) {
@@ -114,7 +136,7 @@ self.addEventListener('push', event => {
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   var notifData = event.notification.data || {};
-  const url = notifData.url || 'https://senoobar.ir/';
+  const url = notifData.url || (ORIGIN + '/');
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
