@@ -3,18 +3,22 @@
  * Senoobar — بازنشانی رمز عبور با پیامک (فراموشی رمز عبور).
  *
  * چون آدرس ایمیل حساب‌ها مصنوعی (@senoobar.local) است، مکانیزم پیش‌فرض
- * وردپرس (ارسال ایمیل لینک ریست) کار نمی‌کند؛ بنابراین بازنشانی رمز از طریق
- * کد تأیید پیامکی انجام می‌شود.
+ * وردپرس (ارسال لینک ریست به ایمیل) کار نمی‌کند؛ بنابراین بازنشانی رمز از
+ * طریق کد تأیید پیامکی (SMS OTP) انجام می‌شود.
  *
- * از توابع موجود در inc/otp-login.php استفاده می‌کند:
- *  senoobar_normalize_phone, senoobar_phone_email, senoobar_otp_generate,
- *  senoobar_otp_store, senoobar_otp_verify, senoobar_otp_rate_limit,
- *  senoobar_otp_send_sms
+ * سه مرحله:
+ *  ۱) senoobar_reset_send    → دریافت موبایل و ارسال کد OTP
+ *  ۲) senoobar_reset_verify  → تأیید کد OTP
+ *  ۳) senoobar_reset_save    → ذخیره رمز عبور جدید
  *
  * @package Senoobar
  */
 
 defined( 'ABSPATH' ) || exit;
+
+if ( ! class_exists( 'WooCommerce' ) || ! function_exists( 'senoobar_otp_send_sms' ) ) {
+    return;
+}
 
 /* ─── پیدا کردن کاربر با موبایل (بدون ساخت کاربر) ─── */
 if ( ! function_exists( 'senoobar_otp_find_user' ) ) {
@@ -126,7 +130,7 @@ function senoobar_reset_save_ajax() {
     wp_send_json_success( [ 'message' => 'رمز عبور با موفقیت تغییر کرد.' ] );
 }
 
-/* ─── JS فرم بازنشانی رمز (فقط در صفحه حساب) ─── */
+/* ─── JS فرم بازنشانی رمز ─── */
 add_action( 'wp_footer', 'senoobar_reset_footer_js', 31 );
 function senoobar_reset_footer_js() {
     if ( ! is_account_page() ) {
