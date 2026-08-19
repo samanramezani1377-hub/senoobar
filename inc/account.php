@@ -225,15 +225,14 @@ add_action( 'woocommerce_checkout_order_processed', function ( $order_id, $poste
     // Determine the order number up-front (used in every SMS variant).
     $order_number = ( $order ) ? $order->get_order_number() : $order_id;
 
-    // Resolve a friendly first name for the greeting. For a guest checkout the
-    // name comes from the posted form; for an existing account we prefer the
-    // stored profile name (falling back to the posted name).
+    // Resolve a friendly first name for the greeting. The customer's first name
+    // (billing_first_name) is the name they just typed into the checkout form,
+    // which is always the correct, current first name. Fall back to the stored
+    // profile first name only if the posted first name is empty.
     $greet_name = $first;
-    if ( $existing_id ) {
+    if ( $greet_name === '' && $existing_id ) {
         $stored_first = get_user_meta( $existing_id, 'first_name', true );
-        if ( $stored_first !== '' ) {
-            $greet_name = $stored_first;
-        }
+        $greet_name   = ( $stored_first !== '' ) ? $stored_first : '';
     }
 
     if ( $existing_id ) {

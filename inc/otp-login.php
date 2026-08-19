@@ -285,10 +285,10 @@ function senoobar_otp_send_order_welcome_sms( $phone, $username, $password, $ord
     if ( ! senoobar_otp_configured() ) {
         return false;
     }
-    $greeting = $first_name !== '' ? "سلام {$first_name} عزیز! 🌿" : "سلام! 🌿";
+    $greeting = $first_name !== '' ? "سلام {$first_name} عزیز!" : "سلام!";
     $text  = "فروشگاه صنوبر\n";
     $text .= $greeting . "\n";
-    $text .= "سفارشت به شماره {$order_number} با موفقیت ثبت شد؛ خوش اومدی به خانواده صنوبر. 🎉\n";
+    $text .= "سفارشت به شماره {$order_number} با موفقیت ثبت شد؛ خوش اومدی به خانواده صنوبر.\n";
     $text .= "برای پیگیری سفارش، با این مشخصات وارد حسابت بشو:\n";
     $text .= "نام کاربری: {$username}\n";
     $text .= "رمز عبور: {$password}";
@@ -307,7 +307,7 @@ function senoobar_otp_send_order_confirm_sms( $phone, $order_number, $first_name
     if ( ! senoobar_otp_configured() ) {
         return false;
     }
-    $greeting = $first_name !== '' ? "سلام {$first_name} عزیز! 🎉" : "سلام! 🎉";
+    $greeting = $first_name !== '' ? "سلام {$first_name} عزیز!" : "سلام!";
     $text  = "فروشگاه صنوبر\n";
     $text .= $greeting . "\n";
     $text .= "سفارشت به شماره {$order_number} با موفقیت ثبت شد.\n";
@@ -327,7 +327,7 @@ function senoobar_otp_send_returning_customer_sms( $phone, $order_number, $first
     if ( ! senoobar_otp_configured() ) {
         return false;
     }
-    $greeting = $first_name !== '' ? "سلام {$first_name} عزیز! 💚" : "سلام رفیق! 💚";
+    $greeting = $first_name !== '' ? "سلام {$first_name} عزیز!" : "سلام رفیق!";
     $text  = "فروشگاه صنوبر\n";
     $text .= $greeting . "\n";
     $text .= "چه خوب که دوباره انتخابمون کردی؛ از اعتمادت ممنونیم.\n";
