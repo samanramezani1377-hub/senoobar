@@ -476,23 +476,35 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
    ============================================ */
 .mobile-toggle {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  width: 32px;
-  padding: 4px;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--color-text);
+  border-radius: var(--radius-md, 8px);
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-toggle svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  color: var(--color-text);
+  fill: none;
+}
+
+.mobile-toggle:active {
+  background: var(--color-gray-100, #f7f5f2);
 }
 
 @media (min-width: 992px) {
   .mobile-toggle {
     display: none;
   }
-}
-
-.mobile-toggle span {
-  display: block;
-  height: 2px;
-  background: var(--color-text);
-  border-radius: 2px;
 }
 
 .mobile-menu {
