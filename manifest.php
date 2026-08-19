@@ -53,10 +53,6 @@ $manifest = [
         ['src' => $theme_uri . '/assets/icons/icon-384.png',  'sizes' => '384x384', 'type' => 'image/png', 'purpose' => 'any maskable'],
         ['src' => $theme_uri . '/assets/icons/icon-512.png',  'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any maskable'],
     ],
-    'screenshots'       => [
-        ['src' => $theme_uri . '/assets/screenshots/mobile-1.png',  'sizes' => '1080x1920', 'type' => 'image/png', 'form_factor' => 'narrow'],
-        ['src' => $theme_uri . '/assets/screenshots/desktop-1.png', 'sizes' => '1920x1080', 'type' => 'image/png', 'form_factor' => 'wide'],
-    ],
     'categories'        => ['shopping', 'lifestyle'],
     'prefer_related_applications' => false,
 ];

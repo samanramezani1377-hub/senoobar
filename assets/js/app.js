@@ -36,7 +36,7 @@
 (function () {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js').catch(function (err) {
+      navigator.serviceWorker.register('https://senoobar.ir/sw.js').catch(function (err) {
         // Non-fatal: the site works fine without cached assets.
         console.warn('[SW] registration failed:', err);
       });
