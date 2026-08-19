@@ -101,7 +101,7 @@ self.addEventListener('fetch', event => {
 // Push Notification
 self.addEventListener('push', event => {
   let data = {
-    title: 'فروشگاه سنوبار',
+    title: 'فروشگاه صنوبر',
     body: 'جدیدترین محصولات را مشاهده کنید!',
     icon: THEME_BASE + '/assets/icons/icon-192.png',
     badge: THEME_BASE + '/assets/icons/badge-72.png',
