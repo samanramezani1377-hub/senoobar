@@ -85,7 +85,7 @@ $show_lost     = isset( $_GET['lostpassword'] );
                     </div>
                     <div class="snb-field" id="snb-otp-code-wrap" style="display:none;">
                         <label for="otp_code">کد تأیید</label>
-                        <input type="tel" id="otp_code" inputmode="numeric" maxlength="5" placeholder="کد ۵ رقمی" dir="ltr" style="text-align:right">
+                        <input type="tel" id="otp_code" inputmode="numeric" maxlength="6" placeholder="کد ۶ رقمی" dir="ltr" style="text-align:right">
                     </div>
                     <div class="snb-field" id="snb-otp-msg" style="display:none;font-size:13px;"></div>
                     <button type="button" id="snb-otp-send" class="snb-btn snb-btn-primary snb-btn-block">ارسال کد تأیید</button>
@@ -135,7 +135,7 @@ $show_lost     = isset( $_GET['lostpassword'] );
             </div>
             <div class="snb-field" id="snb-reset-code-wrap" style="display:none;">
                 <label for="reset_code">کد تأیید</label>
-                <input type="tel" id="reset_code" inputmode="numeric" maxlength="5" placeholder="کد ۵ رقمی" dir="ltr" style="text-align:right">
+                <input type="tel" id="reset_code" inputmode="numeric" maxlength="6" placeholder="کد ۶ رقمی" dir="ltr" style="text-align:right">
             </div>
             <div class="snb-field" id="snb-reset-pass-wrap" style="display:none;">
                 <label for="reset_pass">رمز عبور جدید</label>
