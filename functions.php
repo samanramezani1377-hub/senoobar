@@ -14,6 +14,7 @@ require_once SENOOBAR_DIR . '/inc/legal-pages-setup.php';
 require_once SENOOBAR_DIR . '/inc/account.php';
 require_once SENOOBAR_DIR . '/inc/wishlist.php';
 require_once SENOOBAR_DIR . '/inc/otp-login.php';
+require_once SENOOBAR_DIR . '/inc/seo.php';
 
 function senoobar_init() {
     Senoobar_Theme::get_instance()->init();
