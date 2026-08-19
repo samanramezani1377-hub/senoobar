@@ -289,7 +289,7 @@ function senoobar_otp_send_order_welcome_sms( $phone, $username, $password, $ord
     $text  = "فروشگاه صنوبر\n";
     $text .= $greeting . "\n";
     $text .= "سفارشت به شماره {$order_number} با موفقیت ثبت شد؛ خوش اومدی به خانواده صنوبر.\n";
-    $text .= "برای پیگیری سفارش، با این مشخصات وارد حسابت بشو:\n";
+    $text .= "با اینا وارد حسابت شو و لحظه‌به‌لحظه ببین سفارشت کجاست:\n";
     $text .= "نام کاربری: {$username}\n";
     $text .= "رمز عبور: {$password}";
     return senoobar_otp_send_sms( $phone, $text );
@@ -311,7 +311,7 @@ function senoobar_otp_send_order_confirm_sms( $phone, $order_number, $first_name
     $text  = "فروشگاه صنوبر\n";
     $text .= $greeting . "\n";
     $text .= "سفارشت به شماره {$order_number} با موفقیت ثبت شد.\n";
-    $text .= "برای پیگیری وارد حساب کاربریت بشو؛ با همون رمز خودت.";
+    $text .= "برای پیگیری سفارشت وارد حسابت شو.";
     return senoobar_otp_send_sms( $phone, $text );
 }
 
