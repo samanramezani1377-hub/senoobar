@@ -274,17 +274,64 @@ function senoobar_otp_send_password_sms( $phone, $username, $password ) {
 
 /**
  * ارسال پیام کامل تأیید سفارش + مشخصات ورود، پس از ساخت حساب جدید در چک‌اوت.
+ *
+ * @param string $phone        شماره موبایل (مقصد).
+ * @param string $username     نام کاربری (= شماره موبایل نرمال‌شده).
+ * @param string $password     رمز عبور یکبارمصرف تولیدشده.
+ * @param string $order_number شماره سفارش (برای نمایش در پیام).
+ * @param string $first_name   نام کوچک مشتری (اختیاری، برای احوالپرسی).
  */
-function senoobar_otp_send_order_welcome_sms( $phone, $username, $password, $order_number ) {
+function senoobar_otp_send_order_welcome_sms( $phone, $username, $password, $order_number, $first_name = '' ) {
     if ( ! senoobar_otp_configured() ) {
         return false;
     }
+    $greeting = $first_name !== '' ? "سلام {$first_name} عزیز! 🌿" : "سلام! 🌿";
     $text  = "فروشگاه صنوبر\n";
-    $text .= "سفارش شما به شماره {$order_number} با موفقیت ثبت شد.\n";
-    $text .= "برای پیگیری سفارش خود وارد حساب کاربری شوید:\n";
+    $text .= $greeting . "\n";
+    $text .= "سفارشت به شماره {$order_number} با موفقیت ثبت شد؛ خوش اومدی به خانواده صنوبر. 🎉\n";
+    $text .= "برای پیگیری سفارش، با این مشخصات وارد حسابت بشو:\n";
     $text .= "نام کاربری: {$username}\n";
-    $text .= "رمز عبور: {$password}\n";
-    $text .= "از شنبه تا پنجشنبه، ۱۰ صبح تا ۹ شب پاسخگوی شما هستیم.";
+    $text .= "رمز عبور: {$password}";
+    return senoobar_otp_send_sms( $phone, $text );
+}
+
+/**
+ * پیام تأیید سفارش برای مشتری‌ای که حساب دارد ولی قبلاً خریدی نداشته است.
+ * (بدون ارسال رمز عبور — رمز قبلی خودش معتبر است.)
+ *
+ * @param string $phone        شماره موبایل (مقصد).
+ * @param string $order_number شماره سفارش.
+ * @param string $first_name   نام کوچک مشتری (اختیاری).
+ */
+function senoobar_otp_send_order_confirm_sms( $phone, $order_number, $first_name = '' ) {
+    if ( ! senoobar_otp_configured() ) {
+        return false;
+    }
+    $greeting = $first_name !== '' ? "سلام {$first_name} عزیز! 🎉" : "سلام! 🎉";
+    $text  = "فروشگاه صنوبر\n";
+    $text .= $greeting . "\n";
+    $text .= "سفارشت به شماره {$order_number} با موفقیت ثبت شد.\n";
+    $text .= "برای پیگیری وارد حساب کاربریت بشو؛ با همون رمز خودت.";
+    return senoobar_otp_send_sms( $phone, $text );
+}
+
+/**
+ * پیام تشکر برای مشتری تکراری (که قبلاً حداقل یک سفارش داشته است).
+ * (بدون ارسال رمز عبور.)
+ *
+ * @param string $phone        شماره موبایل (مقصد).
+ * @param string $order_number شماره سفارش.
+ * @param string $first_name   نام کوچک مشتری (اختیاری).
+ */
+function senoobar_otp_send_returning_customer_sms( $phone, $order_number, $first_name = '' ) {
+    if ( ! senoobar_otp_configured() ) {
+        return false;
+    }
+    $greeting = $first_name !== '' ? "سلام {$first_name} عزیز! 💚" : "سلام رفیق! 💚";
+    $text  = "فروشگاه صنوبر\n";
+    $text .= $greeting . "\n";
+    $text .= "چه خوب که دوباره انتخابمون کردی؛ از اعتمادت ممنونیم.\n";
+    $text .= "سفارشت به شماره {$order_number} با موفقیت ثبت شد و به زودی برات ارسال می‌شه.";
     return senoobar_otp_send_sms( $phone, $text );
 }
 

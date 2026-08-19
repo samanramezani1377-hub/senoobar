@@ -222,8 +222,48 @@ add_action( 'woocommerce_checkout_order_processed', function ( $order_id, $poste
     $first = isset( $posted_data['billing_first_name'] ) ? sanitize_text_field( $posted_data['billing_first_name'] ) : '';
     $last  = isset( $posted_data['billing_last_name'] ) ? sanitize_text_field( $posted_data['billing_last_name'] ) : '';
 
+    // Determine the order number up-front (used in every SMS variant).
+    $order_number = ( $order ) ? $order->get_order_number() : $order_id;
+
+    // Resolve a friendly first name for the greeting. For a guest checkout the
+    // name comes from the posted form; for an existing account we prefer the
+    // stored profile name (falling back to the posted name).
+    $greet_name = $first;
     if ( $existing_id ) {
+        $stored_first = get_user_meta( $existing_id, 'first_name', true );
+        if ( $stored_first !== '' ) {
+            $greet_name = $stored_first;
+        }
+    }
+
+    if ( $existing_id ) {
+        // ── Account already exists (returning or previously-registered) ──
         $user_id = $existing_id;
+
+        // Check whether this customer has any prior completed/processing order,
+        // so we can send a "welcome back" note instead of a plain confirmation.
+        $has_previous_order = false;
+        if ( function_exists( 'wc_get_orders' ) ) {
+            $prev_orders = wc_get_orders( [
+                'customer_id' => $existing_id,
+                'exclude'     => [ $order_id ],
+                'limit'       => 1,
+                'return'      => 'ids',
+            ] );
+            $has_previous_order = ! empty( $prev_orders );
+        }
+
+        if ( $has_previous_order ) {
+            // Returning customer — thank them, no password.
+            if ( function_exists( 'senoobar_otp_send_returning_customer_sms' ) ) {
+                senoobar_otp_send_returning_customer_sms( $phone, $order_number, $greet_name );
+            }
+        } else {
+            // Existing account, first order — confirm without sending a password.
+            if ( function_exists( 'senoobar_otp_send_order_confirm_sms' ) ) {
+                senoobar_otp_send_order_confirm_sms( $phone, $order_number, $greet_name );
+            }
+        }
     } else {
         // 2) Create a new customer account with a random password.
         $temp_password = wp_generate_password( 10, false, false ); // readable (letters+digits)
@@ -245,13 +285,8 @@ add_action( 'woocommerce_checkout_order_processed', function ( $order_id, $poste
 
         // Send a complete welcome SMS with the order number + login credentials
         // (instead of showing the password on the thank-you page).
-        if ( $order ) {
-            $order_number = $order->get_order_number();
-        } else {
-            $order_number = $order_id;
-        }
         if ( function_exists( 'senoobar_otp_send_order_welcome_sms' ) ) {
-            senoobar_otp_send_order_welcome_sms( $phone, $phone, $temp_password, $order_number );
+            senoobar_otp_send_order_welcome_sms( $phone, $phone, $temp_password, $order_number, $greet_name );
         }
     }
 
