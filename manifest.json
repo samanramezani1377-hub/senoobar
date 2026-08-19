@@ -11,14 +11,14 @@
   "lang": "fa-IR",
   "dir": "rtl",
   "icons": [
-    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-72.png", "sizes": "72x72", "type": "image/png", "purpose": "any" },
-    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-96.png", "sizes": "96x96", "type": "image/png", "purpose": "any" },
-    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
-    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-144.png", "sizes": "144x144", "type": "image/png", "purpose": "any" },
-    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-152.png", "sizes": "152x152", "type": "image/png", "purpose": "any" },
-    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-384.png", "sizes": "384x384", "type": "image/png", "purpose": "any" },
-    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-72.webp", "sizes": "72x72", "type": "image/webp", "purpose": "any" },
+    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-96.webp", "sizes": "96x96", "type": "image/webp", "purpose": "any" },
+    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-128.webp", "sizes": "128x128", "type": "image/webp", "purpose": "any" },
+    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-144.webp", "sizes": "144x144", "type": "image/webp", "purpose": "any" },
+    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-152.webp", "sizes": "152x152", "type": "image/webp", "purpose": "any" },
+    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-192.webp", "sizes": "192x192", "type": "image/webp", "purpose": "any maskable" },
+    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-384.webp", "sizes": "384x384", "type": "image/webp", "purpose": "any" },
+    { "src": "/wp-content/themes/senoobar.ir-main/assets/icons/icon-512.webp", "sizes": "512x512", "type": "image/webp", "purpose": "any maskable" }
   ],
   "categories": ["shopping", "lifestyle"],
   "prefer_related_applications": false
