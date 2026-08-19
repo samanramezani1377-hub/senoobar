@@ -3,12 +3,26 @@
         <div class="footer-col">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
                 <div style="width:40px;height:40px;border-radius:var(--radius-xl);background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" style="color:var(--color-white);"><path d="M12 2L8 8H4l4 4-1.5 6L12 15l5.5 3L16 12l4-4h-4L12 2z"/></svg></div>
-                <div><div style="font-weight:700;font-size:1.1rem;">فروشگاه صنوبر</div><div style="font-size:0.7rem;opacity:0.6;">میلمان خانه شما</div></div>
+                <div><div style="font-weight:700;font-size:1.1rem;">فروشگاه صنوبر</div><div style="font-size:0.7rem;opacity:0.6;">کیفیت خواب بهتر</div></div>
             </div>
-            <p style="opacity:0.6;font-size:0.85rem;line-height:2;"><?php echo esc_html(get_theme_mod('senoobar_footer_about','فروشگاه صنوبر یک فروشگاه تخصصی در زمینه سرویس خواب، تشک و مبلمان در اصفهان است. ما انواع تشک، سرویس خواب، تخت خواب، مبل و مبلمان منزل را با تنوع بالا و کیفیت مناسب ارائه می‌دهیم.')); ?></p>
+            <p style="opacity:0.6;font-size:0.85rem;line-height:2;"><?php echo esc_html(get_theme_mod('senoobar_footer_about','فروشگاه صنوبر با ارائه محصولات باکیفیت برای خواب راحت، تجربه خریدی لذت‌بخش و مطمئن برای شما فراهم می‌کند. ما اینجا هستیم تا با محصولات بادوام، خدمات عالی و ارسال سریع، بهترین را برای شما رقم بزنیم — هدف ما رضایت شماست.')); ?></p>
             <div class="footer-social"><?php foreach(['instagram'=>'I','telegram'=>'T','pinterest'=>'P','linkedin'=>'L'] as $k=>$l): ?><a href="<?php echo esc_url(get_theme_mod("senoobar_footer_{$k}",'#')); ?>" aria-label="<?php echo $k; ?>"><?php echo $l; ?></a><?php endforeach; ?></div>
         </div>
-        <div class="footer-col"><h4>دسته‌بندی محصولات</h4><ul><li><a href="#">سرویس خواب</a></li><li><a href="#">تشک</a></li><li><a href="#">تخت خواب</a></li><li><a href="#">مبل و مبلمان</a></li><li><a href="#">میز جلو مبلی</a></li><li><a href="#">اکسسوری</a></li></ul></div>
+        <div class="footer-col"><h4>دسته‌بندی محصولات</h4><ul><?php
+// Dynamic product category links (top-level WooCommerce categories).
+if ( function_exists('wc_get_page_permalink') && function_exists('get_terms') ) {
+    $snb_footer_cats = get_terms(array('taxonomy'=>'product_cat','parent'=>0,'hide_empty'=>false));
+    if ( ! is_wp_error($snb_footer_cats) && ! empty($snb_footer_cats) ) {
+        foreach ( $snb_footer_cats as $snb_cat ) {
+            echo '<li><a href="' . esc_url( get_term_link($snb_cat) ) . '">' . esc_html($snb_cat->name) . '</a></li>';
+        }
+    } else {
+        echo '<li><a href="' . esc_url(home_url('/shop/')) . '">همه محصولات</a></li>';
+    }
+} else {
+    echo '<li><a href="' . esc_url(home_url('/shop/')) . '">همه محصولات</a></li>';
+}
+?></ul></div>
 <?php
 // Resolve legal-page URLs (created via legal-pages-setup.php).
 $snb_f_about   = function_exists('senoobar_legal_page_url') && senoobar_legal_page_url('about')   ? senoobar_legal_page_url('about')   : home_url('/about/');
@@ -18,10 +32,10 @@ $snb_f_terms   = function_exists('senoobar_legal_page_url') && senoobar_legal_pa
 $snb_f_privacy = function_exists('senoobar_legal_page_url') && senoobar_legal_page_url('privacy') ? senoobar_legal_page_url('privacy') : home_url('/privacy-policy/');
 ?>
         <div class="footer-col"><h4>دسترسی سریع</h4><ul><li><a href="<?php echo esc_url($snb_f_about); ?>">درباره ما</a></li><li><a href="<?php echo esc_url($snb_f_contact); ?>">تماس با ما</a></li><li><a href="<?php echo esc_url($snb_f_faq); ?>">سوالات متداول</a></li><li><a href="<?php echo esc_url($snb_f_terms); ?>">شرایط و قوانین</a></li><li><a href="<?php echo esc_url($snb_f_privacy); ?>">حریم خصوصی</a></li></ul></div>
-        <div class="footer-col"><h4>اطلاعات تماس</h4><div class="footer-contact"><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone1','۰۹۱۳۰۲۰۵۸۹۸')); ?></span></div><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone2','۰۹۱۳۰۲۰۵۸۶۸')); ?></span></div><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone3','۰۹۱۳۰۲۰۵۳۲۳')); ?></span></div><div><span>📍</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_address','اصفهان، شهرک صنعتی دولت‌آباد، خیابان شماره ۱۰ (خیام)، فروشگاه صنوبر')); ?></span></div><div><span>🕐</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_hours','شنبه تا پنجشنبه، ۱۰ صبح تا ۹ شب')); ?></span></div></div></div>
+        <div class="footer-col"><h4>اطلاعات تماس</h4><div class="footer-contact"><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone1','۰۹۱۲۳۴۵۶۷۸۹')); ?></span></div><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone2','۰۲۱۸۸۷۷۶۶۵۵')); ?></span></div><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone3','۰۲۱۸۸۷۷۶۶۵۵')); ?></span></div><div><span>📍</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_address','استان، تهران، منطقهٔ نمونه، خیابان صنوبر، پلاک ۱۰ (فعالیت) فروشگاه خواب')); ?></span></div><div><span>🕐</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_hours','شنبه تا پنجشنبه، ۱۰ تا ۲۰ (به وقت)')); ?></span></div></div></div>
     </div>
     <div class="footer-bottom">
-        <p>© <?php echo date('Y'); ?> فروشگاه صنوبر — کلیه حقوق این وب‌سایت متعلق به صنوبر است.</p>
+        <p>&#169; <?php echo date('Y'); ?> فروشگاه صنوبر — تمامی حقوق برای فروشگاه صنوبر است.</p>
         <div class="footer-bottom__badges">
             <?php
             $enamad_code = get_theme_mod('senoobar_enamad_code', '');
@@ -29,7 +43,7 @@ $snb_f_privacy = function_exists('senoobar_legal_page_url') && senoobar_legal_pa
                 echo '<div class="enamad-badge">' . $enamad_code . '</div>';
             endif;
             ?>
-            <span>استفاده از مطالب با ذکر منبع</span>
+            <span>استفاده از مطالب با ذکر منبع مجاز</span>
         </div>
     </div>
 </footer>
@@ -56,7 +70,7 @@ $senoobar_account_url = get_permalink(get_option('woocommerce_myaccount_page_id'
         <span class="mbn-icon">
             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
         </span>
-        <span class="mbn-label">علاقه‌مندی</span>
+        <span class="mbn-label">علاقه‌مندی‌ها</span>
     </a>
     <a href="<?php echo home_url('/'); ?>" class="mbn-item mbn-home<?php echo is_front_page() ? ' is-active' : ''; ?>">
         <span class="mbn-home-icon">
@@ -64,11 +78,11 @@ $senoobar_account_url = get_permalink(get_option('woocommerce_myaccount_page_id'
         </span>
         <span class="mbn-label">خانه</span>
     </a>
-    <button id="js-push-subscribe-bottom" class="mbn-item mbn-push" aria-label="نوتیفیکیشن">
+    <button id="js-push-subscribe-bottom" class="mbn-item mbn-push" aria-label="فعال‌سازی اعلان‌ها">
         <span class="mbn-icon">
             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
         </span>
-        <span class="mbn-label">نوتیفیکیشن</span>
+        <span class="mbn-label">اعلان‌ها</span>
     </button>
     <a href="<?php echo esc_url($senoobar_account_url); ?>" class="mbn-item<?php echo is_account_page() ? ' is-active' : ''; ?>">
         <span class="mbn-icon">
@@ -79,7 +93,7 @@ $senoobar_account_url = get_permalink(get_option('woocommerce_myaccount_page_id'
 </nav>
 <?php endif; ?>
 
-<button id="backToTop" class="back-to-top" aria-label="بازگشت به بالا">↑</button>
+<button id="backToTop" class="back-to-top" aria-label="بازگشت به بالای صفحه">↑</button>
 <?php wp_footer(); ?>
 </body>
 </html>
