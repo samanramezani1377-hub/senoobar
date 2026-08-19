@@ -34,7 +34,7 @@ const PRECACHE_URLS = [
   THEME_BASE + '/assets/css/critical.css',
   THEME_BASE + '/assets/css/main.css',
   THEME_BASE + '/assets/js/app.js',
-  THEME_BASE + '/assets/icons/icon-192.png'
+  THEME_BASE + '/assets/icons/icon-192.webp'
 ];
 
 // Install: precache static assets individually (one failure won't break the rest)
@@ -103,8 +103,8 @@ self.addEventListener('push', event => {
   let data = {
     title: 'فروشگاه صنوبر',
     body: 'جدیدترین محصولات را مشاهده کنید!',
-    icon: THEME_BASE + '/assets/icons/icon-192.png',
-    badge: THEME_BASE + '/assets/icons/badge-72.png',
+    icon: THEME_BASE + '/assets/icons/icon-192.webp',
+    badge: THEME_BASE + '/assets/icons/badge-72.webp',
     data: { url: ORIGIN + '/' }
   };
 
