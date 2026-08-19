@@ -50,3 +50,54 @@
     });
   }
 })();
+
+
+// Refresh cart counter on back/forward navigation.
+// When the browser restores a page from the back/forward cache (bfcache), PHP
+// still holds the stale cart count. We re-fetch the real count from the server
+// on 'pageshow' (covers both bfcache restores and regular loads) so the header
+// and bottom-nav badges always reflect the live cart.
+(function () {
+  function applyCount(count) {
+    var n = parseInt(count, 10);
+    if (isNaN(n)) return;
+    var badges = document.querySelectorAll('.cart-badge[data-cart-count], .mbn-badge[data-cart-count]');
+    badges.forEach(function (el) {
+      el.textContent = n;
+      if (n > 0) el.classList.remove('is-hidden');
+      else el.classList.add('is-hidden');
+    });
+  }
+
+  function refreshCart() {
+    var d = window.senoobarData || {};
+    if (!d.ajaxUrl || !d.nonce) return;
+
+    var fd = new FormData();
+    fd.append('action', 'senoobar_cart_refresh');
+    fd.append('nonce', d.nonce);
+
+    fetch(d.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
+      .then(function (r) { return r.json(); })
+      .then(function (json) {
+        if (json && json.success && typeof json.data !== 'undefined') {
+          applyCount(json.data.count);
+        }
+      })
+      .catch(function () { /* non-fatal */ });
+  }
+
+  // 'pageshow' fires on bfcache restore (event.persisted === true) as well as
+  // normal first paint, so it covers the back-button case reliably.
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted) {
+      refreshCart();
+    }
+  });
+
+  // Also refresh once on load so a freshly-cached HTML can never show a stale
+  // badge even if the page was served from LiteSpeed cache.
+  window.addEventListener('load', function () {
+    refreshCart();
+  });
+})();

@@ -4,6 +4,21 @@
  * Compatible with SenoobarCart JS config
  */
 
+// ---- Refresh cart counter only (lightweight, for back/forward-cache restore) ----
+add_action('wp_ajax_senoobar_cart_refresh', 'senoobar_cart_refresh');
+add_action('wp_ajax_nopriv_senoobar_cart_refresh', 'senoobar_cart_refresh');
+
+function senoobar_cart_refresh(): void {
+    check_ajax_referer('senoobar_cart_nonce', 'nonce');
+
+    if (!class_exists('WooCommerce')) {
+        wp_send_json_success(['count' => 0]);
+    }
+
+    $count = WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
+    wp_send_json_success(['count' => $count]);
+}
+
 // ---- Update Quantity ----
 add_action('wp_ajax_senoobar_cart_update_quantity', 'senoobar_cart_update_quantity');
 add_action('wp_ajax_nopriv_senoobar_cart_update_quantity', 'senoobar_cart_update_quantity');
