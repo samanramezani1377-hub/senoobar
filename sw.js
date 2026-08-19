@@ -1,24 +1,21 @@
 /**
  * Senoobar Service Worker
- * Caching strategy: Cache First with Network Update for static assets
- * Network First for API calls
+ * Strategy: Cache static assets only (CSS/JS/fonts/images).
+ * No HTML navigation interception -> no network error / redirect issues.
  */
 
-const CACHE_VERSION = 'senoobar-v2.0.9';
+const CACHE_VERSION = 'senoobar-v2.1.0';
 const STATIC_CACHE = CACHE_VERSION + '-static';
-const DYNAMIC_CACHE = CACHE_VERSION + '-dynamic';
-const API_CACHE = CACHE_VERSION + '-api';
 
-// Assets to pre-cache on install (all must return 200)
+// Assets to pre-cache on install (all return 200)
 const PRECACHE_URLS = [
-  'https://senoobar.ir/',
   'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/css/critical.css',
   'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/css/main.css',
   'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/js/app.js',
   'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/icons/icon-192.png'
 ];
 
-// Install event - precache critical assets (individually so one failure doesn't break all)
+// Install: precache static assets individually (one failure won't break the rest)
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then(cache => {
@@ -34,55 +31,28 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate event - clean old caches
+// Activate: remove old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames
-          .filter(name => name.startsWith('senoobar-') && name !== STATIC_CACHE && name !== DYNAMIC_CACHE && name !== API_CACHE)
+          .filter(name => name.startsWith('senoobar-') && name !== STATIC_CACHE)
           .map(name => caches.delete(name))
       );
     }).then(() => self.clients.claim())
   );
 });
 
-// Fetch event - smart caching strategy
+// Fetch: only cache static assets. Never touch HTML/API/navigation.
 self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Only handle GET requests on our own origin
+  // Only GET on our own origin
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
 
-  // NEVER cache these WooCommerce dynamic pages
-  const dynamicPaths = [
-    '/cart/', '/checkout/', '/my-account/', '/login/', '/register/',
-    '/lost-password/', '/order-received/', '/wc-api/',
-    '/wp-admin/admin-ajax.php', '/wp-json/wc/'
-  ];
-
-  if (dynamicPaths.some(path => url.pathname.includes(path))) {
-    return; // Network only - let the browser handle it
-  }
-
-  // HTML navigation: Network First with offline fallback
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request).then(response => {
-        if (response && response.ok && response.type === 'basic') {
-          const clone = response.clone();
-          caches.open(DYNAMIC_CACHE).then(cache => cache.put(request, clone)).catch(() => {});
-        }
-        return response;
-      }).catch(() => {
-        return caches.match(request).then(cached => cached || caches.match('https://senoobar.ir/'));
-      })
-    );
-    return;
-  }
-
-  // Static assets (CSS, JS, fonts, images): Cache First
+  // Only handle static assets
   if (url.pathname.match(/\.(css|js|woff2?|png|jpg|jpeg|gif|svg|webp|ico)$/) || url.pathname.includes('/assets/')) {
     event.respondWith(
       caches.match(request).then(cached => {
@@ -93,28 +63,17 @@ self.addEventListener('fetch', event => {
             caches.open(STATIC_CACHE).then(cache => cache.put(request, clone)).catch(() => {});
           }
           return response;
+        }).catch(() => {
+          // If network fails, try cache once more (already handled above)
+          return caches.match(request);
         });
       })
     );
     return;
   }
 
-  // Other API / AJAX: Network First
-  if (url.pathname.includes('/wp-json/') || url.pathname.includes('/wc-api/')) {
-    event.respondWith(
-      fetch(request).then(response => {
-        if (response && response.ok && response.type === 'basic') {
-          const clone = response.clone();
-          caches.open(API_CACHE).then(cache => cache.put(request, clone)).catch(() => {});
-        }
-        return response;
-      }).catch(() => caches.match(request))
-    );
-    return;
-  }
-
-  // Default: network first, no cache
-  event.respondWith(fetch(request));
+  // Everything else: pass through to network untouched
+  return;
 });
 
 // Push Notification
