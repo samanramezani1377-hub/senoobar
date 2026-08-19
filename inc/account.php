@@ -190,8 +190,7 @@ add_filter( 'template_include', function ( $template ) {
 // When a guest places an order, create a customer account keyed on the mobile
 // number (username = normalized phone, synthetic email). If an account for
 // that phone already exists, link the order to it instead of creating a new
-// one. Password is auto-generated; the customer can recover it via the
-// "forgot password" flow using their mobile number.
+// one. Password is auto-generated and sent via SMS (see senoobar_otp_send_password_sms).
 add_action( 'woocommerce_checkout_order_processed', function ( $order_id, $posted_data, $order ) {
 
     // Only auto-create accounts for guests.
@@ -244,10 +243,10 @@ add_action( 'woocommerce_checkout_order_processed', function ( $order_id, $poste
 
         update_user_meta( $user_id, 'mobile', $phone );
 
-        // Store the temp password on the order so the thank-you page can show
-        // it to this customer exactly once (right after checkout).
-        if ( $order ) {
-            update_post_meta( $order_id, '_senoobar_temp_password', $temp_password );
+        // Send the username + password to the customer via SMS (instead of
+        // showing the password on the thank-you page).
+        if ( function_exists( 'senoobar_otp_send_password_sms' ) ) {
+            senoobar_otp_send_password_sms( $phone, $phone, $temp_password );
         }
     }
 
@@ -277,6 +276,9 @@ add_action( 'woocommerce_checkout_order_processed', function ( $order_id, $poste
     // 5) Mark account-created flag so the thank-you page can show a hint.
     if ( ! $existing_id ) {
         WC()->session->set( 'senoobar_account_created', $phone );
+        if ( $order ) {
+            update_post_meta( $order_id, '_senoobar_account_created', $phone );
+        }
     }
 
 }, 10, 3 );
