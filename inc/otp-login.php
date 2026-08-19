@@ -200,6 +200,25 @@ function senoobar_otp_find_or_create_user( $phone ) {
     return $user;
 }
 
+/**
+ * بررسی وجود حساب کاربری برای یک شماره موبایل (بدون ساخت حساب جدید).
+ *
+ * @param string $phone شماره موبایل نرمال‌شده.
+ * @return bool
+ */
+function senoobar_otp_user_exists( $phone ) {
+    $phone = senoobar_normalize_phone( $phone );
+
+    if ( get_user_by( 'login', $phone ) ) {
+        return true;
+    }
+    if ( get_user_by( 'email', senoobar_phone_email( $phone ) ) ) {
+        return true;
+    }
+    $found = get_users( [ 'meta_key' => 'mobile', 'meta_value' => $phone, 'number' => 1, 'fields' => 'ID' ] );
+    return ! empty( $found );
+}
+
 /* ─── ۹. AJAX: ارسال کد ─── */
 add_action( 'wp_ajax_nopriv_senoobar_otp_send', 'senoobar_otp_send_ajax' );
 add_action( 'wp_ajax_senoobar_otp_send', 'senoobar_otp_send_ajax' );
@@ -220,7 +239,11 @@ function senoobar_otp_send_ajax() {
     $code = senoobar_otp_generate();
     senoobar_otp_store( $phone, $code );
 
-    $text = "فروشگاه صنوبر\nکد ورود: {$code}";
+    if ( senoobar_otp_user_exists( $phone ) ) {
+        $text = "فروشگاه صنوبر\nکد ورود: {$code}\nخوش برگشتی رفیق!";
+    } else {
+        $text = "فروشگاه صنوبر\nکد ورود: {$code}\nبه جمع ما خوش اومدی!";
+    }
     $sent = senoobar_otp_send_sms( $phone, $text );
 
     if ( is_wp_error( $sent ) ) {
