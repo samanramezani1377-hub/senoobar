@@ -169,7 +169,7 @@ function senoobar_get_document_title() {
     if ( is_front_page() ) {
         $tagline = trim( get_bloginfo( 'description' ) );
         if ( empty( $tagline ) || $tagline === 'senoobar' ) {
-            return $brand . ' | فروشگاه تشک طبی، سرویس خواب و مبلمان';
+            return $brand . ' | فروشگاه تشک طبی و فنری، سرویس خواب و مبلمان';
         }
         return senoobar_clip( $brand . ' | ' . $tagline, 60 );
     }
