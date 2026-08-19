@@ -1,23 +1,50 @@
 <?php
 /**
- * Senoobar — Dynamic SEO (title + meta description + OG tags)
+ * Senoobar — Dynamic SEO Engine (title + meta description + OG tags)
  *
- * به‌جای وابستگی به افزونه، متا‌تگ‌ها را برای همه‌ی صفحه‌ها به‌صورت خودکار تولید
- * می‌کند. شامل صفحه‌های آینده (محصول جدید، دسته، برگه، نوشته و …) هم می‌شود،
- * چون بر اساس «نوع صفحه» ساخته می‌شود نه به‌صورت دستی.
+ * به‌صورت خودکار و داینامیک، تایتل و متا دیسکریپشنِ همه‌ی صفحه‌ها را با طول
+ * استاندارد تولید می‌کند. شامل صفحه‌های آینده (محصول جدید، دسته، برگه، نوشته و …)
+ * هم می‌شود، چون بر اساس «نوع صفحه» ساخته می‌شود نه به‌صورت دستی.
  *
- * طرز خروجی:
- *   - اگر افزونه‌ی سئو (Yoast / RankMath) مقدار پر کرده باشد، اولویت با آن است.
- *   - اگر صفحه تنظیم دستی داشته باشد (SEO متاباکس)، همان استفاده می‌شود.
- *   - در غیر این صورت، تیتر و توضیح به‌صورت هوشمند از محتوا ساخته می‌شود.
+ * استانداردهای طول (برای نمایش کامل در نتایج گوگل):
+ *   - Title: حداکثر ۶۰ کاراکتر
+ *   - Meta description: بین ۷۰ تا ۱۶۰ کاراکتر (بهینه ۱۵۰~۱۶۰)
+ *
+ * اولویت خروجی:
+ *   ۱) مقدار دستی (فیلد سفارشی) اگر پر شده باشد
+ *   ۲) ساخت هوشمند از محتوای صفحه
+ *   ۳) پیش‌فرض‌های سایت
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/* -------------------------------------------------------------------------
+ * ابزارهای کمکی
+ * ---------------------------------------------------------------------- */
+
+function senoobar_brand() {
+    static $brand = null;
+    if ( null === $brand ) {
+        $brand = trim( get_bloginfo( 'name' ) );
+        if ( empty( $brand ) || $brand === 'senoobar' ) {
+            $brand = 'صنوبر';
+        }
+    }
+    return $brand;
+}
+
+function senoobar_clip( $text, $max ) {
+    $text = trim( $text );
+    if ( mb_strlen( $text ) <= $max ) {
+        return $text;
+    }
+    return mb_substr( $text, 0, $max - 1 ) . '…';
+}
+
 /**
- * یک توضیح متا (meta description) هوشمند بساز.
+ * ساخت یک توضیح متا تمیز (بین ۷۰ تا ۱۶۰ کاراکتر).
  */
 function senoobar_build_description( $text ) {
     $text = wp_strip_all_tags( $text );
@@ -29,82 +56,145 @@ function senoobar_build_description( $text ) {
         $text = mb_substr( $text, 0, 157 ) . '…';
     }
 
+    // حداقل طول: اگر خیلی کوتاه بود با برند کاملش کن.
+    if ( mb_strlen( $text ) < 70 ) {
+        $text .= ' | ' . senoobar_brand() . ' — فروشگاه تخصصی تشک، سرویس خواب و مبلمان.';
+        if ( mb_strlen( $text ) > 160 ) {
+            $text = mb_substr( $text, 0, 157 ) . '…';
+        }
+    }
+
     return $text;
 }
 
-/**
- * دریافت متا دیسکریپشن نهاییِ صفحه‌ی فعلی.
- */
+/* -------------------------------------------------------------------------
+ * متا دیسکریپشن
+ * ---------------------------------------------------------------------- */
+
 function senoobar_get_meta_description() {
     $desc = '';
 
-    // 1) اگر افزونه سئو مقدار داده، همان را برگردان.
-    $plugin_desc = apply_filters( 'senoobar_plugin_description', false );
-    if ( ! empty( $plugin_desc ) ) {
-        return $plugin_desc;
+    // 1) مقدار دستی (بالاترین اولویت).
+    if ( is_singular() ) {
+        $manual = get_post_meta( get_queried_object_id(), '_senoobar_meta_description', true );
+        if ( ! empty( $manual ) ) {
+            return senoobar_build_description( $manual );
+        }
     }
 
-    // 2) صفحه اصلی (فروشگاه / بلاگ).
+    // 2) صفحه اصلی.
     if ( is_front_page() ) {
         $desc = get_bloginfo( 'description' );
-        if ( empty( $desc ) ) {
-            $desc = 'خرید تشک طبی فنری، سرویس خواب و مبلمان با ضمانت و ارسال سریع | فروشگاه سیانوبر';
+        if ( empty( $desc ) || $desc === 'senoobar' ) {
+            $desc = 'خرید تشک طبی فنری، سرویس خواب و مبلمان با ضمانت و ارسال سریع | فروشگاه صنوبر';
         }
         return senoobar_build_description( $desc );
     }
 
-    // 3) برگه / نوشته / محصول با مقدار دستی.
+    // 3) برگه / نوشته / محصول.
     if ( is_singular() ) {
-        $id   = get_queried_object_id();
-        $desc = get_post_meta( $id, '_senoobar_meta_description', true );
-
-        if ( empty( $desc ) ) {
-            $post = get_post( $id );
-            $desc = ! empty( $post->post_excerpt )
-                ? $post->post_excerpt
-                : $post->post_content;
-        }
-
+        $post = get_post( get_queried_object_id() );
+        $desc = ! empty( $post->post_excerpt ) ? $post->post_excerpt : $post->post_content;
         if ( ! empty( $desc ) ) {
             return senoobar_build_description( $desc );
         }
     }
 
-    // 4) دسته‌بندی / برچسب / اصطلاح (محصول، نوشته و …).
+    // 4) دسته‌بندی / برچسب / اصطلاح.
     if ( is_tax() || is_category() || is_tag() ) {
         $term = get_queried_object();
         if ( $term && ! empty( $term->description ) ) {
             return senoobar_build_description( $term->description );
         }
         if ( $term ) {
-            return 'آرشیو ' . esc_html( $term->name ) . ' در فروشگاه سیانوبر.';
+            return senoobar_build_description( 'انواع ' . $term->name . ' با کیفیت و قیمت مناسب در فروشگاه ' . senoobar_brand() . '.' );
         }
     }
 
     // 5) بایگانی نویسنده.
     if ( is_author() ) {
-        return 'نوشته‌های این نویسنده را در فروشگاه سیانوبر بخوانید.';
+        return senoobar_build_description( 'نوشته‌های این نویسنده را در فروشگاه ' . senoobar_brand() . ' بخوانید.' );
     }
 
     // 6) نتایج جستجو.
     if ( is_search() ) {
-        return 'نتایج جستجو برای عبارت «' . esc_html( get_search_query() ) . '» در فروشگاه سیانوبر.';
+        return senoobar_build_description( 'نتایج جستجو برای عبارت «' . get_search_query() . '» در فروشگاه ' . senoobar_brand() . '.' );
     }
 
     // 7) پیش‌فرض.
     return senoobar_build_description( get_bloginfo( 'description' ) );
 }
 
-/**
- * خروجی متاتگ‌ها در هدر.
- */
+/* -------------------------------------------------------------------------
+ * تایتل صفحه
+ * ---------------------------------------------------------------------- */
+
+function senoobar_get_document_title() {
+    // مقدار دستی (بالاترین اولویت).
+    if ( is_singular() ) {
+        $manual = get_post_meta( get_queried_object_id(), '_senoobar_meta_title', true );
+        if ( ! empty( $manual ) ) {
+            return senoobar_clip( $manual, 60 );
+        }
+    }
+
+    $brand = senoobar_brand();
+
+    if ( is_front_page() ) {
+        $tagline = trim( get_bloginfo( 'description' ) );
+        if ( empty( $tagline ) || $tagline === 'senoobar' ) {
+            return $brand . ' | فروشگاه تشک طبی، سرویس خواب و مبلمان';
+        }
+        return senoobar_clip( $brand . ' | ' . $tagline, 60 );
+    }
+
+    if ( is_singular() ) {
+        return senoobar_clip( get_the_title( get_queried_object_id() ) . ' | ' . $brand, 60 );
+    }
+
+    if ( is_tax() || is_category() || is_tag() ) {
+        $term = get_queried_object();
+        $name = $term ? $term->name : wp_strip_all_tags( get_the_archive_title() );
+        return senoobar_clip( $name . ' | ' . $brand, 60 );
+    }
+
+    if ( is_author() ) {
+        return senoobar_clip( get_the_author() . ' | ' . $brand, 60 );
+    }
+
+    if ( is_search() ) {
+        return senoobar_clip( 'جستجوی «' . get_search_query() . '» | ' . $brand, 60 );
+    }
+
+    if ( is_archive() ) {
+        return senoobar_clip( wp_strip_all_tags( get_the_archive_title() ) . ' | ' . $brand, 60 );
+    }
+
+    if ( is_404() ) {
+        return 'صفحه پیدا نشد | ' . $brand;
+    }
+
+    return senoobar_clip( get_the_title() . ' | ' . $brand, 60 );
+}
+
+/* -------------------------------------------------------------------------
+ * خروجی در هدر
+ * ---------------------------------------------------------------------- */
+
 function senoobar_render_seo_meta() {
-    $desc = senoobar_get_meta_description();
+    $desc  = senoobar_get_meta_description();
+    $title = senoobar_get_document_title();
+
     if ( ! empty( $desc ) ) {
         echo '<meta name="description" content="' . esc_attr( $desc ) . '" />' . "\n";
     }
 
-    // Open Graph (برای اشتراک‌گذاری در تلگرام/واتساپ/…).
+    echo '<title>' . esc_html( $title ) . "</title>\n";
+
+    echo '<meta property="og:title" content="' . esc_attr( $title ) . '" />' . "\n";
+    echo '<meta property="og:description" content="' . esc_attr( $desc ) . '" />' . "\n";
+    echo '<meta property="og:site_name" content="' . esc_attr( senoobar_brand() ) . '" />' . "\n";
+
     if ( is_singular() ) {
         $id    = get_queried_object_id();
         $og_ok = (bool) post_type_supports( get_post_type( $id ), 'thumbnail' ) && has_post_thumbnail( $id );
@@ -118,39 +208,22 @@ function senoobar_render_seo_meta() {
 }
 add_action( 'wp_head', 'senoobar_render_seo_meta', 1 );
 
-/**
- * افزودن عنوان سایت (title) به‌صورت داینامیک برای همه‌ی صفحه‌ها.
- * اگر افزونه سئو فعال باشد، به آن اجازه مدیریت تیتر را می‌دهیم.
- */
-function senoobar_document_title_parts( $title ) {
-    // اگر افزونه سئو خروجی title را مدیریت می‌کند، دست نزن.
-    if ( apply_filters( 'senoobar_seo_plugin_active', false ) ) {
-        return $title;
-    }
+/* -------------------------------------------------------------------------
+ * مدیریت افزونه‌های سئو (Yoast) — تا title/desc خراب نشود.
+ * ---------------------------------------------------------------------- */
 
-    if ( is_front_page() ) {
-        $tagline = get_bloginfo( 'description' );
-        if ( ! empty( $tagline ) ) {
-            $title['tagline'] = $tagline;
-        }
-    }
-    return $title;
-}
-add_filter( 'document_title_parts', 'senoobar_document_title_parts' );
+if ( function_exists( 'YoastSEO' ) || class_exists( 'WPSEO_Frontend' ) || defined( 'WPSEO_VERSION' ) ) {
+    // تایتل و توضیحِ ما جایگزین خروجی Yoast می‌شود.
+    add_filter( 'wpseo_title', 'senoobar_get_document_title', 999 );
+    add_filter( 'wpseo_metadesc', 'senoobar_get_meta_description', 999 );
 
-/**
- * اتصال به افزونه‌های سئو:
- * اگر Yoast یا RankMath نصب باشد، مقدار آنها را اولویت می‌دهیم تا تداخل نشود.
- */
-if ( function_exists( 'YoastSEO' ) || class_exists( 'WPSEO_Frontend' ) ) {
-    add_filter( 'senoobar_seo_plugin_active', '__return_true' );
-    add_filter( 'senoobar_plugin_description', function () {
-        if ( class_exists( 'WPSEO_Frontend' ) ) {
-            $front = WPSEO_Frontend::get_instance();
-            if ( method_exists( $front, 'get_meta_description' ) ) {
-                return $front->get_meta_description( get_queried_object_id() );
-            }
-        }
-        return false;
+    // حذف تگ <title> تکراریِ Yoast.
+    add_filter( 'wpseo_frontend_presenter_classes', function ( $classes ) {
+        return array_filter( $classes, function ( $c ) {
+            return false === strpos( $c, 'Title' );
+        } );
     } );
 }
+
+// جلوگیری از چاپ تایتل پیش‌فرض وردپرس.
+add_filter( 'pre_get_document_title', 'senoobar_get_document_title', 998 );
