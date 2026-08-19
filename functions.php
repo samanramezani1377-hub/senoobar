@@ -1,5 +1,5 @@
 <?php
-define('SENOOBAR_VERSION', '2.0.7');
+define('SENOOBAR_VERSION', '2.0.8');
 define('SENOOBAR_DIR', get_template_directory());
 define('SENOOBAR_URI', get_template_directory_uri());
 
@@ -13,6 +13,7 @@ require_once SENOOBAR_DIR . '/inc/wishlist-page-setup.php';
 require_once SENOOBAR_DIR . '/inc/account.php';
 require_once SENOOBAR_DIR . '/inc/wishlist.php';
 require_once SENOOBAR_DIR . '/inc/otp-login.php';
+require_once SENOOBAR_DIR . '/inc/otp-reset.php';
 
 function senoobar_init() {
     Senoobar_Theme::get_instance()->init();
