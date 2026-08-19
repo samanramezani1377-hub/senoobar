@@ -43,21 +43,42 @@ add_filter( 'authenticate', function ( $user, $username, $password ) {
         return $user;
     }
     $phone = senoobar_normalize_phone( $username );
+
+    // اگر ورودی شبیه شماره موبایل است، آن را به نام کاربری واقعی نگاشت کن.
     if ( strlen( $phone ) >= 10 ) {
+        $found_user = null;
         $by_user  = get_user_by( 'login', $phone );
         $by_email = get_user_by( 'email', senoobar_phone_email( $phone ) );
         if ( $by_user ) {
-            $username = $by_user->user_login;
+            $found_user = $by_user;
         } elseif ( $by_email ) {
-            $username = $by_email->user_login;
+            $found_user = $by_email;
         } else {
             $found = get_users( [ 'meta_key' => 'mobile', 'meta_value' => $phone, 'number' => 1, 'fields' => 'ID' ] );
             if ( ! empty( $found ) ) {
                 $u = get_userdata( $found[0] );
-                if ( $u ) { $username = $u->user_login; }
+                if ( $u ) { $found_user = $u; }
             }
         }
+
+        // شماره وارد شده ولی هیچ کاربری پیدا نشد → پیام «ثبت نام کنید».
+        if ( ! $found_user ) {
+            return new WP_Error(
+                'senoobar_no_account',
+                'حسابی با این شماره تلفن وجود ندارد. لطفاً ثبت نام کنید.'
+            );
+        }
+
+        $username = $found_user->user_login;
+
+        // کاربر پیدا شده؛ رمز را بررسی کن تا پیام دقیق بدهیم.
+        $checked = wp_authenticate_username_password( null, $username, $password );
+        if ( is_wp_error( $checked ) && isset( $checked->errors['incorrect_password'] ) ) {
+            return new WP_Error( 'senoobar_incorrect_password', 'رمز عبوری که وارد کردید اشتباه است.' );
+        }
+        return $checked;
     }
+
     return wp_authenticate_username_password( null, $username, $password );
 }, 20, 3 );
 
