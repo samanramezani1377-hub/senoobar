@@ -1,9 +1,10 @@
 <?php
-define('SENOOBAR_VERSION', '2.0.9');
+define('SENOOBAR_VERSION', '2.1.0');
 define('SENOOBAR_DIR', get_template_directory());
 define('SENOOBAR_URI', get_template_directory_uri());
 
 require_once SENOOBAR_DIR . '/inc/class-senoobar-theme.php';
+require_once SENOOBAR_DIR . '/inc/critical-css.php';
 require_once SENOOBAR_DIR . '/inc/cart-handlers.php';
 require_once SENOOBAR_DIR . '/inc/woocommerce-setup.php';
 require_once SENOOBAR_DIR . '/inc/cart-page-setup.php';
