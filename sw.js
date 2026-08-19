@@ -2,22 +2,16 @@
  * Senoobar Service Worker
  * Caching strategy: Cache First with Network Update for static assets
  * Network First for API calls
+ * Dynamic version - paths resolved via WordPress
  */
 
-const CACHE_VERSION = 'senoobar-v1.0.0';
+const CACHE_VERSION = 'senoobar-v2.0.9';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const DYNAMIC_CACHE = CACHE_VERSION + '-dynamic';
 const API_CACHE = CACHE_VERSION + '-api';
 
 // Assets to pre-cache on install
-const PRECACHE_URLS = [
-  '/',
-  '/wp-content/themes/senoobar/assets/css/critical.css',
-  '/wp-content/themes/senoobar/assets/css/main.css',
-  '/wp-content/themes/senoobar/assets/js/app.js',
-  '/wp-content/themes/senoobar/assets/icons/icon-192.png',
-  '/offline/',
-];
+const PRECACHE_URLS = ['https://senoobar.ir/', 'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/css/critical.css', 'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/css/main.css', 'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/js/app.js', 'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/icons/icon-192.png', 'https://senoobar.ir/offline/'];
 
 // Install event - precache critical assets
 self.addEventListener('install', event => {
@@ -52,15 +46,39 @@ self.addEventListener('fetch', event => {
   // Skip non-GET requests and external URLs
   if (request.method !== 'GET' || !url.origin.includes(self.location.origin)) return;
 
+  // NEVER cache these WooCommerce dynamic pages
+  const dynamicPaths = [
+    '/cart/',
+    '/checkout/',
+    '/my-account/',
+    '/login/',
+    '/register/',
+    '/lost-password/',
+    '/order-received/',
+    '/wc-api/',
+    '/wp-admin/admin-ajax.php',
+    '/wp-json/wc/',
+  ];
+  
+  const isDynamicPage = dynamicPaths.some(path => url.pathname.includes(path));
+  const isWcAjax = url.pathname.includes('/wp-admin/admin-ajax.php');
+  const isWcRest = url.pathname.includes('/wp-json/wc/');
+
+  if (isDynamicPage || isWcAjax || isWcRest) {
+    // Network only - never cache dynamic WooCommerce pages
+    event.respondWith(fetch(request));
+    return;
+  }
+
   // HTML: Network First with offline fallback
-  if (request.mode === 'navigate' || request.headers.get('Accept')?.includes('text/html')) {
+  if (request.mode === 'navigate' || (request.headers.get('Accept') || '').indexOf('text/html') !== -1) {
     event.respondWith(
       fetch(request).then(response => {
         const clone = response.clone();
         caches.open(DYNAMIC_CACHE).then(cache => cache.put(request, clone));
         return response;
       }).catch(() => {
-        return caches.match(request).then(cached => cached || caches.match('/offline/'));
+        return caches.match(request).then(cached => cached || caches.match('https://senoobar.ir/offline/'));
       })
     );
     return;
@@ -83,7 +101,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // API / AJAX: Network First, no cache for admin-ajax
+  // Other API / AJAX: Network First
   if (url.pathname.includes('/wp-json/') || url.pathname.includes('/wc-api/')) {
     event.respondWith(
       fetch(request).then(response => {
@@ -94,11 +112,20 @@ self.addEventListener('fetch', event => {
     );
     return;
   }
+  
+  // Default: network first
+  event.respondWith(fetch(request));
 });
 
 // Push Notification
 self.addEventListener('push', event => {
-  let data = { title: 'صنوبر', body: 'پیشنهاد ویژه برای شما!', icon: '/wp-content/themes/senoobar/assets/icons/icon-192.png', badge: '/wp-content/themes/senoobar/assets/icons/badge-72.png', data: { url: '/' } };
+  let data = { 
+    title: 'صنوبر', 
+    body: 'پیشنهاد ویژه برای شما!', 
+    icon: 'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/icons/icon-192.png', 
+    badge: 'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/icons/badge-72.png', 
+    data: { url: 'https://senoobar.ir/' } 
+  };
   
   if (event.data) {
     try { data = { ...data, ...event.data.json() }; } catch(e) {}
@@ -127,7 +154,8 @@ self.addEventListener('push', event => {
 // Notification click
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  const url = event.notification.data?.url || '/';
+  var notifData = event.notification.data || {};
+  const url = notifData.url || 'https://senoobar.ir/';
   
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
