@@ -1,0 +1,321 @@
+/* ============================================
+   Senoobar — Legal / Info Pages
+   درباره ما، تماس، سوالات متداول، شرایط، حریم خصوصی
+   Reuses the theme's design tokens from critical.css
+   RTL | Mobile-First
+   ============================================ */
+
+.legal-page {
+  padding: 40px 0 72px;
+  background: var(--color-white);
+}
+
+@media (min-width: 768px) {
+  .legal-page {
+    padding: 56px 0 88px;
+  }
+}
+
+.legal-page__head {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.legal-page__head .section__title {
+  margin-bottom: 8px;
+}
+
+.legal-page__head .section__desc {
+  margin-top: 0;
+}
+
+.legal-page__body {
+  max-width: 860px;
+  margin: 0 auto;
+  line-height: 2.1;
+  color: var(--color-gray-700);
+  font-size: 0.95rem;
+}
+
+/* Breadcrumb (matches wishlist page pattern) */
+.legal-page__crumb {
+  max-width: 860px;
+  margin: 0 auto 24px;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legal-page__crumb a {
+  color: var(--color-brand);
+  transition: var(--transition-fast);
+}
+
+.legal-page__crumb a:hover {
+  opacity: 0.75;
+}
+
+/* Sections / headings */
+.legal-page__body h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin: 32px 0 12px;
+  padding-right: 12px;
+  position: relative;
+}
+
+.legal-page__body h2::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--color-brand);
+}
+
+.legal-page__body h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin: 24px 0 8px;
+}
+
+.legal-page__body p {
+  margin: 0 0 16px;
+}
+
+.legal-page__body ul,
+.legal-page__body ol {
+  margin: 0 0 16px;
+  padding-right: 24px;
+}
+
+.legal-page__body ul {
+  list-style: disc;
+}
+
+.legal-page__body ol {
+  list-style: decimal;
+}
+
+.legal-page__body li {
+  margin-bottom: 8px;
+}
+
+.legal-page__body a {
+  color: var(--color-brand);
+  font-weight: 500;
+}
+
+.legal-page__body a:hover {
+  text-decoration: underline;
+}
+
+.legal-page__body strong {
+  color: var(--color-gray-900);
+  font-weight: 700;
+}
+
+/* Highlight box */
+.legal-page__note {
+  background: var(--color-brand-lighter);
+  border: 1px solid var(--color-brand-light);
+  border-radius: var(--radius-xl);
+  padding: 16px 20px;
+  margin: 20px 0;
+  font-size: 0.9rem;
+  color: var(--color-brand-dark);
+  line-height: 2;
+}
+
+/* About page — feature grid */
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 24px 0;
+}
+
+@media (min-width: 768px) {
+  .about-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+}
+
+.about-card {
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-100);
+  border-radius: var(--radius-xl);
+  padding: 16px 12px;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.about-card:hover {
+  border-color: var(--color-brand);
+  background: var(--color-brand-lighter);
+}
+
+.about-card__icon {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.about-card__title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-bottom: 4px;
+}
+
+.about-card__desc {
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  line-height: 1.8;
+}
+
+/* Contact page — info cards */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+@media (min-width: 640px) {
+  .contact-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .contact-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.contact-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-100);
+  border-radius: var(--radius-xl);
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: var(--shadow-xs);
+  transition: var(--transition);
+}
+
+.contact-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-brand-light);
+}
+
+.contact-card__icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-brand-lighter);
+  color: var(--color-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.contact-card__title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-bottom: 6px;
+}
+
+.contact-card__value {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  line-height: 1.9;
+  word-break: break-word;
+}
+
+.contact-card__value a {
+  color: var(--color-brand);
+  font-weight: 500;
+}
+
+/* FAQ page — accordion */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 24px 0;
+}
+
+.faq-item {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-100);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.faq-item.open {
+  border-color: var(--color-brand-light);
+  box-shadow: var(--shadow-md);
+}
+
+.faq-item__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  text-align: right;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+.faq-item__q svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--color-brand);
+  transition: transform var(--transition);
+}
+
+.faq-item.open .faq-item__q svg {
+  transform: rotate(180deg);
+}
+
+.faq-item__a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.faq-item__a-inner {
+  padding: 0 18px 18px;
+  font-size: 0.88rem;
+  color: var(--color-text-light);
+  line-height: 2;
+}
+
+/* Terms / privacy — section spacing */
+.legal-page__body .legal-section {
+  margin-bottom: 8px;
+}
+
+/* CTA footer button */
+.legal-page__cta {
+  text-align: center;
+  margin-top: 40px;
+}
