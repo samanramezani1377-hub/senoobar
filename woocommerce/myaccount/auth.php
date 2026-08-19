@@ -7,6 +7,7 @@ defined( 'ABSPATH' ) || exit;
 
 $account_url    = wc_get_page_permalink( 'myaccount' );
 $show_register  = isset( $_GET['register'] ) || ( isset( $_GET['action'] ) && $_GET['action'] === 'register' );
+$show_otp       = isset( $_GET['otp'] );
 ?>
 
 <div class="snb-auth" dir="rtl">
@@ -16,11 +17,12 @@ $show_register  = isset( $_GET['register'] ) || ( isset( $_GET['action'] ) && $_
     </div>
 
     <div class="snb-auth-tabs">
-        <a href="<?php echo esc_url( $account_url ); ?>" class="snb-auth-tab<?php echo ! $show_register ? ' is-active' : ''; ?>">ورود</a>
+        <a href="<?php echo esc_url( $account_url ); ?>" class="snb-auth-tab<?php echo ( ! $show_register && ! $show_otp ) ? ' is-active' : ''; ?>">ورود</a>
         <a href="<?php echo esc_url( $account_url . '?register' ); ?>" class="snb-auth-tab<?php echo $show_register ? ' is-active' : ''; ?>">ثبت نام</a>
+        <a href="<?php echo esc_url( $account_url . '?otp' ); ?>" class="snb-auth-tab<?php echo $show_otp ? ' is-active' : ''; ?>">ورود با کد پیامکی</a>
     </div>
 
-    <?php if ( ! $show_register ) : ?>
+    <?php if ( ! $show_register && ! $show_otp ) : ?>
         <div class="snb-auth-card">
             <h2>ورود به حساب</h2>
             <p class="snb-auth-sub">شماره موبایل و رمز عبور خود را وارد کنید.</p>
@@ -41,6 +43,24 @@ $show_register  = isset( $_GET['register'] ) || ( isset( $_GET['action'] ) && $_
                 <?php wp_nonce_field( 'woocommerce-login', 'woocommerce-login-nonce' ); ?>
                 <button type="submit" name="login" value="ورود" class="snb-btn snb-btn-primary snb-btn-block">ورود</button>
             </form>
+        </div>
+    <?php elseif ( $show_otp ) : ?>
+        <div class="snb-auth-card">
+            <h2>ورود با کد پیامکی</h2>
+            <p class="snb-auth-sub">شماره موبایل را وارد کنید تا کد تأیید برایتان پیامک شود.</p>
+            <div class="snb-form" id="snb-otp-form">
+                <div class="snb-field">
+                    <label for="otp_phone">شماره موبایل</label>
+                    <input type="tel" id="otp_phone" placeholder="۰۹۱۲ ۳۴۵ ۶۷۸۹" required dir="ltr" style="text-align:right">
+                </div>
+                <div class="snb-field" id="snb-otp-code-wrap" style="display:none;">
+                    <label for="otp_code">کد تأیید</label>
+                    <input type="tel" id="otp_code" inputmode="numeric" maxlength="5" placeholder="کد ۵ رقمی" dir="ltr" style="text-align:right">
+                </div>
+                <div class="snb-field" id="snb-otp-msg" style="display:none;font-size:13px;"></div>
+                <button type="button" id="snb-otp-send" class="snb-btn snb-btn-primary snb-btn-block">ارسال کد تأیید</button>
+                <button type="button" id="snb-otp-verify" class="snb-btn snb-btn-primary snb-btn-block" style="display:none;">تأیید و ورود</button>
+            </div>
         </div>
     <?php else : ?>
         <div class="snb-auth-card">
