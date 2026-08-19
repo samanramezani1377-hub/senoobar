@@ -85,6 +85,14 @@ function senoobar_otp_send_sms( $to, $text ) {
         return new WP_Error( 'otp_invalid_phone', 'شماره موبایل نامعتبر است.' );
     }
 
+    // عبارت «لغو۱۱» الزامی خط‌های خدماتی ملی‌پیامک است و باید در انتهای هر
+    // پیامک ارسالی درج شود؛ در غیر این صورت ارسال رد می‌شود. برای جلوگیری از
+    // تکرار، فقط در صورتی اضافه می‌شود که از قبل در متن نباشد.
+    if ( false === mb_strpos( $text, 'لغو۱۱' ) && false === strpos( $text, 'لغو ۱۱' ) ) {
+        $text .= "
+لغو۱۱";
+    }
+
     $args = [
         'body' => [
             'username' => senoobar_otp_username(),
