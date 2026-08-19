@@ -42,29 +42,19 @@ $order_status = $order->get_status();
         </div>
 
         <?php
-        // If a customer account was auto-created for this guest order, surface
-        // the login credentials (mobile = username + temporary password) so the
-        // customer can log in later and track the order.
-        $senoobar_temp_password = get_post_meta( $order->get_id(), '_senoobar_temp_password', true );
-        if ( $senoobar_temp_password && $order->get_billing_phone() ) :
+        // حساب کاربری برای سفارش مهمان به‌صورت خودکار ساخته شده و نام کاربری
+        // (= شماره موبایل) و رمز عبور از طریق پیامک به مشتری ارسال شده است.
+        // (رمز عبور دیگر در این صفحه نمایش داده نمی‌شود — دلیل امنیتی.)
+        $senoobar_account_created = get_post_meta( $order->get_id(), '_senoobar_account_created', true );
+        if ( $senoobar_account_created && $order->get_billing_phone() ) :
         ?>
         <div class="senoobar-account-hint">
-            <div class="senoobar-account-hint-icon">🔐</div>
+            <div class="senoobar-account-hint-icon">📱</div>
             <div class="senoobar-account-hint-body">
                 <strong>حساب کاربری شما ساخته شد</strong>
                 <p>
-                    با مشخصات زیر می‌توانید وارد «حساب کاربری» شوید و سفارش‌هایتان را پیگیری کنید. پس از اولین ورود، رمز عبور را تغییر دهید.
+                    نام کاربری (شماره موبایل) و رمز عبور شما از طریق پیامک ارسال شد. می‌توانید وارد «حساب کاربری» شوید و سفارش‌هایتان را پیگیری کنید.
                 </p>
-                <div class="senoobar-account-creds">
-                    <div class="senoobar-cred-row">
-                        <span class="senoobar-cred-label">شماره موبایل</span>
-                        <span class="senoobar-cred-value" dir="ltr"><?php echo esc_html( $order->get_billing_phone() ); ?></span>
-                    </div>
-                    <div class="senoobar-cred-row senoobar-cred-password">
-                        <span class="senoobar-cred-label">رمز عبور موقت</span>
-                        <span class="senoobar-cred-value" dir="ltr"><?php echo esc_html( $senoobar_temp_password ); ?></span>
-                    </div>
-                </div>
                 <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="senoobar-btn senoobar-btn-primary" style="margin-top:14px;">ورود به حساب کاربری</a>
             </div>
         </div>
@@ -176,8 +166,6 @@ $order_status = $order->get_status();
                                             <span class="senoobar-review-name"><?php echo esc_html( $name ); ?></span>
                                         <?php endif; ?>
                                         <?php
-                                        // Use WC's own formatted meta (auto-skips hidden/internal
-                                        // keys) — safe across WooCommerce versions.
                                         $formatted_meta = $item->get_formatted_meta_data( '_' );
                                         if ( ! empty( $formatted_meta ) ) {
                                             foreach ( $formatted_meta as $meta_id => $meta ) {
@@ -498,7 +486,6 @@ $order_status = $order->get_status();
     .senoobar-thankyou-actions { flex-direction: column; }
     .senoobar-btn { width: 100%; }
 
-    /* Order items table -> stacked product cards on mobile */
     .senoobar-review-table thead { display: none; }
     .senoobar-review-table,
     .senoobar-review-table tbody,
@@ -511,11 +498,9 @@ $order_status = $order->get_status();
     .senoobar-review-table tr:last-child { border-bottom: none; }
     .senoobar-review-table td { padding: 6px 0; border: none; }
 
-    /* Product cell: full-width image + name in a row */
     .senoobar-review-table .product-name { display: block; }
     .senoobar-review-product { width: 100%; }
 
-    /* Quantity + price on one line under the name */
     .senoobar-review-table .product-quantity,
     .senoobar-review-table .product-total {
         display: inline-block;
