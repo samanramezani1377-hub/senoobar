@@ -7,7 +7,7 @@
  * (در سورس هاردکد نمی‌شود تا امن بماند).
  *
  * امکانات:
- *  - ارسال کد تأیید ۶ رقمی و ورود خودکار (ورود = ثبت‌نام).
+ *  - ارسال کد تأیید ۵ رقمی و ورود خودکار (ورود = ثبت‌نام).
  *  - ارسال رمز عبور + نام کاربری (موبایل) پس از ساخت حساب در چک‌اوت.
  *  - بازنشانی (ریست) رمز عبور با پیامک.
  *  - محدودیت نرخ درخواست برای جلوگیری از سوءاستفاده.
@@ -123,7 +123,7 @@ function senoobar_otp_send_sms( $to, $text ) {
 
 /* ─── ۵. ساخت / ذخیره / تأیید کد OTP ─── */
 function senoobar_otp_generate() {
-    return (string) random_int( 100000, 999999 );
+    return (string) random_int( 10000, 99999 );
 }
 function senoobar_otp_store( $phone, $code ) {
     set_transient( 'senoobar_otp_' . $phone, wp_hash( $code ), 2 * MINUTE_IN_SECONDS );
@@ -334,8 +334,8 @@ function senoobar_otp_footer_js() {
         verifyBtn.addEventListener('click', function () {
             var phone = normPhone(phoneEl.value);
             var code  = (codeEl.value || '').replace(/\D+/g, '');
-            if (code.length !== 6) {
-                showMsg('کد ۶ رقمی را وارد کنید.', false);
+            if (code.length !== 5) {
+                showMsg('کد ۵ رقمی را وارد کنید.', false);
                 return;
             }
             verifyBtn.disabled = true;
@@ -543,8 +543,8 @@ function senoobar_reset_footer_js() {
         verifyBtn.addEventListener('click', function () {
             var phone = normPhone(phoneEl.value);
             var code  = (codeEl.value || '').replace(/\D+/g, '');
-            if (code.length !== 6) {
-                showMsg('کد ۶ رقمی را وارد کنید.', false);
+            if (code.length !== 5) {
+                showMsg('کد ۵ رقمی را وارد کنید.', false);
                 return;
             }
             verifyBtn.disabled = true;

@@ -202,8 +202,8 @@ function senoobar_reset_footer_js() {
         verifyBtn.addEventListener('click', function () {
             var phone = normPhone(phoneEl.value);
             var code  = (codeEl.value || '').replace(/\D+/g, '');
-            if (code.length !== 6) {
-                showMsg('کد ۶ رقمی را وارد کنید.', false);
+            if (code.length !== 5) {
+                showMsg('کد ۵ رقمی را وارد کنید.', false);
                 return;
             }
             verifyBtn.disabled = true;
