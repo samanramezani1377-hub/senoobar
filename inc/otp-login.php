@@ -231,6 +231,18 @@ function senoobar_otp_send_ajax() {
         wp_send_json_error( [ 'message' => 'شماره موبایل نامعتبر است.' ] );
     }
 
+    // اگر حسابی برای این شماره وجود ندارد، کد ارسال نکن و کاربر را
+    // به صفحه ثبت‌نام هدایت کن (شماره از قبل پر شده است).
+    if ( ! senoobar_otp_user_exists( $phone ) ) {
+        $account_url = wc_get_page_permalink( 'myaccount' );
+        $register_url = add_query_arg( [ 'register' => '1', 'reg_phone' => $phone ], $account_url );
+        wp_send_json_success( [
+            'message'  => 'حسابی با این شماره تلفن وجود ندارد. در حال انتقال به ثبت‌نام…',
+            'redirect' => $register_url,
+            'register' => true,
+        ] );
+    }
+
     $rl = senoobar_otp_rate_limit( $phone );
     if ( is_wp_error( $rl ) ) {
         wp_send_json_error( [ 'message' => $rl->get_error_message() ] );
@@ -239,11 +251,8 @@ function senoobar_otp_send_ajax() {
     $code = senoobar_otp_generate();
     senoobar_otp_store( $phone, $code );
 
-    if ( senoobar_otp_user_exists( $phone ) ) {
-        $text = "فروشگاه صنوبر\nکد ورود: {$code}\nخوش برگشتی رفیق!";
-    } else {
-        $text = "فروشگاه صنوبر\nکد ورود: {$code}\nبه جمع ما خوش اومدی!";
-    }
+    // حساب وجود دارد — کد ورود بفرست.
+    $text = "فروشگاه صنوبر\nکد ورود: {$code}\nخوش برگشتی رفیق!";
     $sent = senoobar_otp_send_sms( $phone, $text );
 
     if ( is_wp_error( $sent ) ) {
@@ -412,6 +421,11 @@ function senoobar_otp_footer_js() {
                 sendBtn.disabled = false;
                 sendBtn.textContent = 'ارسال مجدد کد';
                 if (res && res.success) {
+                    if (res.data && res.data.register && res.data.redirect) {
+                        showMsg(res.data.message || 'در حال انتقال به ثبت‌نام…', true);
+                        setTimeout(function () { window.location.href = res.data.redirect; }, 900);
+                        return;
+                    }
                     codeWrap.style.display = 'block';
                     verifyBtn.style.display = 'block';
                     if (editPhoneEl) { editPhoneEl.style.display = 'inline-block'; }

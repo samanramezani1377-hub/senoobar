@@ -16,6 +16,9 @@ $account_url   = wc_get_page_permalink( 'myaccount' );
 $show_register = isset( $_GET['register'] ) || ( isset( $_GET['action'] ) && $_GET['action'] === 'register' );
 $show_otp      = isset( $_GET['otp'] );
 $show_lost     = isset( $_GET['lostpassword'] );
+
+// شماره موبایل پیش‌فرض برای فرم ثبت‌نام (وقتی از ورود با پیامک منتقل می‌شود).
+$reg_prefill_phone = isset( $_GET['reg_phone'] ) ? senoobar_normalize_phone( $_GET['reg_phone'] ) : '';
 ?>
 
 <style>
@@ -55,6 +58,7 @@ $show_lost     = isset( $_GET['lostpassword'] );
                         </label>
                         <input type="<?php echo esc_attr( $f['type'] ); ?>" id="reg_<?php echo esc_attr( $key ); ?>"
                                name="<?php echo esc_attr( $key ); ?>" placeholder="<?php echo esc_attr( $f['placeholder'] ); ?>"
+                               value="<?php echo ( $key === 'mobile' && $reg_prefill_phone !== '' ) ? esc_attr( $reg_prefill_phone ) : ''; ?>"
                                <?php echo ! empty( $f['required'] ) ? 'required' : ''; ?>
                                <?php echo in_array( $f['type'], [ 'tel', 'password' ], true ) ? 'dir="ltr"' : ''; ?> style="text-align:right">
                     </div>
@@ -100,6 +104,22 @@ $show_lost     = isset( $_GET['lostpassword'] );
             <div class="snb-auth-card">
                 <h2>ورود به حساب</h2>
                 <p class="snb-auth-sub">شماره موبایل و رمز عبور خود را وارد کنید.</p>
+                <?php
+                // نمایش خطاهای ورود مستقیماً بالای فرم (به‌جای بالای صفحه).
+                $wc_notices = wc_get_notices( 'error' );
+                if ( ! empty( $wc_notices ) ) :
+                    foreach ( $wc_notices as $notice ) :
+                        $ntext = is_array( $notice ) && isset( $notice['notice'] ) ? $notice['notice'] : ( is_string( $notice ) ? $notice : '' );
+                        if ( $ntext === '' ) { continue; }
+                ?>
+                <div class="snb-login-error" style="background:#fdecea;color:#b71c1c;border:1px solid #f5c6cb;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:14px;">
+                    <?php echo wp_kses_post( $ntext ); ?>
+                </div>
+                <?php
+                    endforeach;
+                    wc_clear_notices();
+                endif;
+                ?>
                 <form method="post" class="snb-form">
                     <div class="snb-field">
                         <label for="login_username">شماره موبایل</label>
