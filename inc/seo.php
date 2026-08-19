@@ -44,19 +44,35 @@ function senoobar_clip( $text, $max ) {
 }
 
 /**
- * ساخت یک توضیح متا تمیز (بین ۷۰ تا ۱۶۰ کاراکتر).
+ * حذف پیشوندهای مزاحم وردپرس مثل «بایگانی‌ها:» یا «Archives:».
  */
+function senoobar_clean_archive_title( $title ) {
+    $title = wp_strip_all_tags( $title );
+    $prefixes = array(
+        'بایگانی‌ها:', 'بایگانی‌های', 'بایگانی:', 'آرشیو:', 'دسته:', 'برچسب:',
+        'Archives:', 'Archive:', 'Category:', 'Tag:', 'Author:',
+        'فروشگاه:', 'محصولات:',
+    );
+    foreach ( $prefixes as $p ) {
+        if ( 0 === mb_strpos( $title, $p ) ) {
+            $title = trim( mb_substr( $title, mb_strlen( $p ) ) );
+            break;
+        }
+    }
+    return trim( $title );
+}
+
 function senoobar_build_description( $text ) {
     $text = wp_strip_all_tags( $text );
     $text = html_entity_decode( $text, ENT_QUOTES, 'UTF-8' );
     $text = preg_replace( '/\s+/u', ' ', $text );
+    $text = trim( $text, " \t\n\r\0\x0B|—-" );
     $text = trim( $text );
 
     if ( mb_strlen( $text ) > 160 ) {
         $text = mb_substr( $text, 0, 157 ) . '…';
     }
 
-    // حداقل طول: اگر خیلی کوتاه بود با برند کاملش کن.
     if ( mb_strlen( $text ) < 70 ) {
         $text .= ' | ' . senoobar_brand() . ' — فروشگاه تخصصی تشک، سرویس خواب و مبلمان.';
         if ( mb_strlen( $text ) > 160 ) {
@@ -64,7 +80,7 @@ function senoobar_build_description( $text ) {
         }
     }
 
-    return $text;
+    return trim( $text, " \t\n\r\0\x0B|—-" );
 }
 
 /* -------------------------------------------------------------------------
@@ -100,7 +116,17 @@ function senoobar_get_meta_description() {
         }
     }
 
-    // 4) دسته‌بندی / برچسب / اصطلاح.
+    // 4) صفحه فروشگاه ووکامرس (shop).
+    if ( function_exists( 'is_shop' ) && is_shop() ) {
+        $shop_id = wc_get_page_id( 'shop' );
+        $desc    = get_post_meta( $shop_id, '_senoobar_meta_description', true );
+        if ( empty( $desc ) ) {
+            $desc = 'انواع محصولات ' . senoobar_brand() . ' شامل تشک طبی، سرویس خواب، تخت خواب و مبلمان با کیفیت و قیمت مناسب.';
+        }
+        return senoobar_build_description( $desc );
+    }
+
+    // 5) دسته‌بندی / برچسب / اصطلاح.
     if ( is_tax() || is_category() || is_tag() ) {
         $term = get_queried_object();
         if ( $term && ! empty( $term->description ) ) {
@@ -111,17 +137,17 @@ function senoobar_get_meta_description() {
         }
     }
 
-    // 5) بایگانی نویسنده.
+    // 6) بایگانی نویسنده.
     if ( is_author() ) {
         return senoobar_build_description( 'نوشته‌های این نویسنده را در فروشگاه ' . senoobar_brand() . ' بخوانید.' );
     }
 
-    // 6) نتایج جستجو.
+    // 7) نتایج جستجو.
     if ( is_search() ) {
         return senoobar_build_description( 'نتایج جستجو برای عبارت «' . get_search_query() . '» در فروشگاه ' . senoobar_brand() . '.' );
     }
 
-    // 7) پیش‌فرض.
+    // 8) پیش‌فرض.
     return senoobar_build_description( get_bloginfo( 'description' ) );
 }
 
@@ -152,9 +178,22 @@ function senoobar_get_document_title() {
         return senoobar_clip( get_the_title( get_queried_object_id() ) . ' | ' . $brand, 60 );
     }
 
+    // صفحه فروشگاه ووکامرس.
+    if ( function_exists( 'is_shop' ) && is_shop() ) {
+        $shop_id = wc_get_page_id( 'shop' );
+        $name    = get_the_title( $shop_id );
+        if ( empty( $name ) || strtolower( $name ) === 'shop' ) {
+            $name = 'فروشگاه';
+        }
+        return senoobar_clip( $name . ' | ' . $brand, 60 );
+    }
+
     if ( is_tax() || is_category() || is_tag() ) {
         $term = get_queried_object();
-        $name = $term ? $term->name : wp_strip_all_tags( get_the_archive_title() );
+        $name = $term ? $term->name : '';
+        if ( empty( $name ) ) {
+            $name = senoobar_clean_archive_title( get_the_archive_title() );
+        }
         return senoobar_clip( $name . ' | ' . $brand, 60 );
     }
 
@@ -167,7 +206,11 @@ function senoobar_get_document_title() {
     }
 
     if ( is_archive() ) {
-        return senoobar_clip( wp_strip_all_tags( get_the_archive_title() ) . ' | ' . $brand, 60 );
+        $name = senoobar_clean_archive_title( get_the_archive_title() );
+        if ( empty( $name ) ) {
+            $name = 'بایگانی';
+        }
+        return senoobar_clip( $name . ' | ' . $brand, 60 );
     }
 
     if ( is_404() ) {
@@ -209,7 +252,7 @@ function senoobar_render_seo_meta() {
 add_action( 'wp_head', 'senoobar_render_seo_meta', 1 );
 
 /* -------------------------------------------------------------------------
- * مدیریت افزونه‌های سئو (Yoast) — تا title/desc خراب نشود.
+ * مدیریت افزونه‌های سئو (Yoast) — تا title/desc خراب یا تکراری نشود.
  * ---------------------------------------------------------------------- */
 
 if ( function_exists( 'YoastSEO' ) || class_exists( 'WPSEO_Frontend' ) || defined( 'WPSEO_VERSION' ) ) {
@@ -217,10 +260,16 @@ if ( function_exists( 'YoastSEO' ) || class_exists( 'WPSEO_Frontend' ) || define
     add_filter( 'wpseo_title', 'senoobar_get_document_title', 999 );
     add_filter( 'wpseo_metadesc', 'senoobar_get_meta_description', 999 );
 
-    // حذف تگ <title> تکراریِ Yoast.
+    // حذف تگ‌های <title> و <meta description> تکراریِ Yoast.
     add_filter( 'wpseo_frontend_presenter_classes', function ( $classes ) {
         return array_filter( $classes, function ( $c ) {
-            return false === strpos( $c, 'Title' );
+            if ( false !== strpos( $c, 'Title' ) ) {
+                return false;
+            }
+            if ( false !== strpos( $c, 'Meta_Description' ) ) {
+                return false;
+            }
+            return true;
         } );
     } );
 }
