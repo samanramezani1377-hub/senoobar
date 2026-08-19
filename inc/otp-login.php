@@ -311,7 +311,7 @@ function senoobar_otp_send_order_confirm_sms( $phone, $order_number, $first_name
     $text  = "فروشگاه صنوبر\n";
     $text .= $greeting . "\n";
     $text .= "سفارشت به شماره {$order_number} با موفقیت ثبت شد.\n";
-    $text .= "برای پیگیری سفارشت وارد حسابت شو.";
+    $text .= "برای پیگیری سفارشت وارد حساب کاربریت شو.";
     return senoobar_otp_send_sms( $phone, $text );
 }
 
