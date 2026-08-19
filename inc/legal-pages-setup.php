@@ -37,11 +37,11 @@ function senoobar_ensure_legal_pages(): void {
 
     // key => [ post_title, post_name (slug), template file ]
     $pages = [
-        'about'   => [ 'درباره ما',     'about',             'page-about.php' ],
-        'contact' => [ 'تماس با ما',    'contact',           'page-contact.php' ],
-        'faq'     => [ 'سوالات متداول', 'faq',               'page-faq.php' ],
-        'terms'   => [ 'شرایط و ضوابط', 'terms-and-conditions', 'page-terms.php' ],
-        'privacy' => [ 'حریم خصوصی',   'privacy-policy',     'page-privacy.php' ],
+        'about'   => [ 'درباره ما',     'about',                 'page-about.php' ],
+        'contact' => [ 'تماس با ما',    'contact',               'page-contact.php' ],
+        'faq'     => [ 'سوالات متداول', 'faq',                   'page-faq.php' ],
+        'terms'   => [ 'شرایط و ضوابط', 'terms-and-conditions',  'page-terms.php' ],
+        'privacy' => [ 'حریم خصوصی',   'privacy-policy',         'page-privacy.php' ],
     ];
 
     foreach ($pages as $key => $cfg) {
@@ -82,3 +82,30 @@ function senoobar_ensure_legal_pages(): void {
 }
 
 add_action('after_setup_theme', 'senoobar_ensure_legal_pages', 30);
+
+/**
+ * Enqueue the legal-pages stylesheet only on these five pages.
+ *
+ * Kept separate from class-senoobar-theme.php so the main assets() method
+ * stays untouched and the CSS is never dead weight on other pages.
+ */
+function senoobar_legal_pages_assets(): void {
+    if (!is_page_template([
+        'page-about.php',
+        'page-contact.php',
+        'page-faq.php',
+        'page-terms.php',
+        'page-privacy.php',
+    ])) {
+        return;
+    }
+
+    wp_enqueue_style(
+        'senoobar-legal-pages',
+        SENOOBAR_URI . '/assets/css/legal-pages.css',
+        ['senoobar-main'],
+        SENOOBAR_VERSION
+    );
+}
+
+add_action('wp_enqueue_scripts', 'senoobar_legal_pages_assets', 20);
