@@ -9,11 +9,6 @@
  * استانداردهای طول (برای نمایش کامل در نتایج گوگل):
  *   - Title: حداکثر ۶۰ کاراکتر
  *   - Meta description: بین ۷۰ تا ۱۶۰ کاراکتر (بهینه ۱۵۰~۱۶۰)
- *
- * اولویت خروجی:
- *   ۱) مقدار دستی (فیلد سفارشی) اگر پر شده باشد
- *   ۲) ساخت هوشمند از محتوای صفحه
- *   ۳) پیش‌فرض‌های سایت
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,6 +18,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /* -------------------------------------------------------------------------
  * ابزارهای کمکی
  * ---------------------------------------------------------------------- */
+
+function senoobar_seo_plugin_active() {
+    return ( function_exists( 'YoastSEO' ) || class_exists( 'WPSEO_Frontend' ) || defined( 'WPSEO_VERSION' ) );
+}
 
 function senoobar_brand() {
     static $brand = null;
@@ -43,9 +42,6 @@ function senoobar_clip( $text, $max ) {
     return mb_substr( $text, 0, $max - 1 ) . '…';
 }
 
-/**
- * حذف پیشوندهای مزاحم وردپرس مثل «بایگانی‌ها:» یا «Archives:».
- */
 function senoobar_clean_archive_title( $title ) {
     $title = wp_strip_all_tags( $title );
     $prefixes = array(
@@ -225,19 +221,26 @@ function senoobar_get_document_title() {
  * ---------------------------------------------------------------------- */
 
 function senoobar_render_seo_meta() {
-    $desc  = senoobar_get_meta_description();
-    $title = senoobar_get_document_title();
+    $desc      = senoobar_get_meta_description();
+    $title     = senoobar_get_document_title();
+    $use_yoast = senoobar_seo_plugin_active();
 
-    if ( ! empty( $desc ) ) {
-        echo '<meta name="description" content="' . esc_attr( $desc ) . '" />' . "\n";
+    // اگر Yoast فعال نباشد، خودمان همه‌چیز را چاپ می‌کنیم.
+    if ( ! $use_yoast ) {
+        if ( ! empty( $desc ) ) {
+            echo '<meta name="description" content="' . esc_attr( $desc ) . '" />' . "\n";
+        }
+        echo '<title>' . esc_html( $title ) . "</title>\n";
+        echo '<meta property="og:title" content="' . esc_attr( $title ) . '" />' . "\n";
+        echo '<meta property="og:description" content="' . esc_attr( $desc ) . '" />' . "\n";
+    } else {
+        // Yoast فعال است: <title> و <meta description> را خودش چاپ می‌کند
+        // (مقادیرش از فیلتر wpseo_title / wpseo_metadesc می‌آید). ما فقط
+        // تگ‌های OG تکمیلی را اضافه می‌کنیم که Yoast نمی‌دهد.
+        echo '<meta property="og:site_name" content="' . esc_attr( senoobar_brand() ) . '" />' . "\n";
     }
 
-    echo '<title>' . esc_html( $title ) . "</title>\n";
-
-    echo '<meta property="og:title" content="' . esc_attr( $title ) . '" />' . "\n";
-    echo '<meta property="og:description" content="' . esc_attr( $desc ) . '" />' . "\n";
-    echo '<meta property="og:site_name" content="' . esc_attr( senoobar_brand() ) . '" />' . "\n";
-
+    // تصویر OG برای صفحات تک‌محتوا (هر دو حالت).
     if ( is_singular() ) {
         $id    = get_queried_object_id();
         $og_ok = (bool) post_type_supports( get_post_type( $id ), 'thumbnail' ) && has_post_thumbnail( $id );
@@ -255,23 +258,10 @@ add_action( 'wp_head', 'senoobar_render_seo_meta', 1 );
  * مدیریت افزونه‌های سئو (Yoast) — تا title/desc خراب یا تکراری نشود.
  * ---------------------------------------------------------------------- */
 
-if ( function_exists( 'YoastSEO' ) || class_exists( 'WPSEO_Frontend' ) || defined( 'WPSEO_VERSION' ) ) {
+if ( senoobar_seo_plugin_active() ) {
     // تایتل و توضیحِ ما جایگزین خروجی Yoast می‌شود.
     add_filter( 'wpseo_title', 'senoobar_get_document_title', 999 );
     add_filter( 'wpseo_metadesc', 'senoobar_get_meta_description', 999 );
-
-    // حذف تگ‌های <title> و <meta description> تکراریِ Yoast.
-    add_filter( 'wpseo_frontend_presenter_classes', function ( $classes ) {
-        return array_filter( $classes, function ( $c ) {
-            if ( false !== strpos( $c, 'Title' ) ) {
-                return false;
-            }
-            if ( false !== strpos( $c, 'Meta_Description' ) ) {
-                return false;
-            }
-            return true;
-        } );
-    } );
 }
 
 // جلوگیری از چاپ تایتل پیش‌فرض وردپرس.
