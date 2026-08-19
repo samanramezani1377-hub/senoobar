@@ -644,8 +644,8 @@ final class Senoobar_Theme {
             $is_home_loop = is_front_page() || is_home();
 
             // ── Core (always) ──────────────────────────────
-            wp_enqueue_style('senoobar-critical', SENOOBAR_URI . '/assets/css/critical.css', [], SENOOBAR_VERSION);
-            wp_enqueue_style('senoobar-main', SENOOBAR_URI . '/assets/css/main.css', ['senoobar-critical'], SENOOBAR_VERSION);
+            // critical.css اینلاین می‌شود (inc/critical-css.php) تا از FOUC بازدید اول جلوگیری شود.
+            wp_enqueue_style('senoobar-main', SENOOBAR_URI . '/assets/css/main.css', [], SENOOBAR_VERSION);
             if (is_rtl()) {
                 wp_enqueue_style('senoobar-rtl', SENOOBAR_URI . '/assets/css/rtl.css', ['senoobar-main'], SENOOBAR_VERSION);
             }
