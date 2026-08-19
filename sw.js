@@ -4,7 +4,7 @@
  * No HTML navigation interception -> no network error / redirect issues.
  */
 
-const CACHE_VERSION = 'senoobar-v2.1.0';
+const CACHE_VERSION = 'senoobar-v2.2.0';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 
 // Assets to pre-cache on install (all return 200)
@@ -79,8 +79,8 @@ self.addEventListener('fetch', event => {
 // Push Notification
 self.addEventListener('push', event => {
   let data = {
-    title: 'صنوبر',
-    body: 'پیشنهاد ویژه برای شما!',
+    title: 'فروشگاه صنوبر',
+    body: 'جدیدترین محصولات را مشاهده کنید!',
     icon: 'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/icons/icon-192.png',
     badge: 'https://senoobar.ir/wp-content/themes/senoobar.ir-main/assets/icons/badge-72.png',
     data: { url: 'https://senoobar.ir/' }
