@@ -63,7 +63,7 @@ function senoobar_reset_send_ajax() {
     $code = senoobar_otp_generate();
     senoobar_otp_store( 'reset_' . $phone, $code );
 
-    $text = "سایت سنوبر\nکد بازنشانی رمز: {$code}";
+    $text = "فروشگاه صنوبر\nکد بازنشانی رمز: {$code}";
     $sent = senoobar_otp_send_sms( $phone, $text );
 
     if ( is_wp_error( $sent ) ) {

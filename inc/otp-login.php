@@ -85,11 +85,11 @@ function senoobar_otp_send_sms( $to, $text ) {
         return new WP_Error( 'otp_invalid_phone', 'شماره موبایل نامعتبر است.' );
     }
 
-    // عبارت «لغو۱۱» الزامی خط‌های خدماتی ملی‌پیامک است و باید در انتهای هر
+    // عبارت «لغو11» الزامی خط‌های خدماتی ملی‌پیامک است و باید در انتهای هر
     // پیامک ارسالی باشد؛ در غیر این صورت ارسال رد می‌شود. برای جلوگیری از
     // تکرار، فقط در صورتی اضافه می‌شود که از قبل در متن نباشد.
-    if ( false === strpos( $text, 'لغو۱۱' ) && false === strpos( $text, 'لغو ۱۱' ) && false === strpos( $text, 'لغو11' ) && false === strpos( $text, 'لغو 11' ) ) {
-        $text .= "\nلغو۱۱";
+    if ( false === strpos( $text, 'لغو11' ) && false === strpos( $text, 'لغو 11' ) ) {
+        $text .= "\nلغو11";
     }
 
     $args = [
@@ -220,7 +220,7 @@ function senoobar_otp_send_ajax() {
     $code = senoobar_otp_generate();
     senoobar_otp_store( $phone, $code );
 
-    $text = "سایت سنوبر\nکد ورود: {$code}";
+    $text = "فروشگاه صنوبر\nکد ورود: {$code}";
     $sent = senoobar_otp_send_sms( $phone, $text );
 
     if ( is_wp_error( $sent ) ) {
@@ -268,7 +268,7 @@ function senoobar_otp_send_password_sms( $phone, $username, $password ) {
     if ( ! senoobar_otp_configured() ) {
         return false;
     }
-    $text = "سایت سنوبر\nحساب شما ساخته شد\nنام کاربری: {$username}\nرمز عبور: {$password}";
+    $text = "فروشگاه صنوبر\nحساب شما ساخته شد\nنام کاربری: {$username}\nرمز عبور: {$password}";
     return senoobar_otp_send_sms( $phone, $text );
 }
 
@@ -411,7 +411,7 @@ function senoobar_reset_send_ajax() {
     $code = senoobar_otp_generate();
     senoobar_otp_store( 'reset_' . $phone, $code );
 
-    $text = "سایت صنوبر\nکد تایید بازنشانی رمز: {$code}";
+    $text = "فروشگاه صنوبر\nکد تایید بازنشانی رمز: {$code}";
     $sent = senoobar_otp_send_sms( $phone, $text );
 
     if ( is_wp_error( $sent ) ) {
