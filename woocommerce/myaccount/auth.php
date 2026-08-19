@@ -18,6 +18,13 @@ $show_otp      = isset( $_GET['otp'] );
 $show_lost     = isset( $_GET['lostpassword'] );
 ?>
 
+<style>
+.snb-auth-subtabs { display: flex; background: #fff; border-radius: 12px; padding: 5px; gap: 5px; box-shadow: var(--snb-shadow); margin-bottom: 16px; }
+.snb-auth-subtab { flex: 1; text-align: center; padding: 9px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--snb-muted); transition: all 0.15s; text-decoration: none; }
+.snb-auth-subtab.is-active { background: #eef4f0; color: var(--snb-brand); }
+.snb-auth-subtab:hover:not(.is-active) { color: var(--snb-brand); }
+</style>
+
 <div class="snb-auth" dir="rtl">
     <div class="snb-auth-intro">
         <h1>حساب کاربری صنوبر</h1>
