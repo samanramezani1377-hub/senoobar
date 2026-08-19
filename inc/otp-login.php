@@ -272,6 +272,22 @@ function senoobar_otp_send_password_sms( $phone, $username, $password ) {
     return senoobar_otp_send_sms( $phone, $text );
 }
 
+/**
+ * ارسال پیام کامل تأیید سفارش + مشخصات ورود، پس از ساخت حساب جدید در چک‌اوت.
+ */
+function senoobar_otp_send_order_welcome_sms( $phone, $username, $password, $order_number ) {
+    if ( ! senoobar_otp_configured() ) {
+        return false;
+    }
+    $text  = "فروشگاه صنوبر\n";
+    $text .= "سفارش شما به شماره {$order_number} با موفقیت ثبت شد.\n";
+    $text .= "برای پیگیری سفارش خود وارد حساب کاربری شوید:\n";
+    $text .= "نام کاربری: {$username}\n";
+    $text .= "رمز عبور: {$password}\n";
+    $text .= "از شنبه تا پنجشنبه، ۱۰ صبح تا ۹ شب پاسخگوی شما هستیم.";
+    return senoobar_otp_send_sms( $phone, $text );
+}
+
 /* ─── ۱۲. JS برای فرم OTP (فقط وقتی فرم OTP در صفحه باشد) ─── */
 add_action( 'wp_footer', 'senoobar_otp_footer_js', 30 );
 function senoobar_otp_footer_js() {

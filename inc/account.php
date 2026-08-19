@@ -243,22 +243,33 @@ add_action( 'woocommerce_checkout_order_processed', function ( $order_id, $poste
 
         update_user_meta( $user_id, 'mobile', $phone );
 
-        // Send the username + password to the customer via SMS (instead of
-        // showing the password on the thank-you page).
-        if ( function_exists( 'senoobar_otp_send_password_sms' ) ) {
-            senoobar_otp_send_password_sms( $phone, $phone, $temp_password );
+        // Send a complete welcome SMS with the order number + login credentials
+        // (instead of showing the password on the thank-you page).
+        if ( $order ) {
+            $order_number = $order->get_order_number();
+        } else {
+            $order_number = $order_id;
+        }
+        if ( function_exists( 'senoobar_otp_send_order_welcome_sms' ) ) {
+            senoobar_otp_send_order_welcome_sms( $phone, $phone, $temp_password, $order_number );
         }
     }
 
-    // 3) Persist billing details onto the (new or existing) account.
-    update_user_meta( $user_id, 'billing_phone', $phone );
-    if ( $first !== '' ) { update_user_meta( $user_id, 'billing_first_name', $first ); }
-    if ( $last !== '' )  { update_user_meta( $user_id, 'billing_last_name', $last ); }
-    update_user_meta( $user_id, 'billing_email', senoobar_phone_email( $phone ) );
+    // 3) Persist billing details onto the account.
+    //    SECURITY: only write billing/address data onto a NEWLY-created account.
+    //    For an EXISTING account we must NOT overwrite the stored name/address,
+    //    otherwise a third party could place a guest order with someone else's
+    //    phone number and silently change that customer's saved shipping address.
+    if ( ! $existing_id ) {
+        update_user_meta( $user_id, 'billing_phone', $phone );
+        if ( $first !== '' ) { update_user_meta( $user_id, 'billing_first_name', $first ); }
+        if ( $last !== '' )  { update_user_meta( $user_id, 'billing_last_name', $last ); }
+        update_user_meta( $user_id, 'billing_email', senoobar_phone_email( $phone ) );
 
-    foreach ( [ 'billing_state', 'billing_postcode', 'billing_address_1' ] as $key ) {
-        if ( isset( $posted_data[ $key ] ) && $posted_data[ $key ] !== '' ) {
-            update_user_meta( $user_id, $key, sanitize_text_field( wp_unslash( $posted_data[ $key ] ) ) );
+        foreach ( [ 'billing_state', 'billing_postcode', 'billing_address_1' ] as $key ) {
+            if ( isset( $posted_data[ $key ] ) && $posted_data[ $key ] !== '' ) {
+                update_user_meta( $user_id, $key, sanitize_text_field( wp_unslash( $posted_data[ $key ] ) ) );
+            }
         }
     }
 
