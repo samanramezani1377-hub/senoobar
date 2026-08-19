@@ -61,11 +61,12 @@ add_filter( 'authenticate', function ( $user, $username, $password ) {
             }
         }
 
-        // شماره وارد شده ولی هیچ کاربری پیدا نشد → پیام «ثبت نام کنید».
+        // شماره وارد شده ولی هیچ کاربری پیدا نشد → پیام با لینک ثبت‌نام.
         if ( ! $found_user ) {
+            $register_url = add_query_arg( 'register', '1', wc_get_page_permalink( 'myaccount' ) );
             return new WP_Error(
                 'senoobar_no_account',
-                'حسابی با این شماره تلفن وجود ندارد. لطفاً ثبت نام کنید.'
+                'حسابی با این شماره تلفن وجود ندارد. <a href="' . esc_url( $register_url ) . '">ثبت نام کنید</a>'
             );
         }
 

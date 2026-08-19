@@ -15,7 +15,7 @@ get_header(); ?>
 <main id="primary" class="site-main">
 <div class="container page-content senoobar-account-wrap">
 
-<?php wc_print_notices(); ?>
+<?php if ( is_user_logged_in() ) : wc_print_notices(); endif; ?>
 
 <?php if ( ! is_user_logged_in() ) : ?>
 

@@ -48,6 +48,22 @@ $reg_prefill_phone = isset( $_GET['reg_phone'] ) ? senoobar_normalize_phone( $_G
         <div class="snb-auth-card">
             <h2>ساخت حساب جدید</h2>
             <p class="snb-auth-sub">با شماره موبایل خود ثبت نام کنید.</p>
+            <?php
+            // نمایش خطاهای ثبت‌نام داخل کارت (بالای فرم).
+            $reg_notices = wc_get_notices( 'error' );
+            if ( ! empty( $reg_notices ) ) :
+                foreach ( $reg_notices as $notice ) :
+                    $rtext = is_array( $notice ) && isset( $notice['notice'] ) ? $notice['notice'] : ( is_string( $notice ) ? $notice : '' );
+                    if ( $rtext === '' ) { continue; }
+            ?>
+            <div class="snb-login-error" style="background:#fdecea;color:#b71c1c;border:1px solid #f5c6cb;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:14px;">
+                <?php echo wp_kses_post( $rtext ); ?>
+            </div>
+            <?php
+                endforeach;
+                wc_clear_notices();
+            endif;
+            ?>
             <form method="post" class="snb-form">
                 <?php wp_nonce_field( 'senoobar_register', 'senoobar_register_nonce' ); ?>
                 <?php foreach ( senoobar_register_fields() as $key => $f ) : ?>
