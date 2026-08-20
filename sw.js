@@ -4,7 +4,7 @@
  * No HTML navigation interception -> no network error / redirect issues.
  */
 
-const CACHE_VERSION = 'senoobar-v2.6.0';
+const CACHE_VERSION = 'senoobar-v2.7.0';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 
 // Origin + theme base path are derived at runtime so the worker keeps working
@@ -76,22 +76,44 @@ self.addEventListener('fetch', event => {
 
   // Only handle static assets
   if (url.pathname.match(/\.(css|js|woff2?|png|jpg|jpeg|gif|svg|webp|ico)$/) || url.pathname.includes('/assets/')) {
+
+    // CSS/JS are versioned by the theme (SENOOBAR_VERSION -> ?ver=), so serve
+    // them NETWORK-FIRST to always pick up the latest code. Images/fonts rarely
+    // change, so keep cache-first for those to save bandwidth.
+    var isCode = /\.(css|js)$/i.test(url.pathname);
+
     event.respondWith(
-      caches.match(request).then(cached => {
-        if (cached) return cached;
-        return fetch(request).then(response => {
-          if (response && response.ok && response.type === 'basic') {
-            const clone = response.clone();
-            caches.open(STATIC_CACHE).then(cache => cache.put(request, clone)).catch(() => {});
-          }
-          return response;
-        }).catch(() => {
-          // If network fails, try cache once more (already handled above)
-          return caches.match(request);
-        });
-      })
+      (isCode ? refreshFromNetwork(request) : serveFromCache(request))
     );
+    if (isCode) return;
     return;
+  }
+
+  // Network-first: try the network, update the cache, fall back to cache offline.
+  function refreshFromNetwork(request) {
+    return fetch(request).then(function (response) {
+      if (response && response.ok && response.type === 'basic') {
+        var clone = response.clone();
+        caches.open(STATIC_CACHE).then(function (cache) { cache.put(request, clone); }).catch(function () {});
+      }
+      return response;
+    }).catch(function () {
+      return caches.match(request);
+    });
+  }
+
+  // Cache-first: return cached copy immediately (for images/fonts).
+  function serveFromCache(request) {
+    return caches.match(request).then(function (cached) {
+      if (cached) return cached;
+      return fetch(request).then(function (response) {
+        if (response && response.ok && response.type === 'basic') {
+          var clone = response.clone();
+          caches.open(STATIC_CACHE).then(function (cache) { cache.put(request, clone); }).catch(function () {});
+        }
+        return response;
+      }).catch(function () { return caches.match(request); });
+    });
   }
 
   // Everything else: pass through to network untouched
