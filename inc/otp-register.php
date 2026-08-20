@@ -183,7 +183,8 @@ function senoobar_reg_otp_footer_js() {
 				.then(function (r) { return r.json(); });
 		}
 		function lockAll(lock) {
-			[ phoneEl, firstEl, lastEl, passEl, codeEl ].forEach(function (el) {
+			// فیلد کد تأیید (codeEl) عمداً قفل نمی‌شود؛ کاربر باید بتواند کد را وارد کند.
+			[ phoneEl, firstEl, lastEl, passEl ].forEach(function (el) {
 				if (el) { el.disabled = !!lock; }
 			});
 		}
