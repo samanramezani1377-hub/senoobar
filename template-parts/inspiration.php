@@ -9,7 +9,7 @@ $title = get_theme_mod( 'senoobar_section_gallery_title', 'ایده‌هایی �
 
 $ideas = senoobar_ideas_query( 4 );
 
-$archive_url = get_post_type_archive_link( 'senoobar_idea' );
+$archive_url = senoobar_ideas_page_url();
 
 // ── نمونه‌های پیش‌فرض (وقتی هنوز ایده‌ای ثبت نشده) ──
 $fallback = [
