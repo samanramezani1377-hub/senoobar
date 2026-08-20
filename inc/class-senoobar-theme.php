@@ -113,6 +113,7 @@ final class Senoobar_Theme {
         add_action('init', function () {
             add_rewrite_rule('^sw\.js$', 'index.php?senoobar_sw=1', 'top');
             add_rewrite_rule('^manifest\.json$', 'index.php?senoobar_manifest=1', 'top');
+            add_rewrite_rule('^llms\.txt$', 'index.php?senoobar_llms=1', 'top');
         });
 
         // Flush rewrite rules on theme activation so the sw.js / manifest.json
@@ -125,6 +126,7 @@ final class Senoobar_Theme {
         add_filter('query_vars', function ($vars) {
             $vars[] = 'senoobar_sw';
             $vars[] = 'senoobar_manifest';
+            $vars[] = 'senoobar_llms';
             return $vars;
         });
 
@@ -149,6 +151,16 @@ final class Senoobar_Theme {
                 $manifest_file = get_template_directory() . '/manifest.php';
                 if (file_exists($manifest_file)) {
                     include $manifest_file;
+                    exit;
+                }
+            }
+
+            if (get_query_var('senoobar_llms') === '1') {
+                // llms.php sets its own headers (text/plain + public cache) and
+                // only works inside a fully-bootstrapped WordPress context.
+                $llms_file = get_template_directory() . '/llms.php';
+                if (file_exists($llms_file)) {
+                    include $llms_file;
                     exit;
                 }
             }
