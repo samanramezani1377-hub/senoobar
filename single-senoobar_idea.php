@@ -48,7 +48,18 @@ $gallery_url = senoobar_ideas_page_url() ?: home_url( '/' );
 			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18 18 6M6 6l12 12"/></svg>
 		</a>
 		<div class="idea-feed__topbar-title">
-			<span class="idea-feed__dot"></span>
+			<span class="idea-feed__avatar">
+				<?php
+				$logo_id = get_theme_mod( 'custom_logo' );
+				$logo_html = $logo_id ? wp_get_attachment_image( $logo_id, 'thumbnail', false, [ 'class' => 'idea-feed__avatar-img' ] ) : '';
+				if ( $logo_html ) {
+					echo $logo_html;
+				} else {
+					// اگر لوگو نبود، حرف اول عنوان سایت
+					echo '<span class="idea-feed__avatar-fallback">' . esc_html( mb_substr( get_bloginfo( 'name' ), 0, 1 ) ) . '</span>';
+				}
+				?>
+			</span>
 			<span>ایده‌های صنوبر</span>
 		</div>
 		<span class="idea-feed__count">
@@ -125,16 +136,35 @@ $gallery_url = senoobar_ideas_page_url() ?: home_url( '/' );
 	}, { passive: true });
 
 	// سوایپ لمسی (موبایل): کشیدن بالا = بعدی، پایین = قبلی
-	var y0 = null;
-	document.addEventListener('touchstart', function (e) { y0 = e.touches[0].clientY; }, { passive: true });
-	document.addEventListener('touchend', function (e) {
-		if (y0 === null) return;
-		var dy = e.changedTouches[0].clientY - y0;
-		y0 = null;
-		if (Math.abs(dy) > 70) {
-			if (dy < 0) go(next);
-			else go(prev);
+	// ردیابی کامل start/move/end تا جهت دقیق مشخص و از تداخل اسکرول جلوگیری شود.
+	var sy = null, sx = null, swiping = false;
+
+	document.addEventListener('touchstart', function (e) {
+		var t = e.touches[0];
+		sy = t.clientY;
+		sx = t.clientX;
+		swiping = false;
+	}, { passive: true });
+
+	document.addEventListener('touchmove', function (e) {
+		if (sy === null) return;
+		var t = e.touches[0];
+		var dy = t.clientY - sy;
+		var dx = t.clientX - sx;
+		// فقط وقتی عمودی‌تر از افقی باشد، سوایپ فعال شود
+		if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 24) {
+			swiping = true;
 		}
+	}, { passive: true });
+
+	document.addEventListener('touchend', function (e) {
+		if (sy === null) return;
+		var dy = e.changedTouches[0].clientY - sy;
+		sy = null;
+		if (!swiping) return;
+		swiping = false;
+		if (dy < -50) go(next);   // کشیدن بالا
+		else if (dy > 50) go(prev); // کشیدن پایین
 	}, { passive: true });
 })();
 </script>

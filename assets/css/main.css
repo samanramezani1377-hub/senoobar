@@ -1315,6 +1315,8 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   background: #000;
   color: #fff;
   font-family: inherit;
+  touch-action: none; /* سوایپ عمودی را JS کنترل کند، نه اسکرول مرورگر */
+  overflow: hidden;
 }
 
 /* نوار بالا (بستن + عنوان) */
@@ -1357,6 +1359,35 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   height: 7px;
   border-radius: 50%;
   background: var(--color-brand, #b18a5a);
+}
+
+/* آواتار لوگو (دایره‌ای، مثل عکس پروفایل) */
+.idea-feed__avatar,
+.idea-feed__avatar-fallback {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  background: var(--color-brand, #b18a5a);
+}
+
+.idea-feed__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.idea-feed__avatar-fallback {
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
 }
 
 .idea-feed__count {
