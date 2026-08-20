@@ -198,3 +198,37 @@ function senoobar_idea_nav() {
 		'next' => $next ? senoobar_idea_item( $next ) : null,
 	];
 }
+
+/* ════════════════════════════════════════════════════════════════
+   ۶. REST API — فهرست کامل ایده‌ها (برای پخش لوپ در صفحه تکی)
+   ════════════════════════════════════════════════════════════════ */
+function senoobar_register_ideas_rest_route() {
+	register_rest_route( 'senoobar/v1', '/ideas', [
+		'methods'             => 'GET',
+		'callback'            => 'senoobar_ideas_rest_callback',
+		'permission_callback' => '__return_true',
+	] );
+}
+add_action( 'rest_api_init', 'senoobar_register_ideas_rest_route' );
+
+function senoobar_ideas_rest_callback() {
+	$posts = get_posts( [
+		'post_type'      => 'senoobar_idea',
+		'post_status'    => 'publish',
+		'numberposts'    => -1,
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+		'suppress_filters'=> false,
+	] );
+
+	$items = [];
+	foreach ( $posts as $p ) {
+		$item = senoobar_idea_item( $p );
+		if ( $item ) {
+			$item['content'] = wpautop( $item['content'] );
+			$items[] = $item;
+		}
+	}
+
+	return new WP_REST_Response( [ 'ideas' => $items ], 200 );
+}

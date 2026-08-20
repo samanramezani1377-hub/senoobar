@@ -1299,7 +1299,7 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
 
 /* صفحه‌ی تکی ایده — شبیه اینستاگرام (تمام‌صفحه در موبایل) */
 /* ────────────────────────────────────────────────
-   صفحه‌ی تکی ایده — تمام‌صفحه (ریلز اینستاگرام)
+   صفحه‌ی تکی ایده — تمام‌صفحه با لوپ (ریلز اینستاگرام)
    بدون هدر/فوتر تم؛ پس‌زمینه سیاه
    ──────────────────────────────────────────────── */
 .senoobar-idea-single {
@@ -1307,7 +1307,7 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   background: #000;
   overflow: hidden;
   overscroll-behavior: none;
-  touch-action: pan-x;
+  height: 100%;
 }
 
 .idea-feed {
@@ -1318,21 +1318,19 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   background: #000;
   color: #fff;
   font-family: inherit;
-  touch-action: none; /* سوایپ عمودی را JS کنترل کند، نه اسکرول مرورگر */
+  touch-action: none;
   overflow: hidden;
 }
 
-/* نوار بالا (بستن + عنوان) */
+/* ── نوار بالا ── */
 .idea-feed__topbar {
   position: relative;
-  z-index: 20;
+  z-index: 30;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
 }
 
 .idea-feed__close {
@@ -1344,9 +1342,9 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   border-radius: 50%;
   color: #fff;
   text-decoration: none;
+  background: rgba(0,0,0,0.35);
 }
-
-.idea-feed__close:hover { background: rgba(255, 255, 255, 0.12); }
+.idea-feed__close:hover { background: rgba(255,255,255,0.15); }
 .idea-feed__close svg { width: 22px; height: 22px; }
 
 .idea-feed__topbar-title {
@@ -1357,14 +1355,7 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   font-weight: 600;
 }
 
-.idea-feed__dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-brand, #b18a5a);
-}
-
-/* آواتار کنار عنوان (مثل عکس پروفایل) */
+/* آواتار (مثل عکس پروفایل) */
 .idea-feed__avatar {
   width: 30px;
   height: 30px;
@@ -1375,16 +1366,14 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   align-items: center;
   justify-content: center;
   background: #333;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1.5px solid rgba(255,255,255,0.85);
 }
-
 .idea-feed__avatar-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-
 .idea-feed__avatar-fallback {
   font-size: 0.9rem;
   font-weight: 700;
@@ -1392,98 +1381,36 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   line-height: 1;
 }
 
-/* دکمه صدا (ویدیو) — pill با آیکن + متن */
-.idea-feed__sound {
-  position: absolute;
-  right: 14px;
-  bottom: 110px;
-  z-index: 16;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  height: 40px;
-  padding: 0 16px 0 12px;
-  border-radius: 20px;
-  border: none;
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.idea-feed__sound svg { width: 22px; height: 22px; flex: 0 0 auto; }
-
-.idea-feed__sound-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-/* آیکن‌ها */
-.idea-feed__sound .idea-sound-on { display: block; }
-.idea-feed__sound .idea-sound-off { display: none; }
-
-/* متن‌ها: وقتی صدا روشن است، «بی‌صدا کردن»؛ وقتی بسته است، «صدا دار کردن» */
-.idea-feed__sound .idea-sound-label-on { display: block; }
-.idea-feed__sound .idea-sound-label-off { display: none; }
-
-/* حالت muted: آیکن بی‌صدا + متن «صدا دار کردن» */
-.idea-feed__sound.is-muted .idea-sound-on { display: none; }
-.idea-feed__sound.is-muted .idea-sound-off { display: block; }
-.idea-feed__sound.is-muted .idea-sound-label-on { display: none; }
-.idea-feed__sound.is-muted .idea-sound-label-off { display: block; }
-
-/* آواتار لوگو (دایره‌ای، مثل عکس پروفایل) */
-.idea-feed__avatar,
-.idea-feed__avatar-fallback {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border: 1.5px solid rgba(255, 255, 255, 0.85);
-  background: var(--color-brand, #b18a5a);
-}
-
-.idea-feed__avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.idea-feed__avatar-fallback {
-  color: #fff;
-  font-weight: 700;
-  font-size: 0.9rem;
-  border: 1.5px solid rgba(255, 255, 255, 0.85);
-}
-
 .idea-feed__count {
   margin-inline-start: auto;
-  opacity: 0.6;
   font-size: 0.8rem;
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
 }
 
-/* اسلاید (رسانه) */
-.idea-feed__slide {
+/* ── ریل اسلایدها ── */
+.idea-feed__track {
   position: relative;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
+}
+
+.idea-feed__slide {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  will-change: transform;
+  transform: translateY(calc(var(--dy, 0) * 100%));
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .idea-feed__media {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1493,47 +1420,46 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
 .idea-feed__video {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* کل تصویر/ویدیو دیده شود، مثل ریلز */
+  object-fit: contain;
   display: block;
 }
 
-.idea-feed__ph {
-  color: rgba(255, 255, 255, 0.5);
-}
+.idea-feed__ph { color: rgba(255,255,255,0.5); }
 
-/* دکمه‌های قبل/بعد — ثابت وسط چپ/راست */
-.idea-feed__nav {
+/* دکمه صدا */
+.idea-feed__sound {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 15;
+  right: 14px;
+  bottom: 110px;
+  z-index: 16;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  gap: 6px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.45);
+  border: none;
+  background: rgba(0,0,0,0.55);
   color: #fff;
-  text-decoration: none;
-  transition: background 0.2s, opacity 0.2s;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: background 0.2s;
 }
+.idea-feed__sound:hover { background: rgba(0,0,0,0.75); }
+.idea-feed__sound svg { width: 22px; height: 22px; }
+.idea-feed__sound.is-muted { opacity: 0.9; }
 
-.idea-feed__nav:hover { background: rgba(0, 0, 0, 0.7); }
-.idea-feed__nav svg { width: 24px; height: 24px; }
-
-.idea-feed__nav--prev { left: 12px; }
-.idea-feed__nav--next { right: 12px; }
-
-/* کپشن پایین (گرادیان مثل ریلز) */
+/* کپشن پایین */
 .idea-feed__caption {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 10;
-  padding: 48px 16px 16px;
-  background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+  padding: 60px 16px 18px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));
   pointer-events: none;
 }
 
@@ -1550,16 +1476,58 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   opacity: 0.92;
   max-width: 60ch;
 }
-
 .idea-feed__content p { margin: 0 0 6px; }
 
-/* ── دسکتاپ (لپ‌تاپ): ستون باریک وسط صفحه، مثل دیدن پست اینستاگرام ── */
+.idea-feed__empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.6);
+}
+
+/* ── نشانگر اسکرول (انیمیشن) ── */
+.idea-feed__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  z-index: 25;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.idea-feed__hint.is-visible { opacity: 1; }
+
+.idea-feed__hint-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: rgba(0,0,0,0.45);
+  padding: 4px 12px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.idea-feed__hint-arrow {
+  width: 24px;
+  height: 24px;
+  animation: idea-hint-bounce 1.6s ease-in-out infinite;
+}
+
+@keyframes idea-hint-bounce {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50%      { transform: translateY(10px); opacity: 0.4; }
+}
+
+/* ── دسکتاپ: ستون باریک وسط ── */
 @media (min-width: 768px) {
-  .idea-feed {
-    /* بک‌دراپ تیره اطراف ستون مرکزی */
-    background: rgba(0, 0, 0, 0.92);
-    padding: 24px 0;
-  }
+  .idea-feed { background: rgba(0,0,0,0.92); }
 
   .idea-feed__topbar {
     position: absolute;
@@ -1570,22 +1538,29 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
     width: 480px;
     max-width: 90vw;
     border-radius: 14px;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
+  .idea-feed__track { padding: 24px 0; }
+
   .idea-feed__slide {
+    left: 50%;
+    transform: translateX(-50%) translateY(calc(var(--dy, 0) * 100%));
     width: 480px;
     max-width: 90vw;
-    height: 100%;
-    margin: 0 auto;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   }
 
-  .idea-feed__nav--prev { left: calc(50% - 260px); }
-  .idea-feed__nav--next { right: calc(50% - 260px); }
+  /* در دسکتاپ شمارنده بالای ستون */
+  .idea-feed__hint { bottom: 40px; }
 }
 
+/* ============================================
+   NEWSLETTER
 /* ============================================
    NEWSLETTER
 /* ============================================
