@@ -3,11 +3,16 @@
  * Senoobar — ایمپورت گروهی نوشته از فایل (ZIP / تکی).
  *
  * قابلیت‌ها:
- *   ۱. آپلود ZIP شامل چند فایل متنی (.txt / .md / .markdown / .html / .htm) — هر فایل به یک نوشته تبدیل می‌شود (عنوان = اولین خط غیرخالی).
+ *   ۱. آپلود ZIP شامل چند فایل متنی (.txt / .md / .markdown / .html / .htm)
+ *      — هر فایل به یک نوشته تبدیل می‌شود (عنوان = اولین خط غیرخالی).
  *   ۲. آپلود تکی با عنوان، دسته، خلاصه و تصویر شاخص.
  *   ۳. تبدیل Markdown → HTML (تیتر، لیست، پاراگراف، بولد، ایتالیک، لینک، عکس).
- *   ۴. پردازش کامل عکس‌های درون متن با هر تعداد و هر موقعیتی (منطق در bulk-post-importer-images.php).
- *   ۵. اولین عکس مقاله به‌صورت تصویر شاخص ست می‌شود.
+ *   ۴. پردازش کامل عکس‌های درون متن با هر تعداد و هر موقعیتی:
+ *      - شناسایی `![alt](src)` و `![alt](src "title")`.
+ *      - عکس‌های نسبی از داخل ZIP استخراج و در کتابخانه رسانه آپلود می‌شوند.
+ *      - URL واقعی جایگزین مسیر نسبی می‌شود.
+ *      - URL مطلق (http/https) دست‌نخورده می‌ماند.
+ *   ۵. اولین عکس مقاله به‌صورت تصویر شاخص (featured image) ست می‌شود.
  *   ۶. پشتیبانی از WEBP / PNG / JPG / GIF.
  *
  * @package Senoobar
@@ -17,7 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/* ۰. منوی ادمین (زیرمنوی «نوشته‌ها») */
 add_action( 'admin_menu', 'senoobar_bulk_import_menu' );
 
 function senoobar_bulk_import_menu() {
@@ -51,13 +55,27 @@ function senoobar_bulk_import_page() {
 			<div style="background:#fff;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.08);">
 				<h2 style="margin-top:0;">📦 آپلود دسته‌ای (ZIP)</h2>
 				<p style="color:#555;font-size:.9rem;">یک فایل ZIP شامل چند فایل متنی (txt / md / html) را بارگذاری کنید تا هر فایل به یک نوشته تبدیل شود.</p>
-				<p style="color:#1e3a2f;font-size:.9rem;background:#f0f7f4;padding:10px;border-radius:8px;">🖼️ عکس‌های درون متن (با هر تعداد و موقعیتی) به‌صورت خودکار از ZIP استخراج و به کتابخانه رسانه اضافه می‌شوند؛ اولین عکس، تصویر شاخص می‌شود.</p>
+				<p style="color:#1e3a2f;font-size:.9rem;background:#f0f7f4;padding:10px;border-radius:8px;">
+					🖼️ عکس‌های درون متن (با هر تعداد و موقعیتی) به‌صورت خودکار از ZIP استخراج و به کتابخانه رسانه اضافه می‌شوند؛ اولین عکس، تصویر شاخص می‌شود.
+				</p>
 				<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<?php wp_nonce_field( 'senoobar_zip_import', 'senoobar_zip_nonce' ); ?>
 					<input type="hidden" name="action" value="senoobar_zip_import">
-					<p><label><strong>فایل ZIP:</strong><br><input type="file" name="zip_file" accept=".zip" required style="margin-top:6px;"></label></p>
-					<p><label><strong>دسته (اختیاری):</strong><br><?php wp_dropdown_categories( array( 'show_option_all' => '— بدون دسته —', 'hide_empty' => 0, 'name' => 'zip_cat', 'taxonomy' => 'category' ) ); ?></label></p>
-					<p><label><strong>وضعیت انتشار:</strong><br><select name="zip_status" style="margin-top:6px;"><option value="publish">منتشر شده</option><option value="draft">پیش‌نویس</option></select></label></p>
+					<p>
+						<label><strong>فایل ZIP:</strong><br>
+						<input type="file" name="zip_file" accept=".zip" required style="margin-top:6px;"></label>
+					</p>
+					<p>
+						<label><strong>دسته (اختیاری):</strong><br>
+						<?php wp_dropdown_categories( array( 'show_option_all' => '— بدون دسته —', 'hide_empty' => 0, 'name' => 'zip_cat', 'taxonomy' => 'category' ) ); ?></label>
+					</p>
+					<p>
+						<label><strong>وضعیت انتشار:</strong><br>
+						<select name="zip_status" style="margin-top:6px;">
+							<option value="publish">منتشر شده</option>
+							<option value="draft">پیش‌نویس</option>
+						</select></label>
+					</p>
 					<button type="submit" class="button button-primary button-large">افزودن نوشته‌ها</button>
 				</form>
 			</div>
@@ -68,12 +86,33 @@ function senoobar_bulk_import_page() {
 				<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<?php wp_nonce_field( 'senoobar_single_import', 'senoobar_single_nonce' ); ?>
 					<input type="hidden" name="action" value="senoobar_single_import">
-					<p><label><strong>فایل نوشته:</strong><br><input type="file" name="post_file" accept=".txt,.md,.html,.htm" required style="margin-top:6px;"></label></p>
-					<p><label><strong>عنوان (اختیاری):</strong><br><input type="text" name="post_title" class="regular-text" style="margin-top:6px;" dir="rtl"></label></p>
-					<p><label><strong>دسته (اختیاری):</strong><br><?php wp_dropdown_categories( array( 'show_option_all' => '— بدون دسته —', 'hide_empty' => 0, 'name' => 'single_cat', 'taxonomy' => 'category' ) ); ?></label></p>
-					<p><label><strong>خلاصه (اختیاری):</strong><br><textarea name="post_excerpt" rows="2" class="large-text" style="margin-top:6px;" dir="rtl"></textarea></label></p>
-					<p><label><strong>تصویر شاخص (اختیاری):</strong><br><input type="file" name="post_image" accept="image/*" style="margin-top:6px;"></label></p>
-					<p><label><strong>وضعیت انتشار:</strong><br><select name="single_status" style="margin-top:6px;"><option value="publish">منتشر شده</option><option value="draft">پیش‌نویس</option></select></label></p>
+					<p>
+						<label><strong>فایل نوشته:</strong><br>
+						<input type="file" name="post_file" accept=".txt,.md,.html,.htm" required style="margin-top:6px;"></label>
+					</p>
+					<p>
+						<label><strong>عنوان (اختیاری — خالی بماند تا از فایل خوانده شود):</strong><br>
+						<input type="text" name="post_title" class="regular-text" style="margin-top:6px;" dir="rtl"></label>
+					</p>
+					<p>
+						<label><strong>دسته (اختیاری):</strong><br>
+						<?php wp_dropdown_categories( array( 'show_option_all' => '— بدون دسته —', 'hide_empty' => 0, 'name' => 'single_cat', 'taxonomy' => 'category' ) ); ?></label>
+					</p>
+					<p>
+						<label><strong>خلاصه (اختیاری):</strong><br>
+						<textarea name="post_excerpt" rows="2" class="large-text" style="margin-top:6px;" dir="rtl"></textarea></label>
+					</p>
+					<p>
+						<label><strong>تصویر شاخص (اختیاری):</strong><br>
+						<input type="file" name="post_image" accept="image/*" style="margin-top:6px;"></label>
+					</p>
+					<p>
+						<label><strong>وضعیت انتشار:</strong><br>
+						<select name="single_status" style="margin-top:6px;">
+							<option value="publish">منتشر شده</option>
+							<option value="draft">پیش‌نویس</option>
+						</select></label>
+					</p>
 					<button type="submit" class="button button-primary button-large">افزودن نوشته</button>
 				</form>
 			</div>
@@ -82,12 +121,14 @@ function senoobar_bulk_import_page() {
 	<?php
 }
 
-/* ۱. پسوندهای مجاز */
+/* ════════════════════════════════════════════════════════════════
+   پسوندهای مجاز
+   ════════════════════════════════════════════════════════════════ */
 function senoobar_bulk_allowed_ext() {
 	return array( 'txt', 'md', 'markdown', 'html', 'htm' );
 }
 
-/* ۲. تبدیل فایل → HTML */
+/* تبدیل فایل → HTML */
 function senoobar_file_to_html( $content, $ext ) {
 	$content = trim( (string) $content );
 
@@ -103,14 +144,16 @@ function senoobar_file_to_html( $content, $ext ) {
 		$content = esc_html( $content );
 		$content = preg_replace( "/\r?\n/", "\n", $content );
 		$paras   = preg_split( "/\n\s*\n/", $content );
-		$paras   = array_map( function ( $p ) { return '<p>' . nl2br( trim( $p ) ) . '</p>'; }, array_filter( $paras, 'trim' ) );
+		$paras   = array_map( function ( $p ) {
+			return '<p>' . nl2br( trim( $p ) ) . '</p>';
+		}, array_filter( $paras, 'trim' ) );
 		$content = implode( "\n", $paras );
 	}
 
 	return wp_kses_post( $content );
 }
 
-/* تبدیل markdown ساده (عکس به تگ <img> با data-src نگه‌داری می‌شود) */
+/* markdown ساده با پشتیبانی از عکس درون‌متن */
 function senoobar_simple_markdown( $text ) {
 	$text  = str_replace( "\r\n", "\n", $text );
 	$lines = explode( "\n", $text );
@@ -121,9 +164,9 @@ function senoobar_simple_markdown( $text ) {
 
 	$flush_list = function () use ( &$list, &$list_buf, &$html ) {
 		if ( $list !== null ) {
-			$html[] = '<' . $list . '>' . implode( '', $list_buf ) . '</' . $list . '>';
-			$list   = null;
-			$list_buf = array();
+			$html[]    = '<' . $list . '>' . implode( '', $list_buf ) . '</' . $list . '>';
+			$list      = null;
+			$list_buf  = array();
 		}
 	};
 
@@ -137,8 +180,8 @@ function senoobar_simple_markdown( $text ) {
 
 		if ( preg_match( '/^(#{1,6})\s+(.*)$/', $trim, $m ) ) {
 			$flush_list();
-			$lvl = min( 6, strlen( $m[1] ) );
-			$html[] = '<h' . $lvl . '>' . senoobar_md_inline( $m[2] ) . '</h' . $lvl . '>';
+			$lvl     = min( 6, strlen( $m[1] ) );
+			$html[]  = '<h' . $lvl . '>' . senoobar_md_inline( $m[2] ) . '</h' . $lvl . '>';
 			continue;
 		}
 
@@ -165,20 +208,18 @@ function senoobar_simple_markdown( $text ) {
 function senoobar_md_inline( $text ) {
 	$text = esc_html( $text );
 
-	// عکس
 	$text = preg_replace_callback(
 		'/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/',
 		function ( $m ) {
-			$alt   = $m[1];
-			$src   = $m[2];
-			$title = isset( $m[3] ) ? $m[3] : '';
+			$alt        = $m[1];
+			$src        = $m[2];
+			$title      = isset( $m[3] ) ? $m[3] : '';
 			$title_attr = $title ? ' title="' . esc_attr( $title ) . '"' : '';
 			return '<img src="' . esc_attr( $src ) . '" alt="' . esc_attr( $alt ) . '"' . $title_attr . ' class="senoobar-bpi-img" data-src="' . esc_attr( $src ) . '" />';
 		},
 		$text
 	);
 
-	// لینک
 	$text = preg_replace_callback(
 		'/\[([^\]\[]+)\]\(([^)]+)\)/',
 		function ( $m ) {
@@ -193,10 +234,10 @@ function senoobar_md_inline( $text ) {
 	return $text;
 }
 
-/* ۳. جداسازی عنوان و بدنه */
+/* جداسازی عنوان و بدنه */
 function senoobar_split_title_body( $raw ) {
-	$raw  = str_replace( "\r\n", "\n", (string) $raw );
-	$raw  = str_replace( "\r", "\n", $raw );
+	$raw   = str_replace( "\r\n", "\n", (string) $raw );
+	$raw   = str_replace( "\r", "\n", $raw );
 	$lines = preg_split( '/\n/', $raw );
 	$title = '';
 	$body_start = 0;
@@ -222,7 +263,9 @@ function senoobar_split_title_body( $raw ) {
 	return array( $title, $body );
 }
 
-/* ۴. ساخت نوشته از فایل */
+/* ════════════════════════════════════════════════════════════════
+   ساخت نوشته از فایل
+   ════════════════════════════════════════════════════════════════ */
 function senoobar_create_post_from_file( $content, $ext, $args = array(), $images_map = array() ) {
 	list( $auto_title, $body ) = senoobar_split_title_body( $content );
 
@@ -263,7 +306,9 @@ function senoobar_create_post_from_file( $content, $ext, $args = array(), $image
 	return array( true, $post_id );
 }
 
-/* ۵. پردازش عکس‌های درون متن */
+/* ════════════════════════════════════════════════════════════════
+   پردازش عکس‌های درون متن
+   ════════════════════════════════════════════════════════════════ */
 function senoobar_process_inline_images( $html, $images_map = array() ) {
 	$first_image_id = 0;
 	$image_count    = 0;
@@ -306,4 +351,246 @@ function senoobar_process_inline_images( $html, $images_map = array() ) {
 	);
 }
 
-require_once __DIR__ . '/bulk-post-importer-images.php';
+/* ════════════════════════════════════════════════════════════════
+   آپلود تصویر به کتابخانه رسانه (با پشتیبانی WEBP)
+   ════════════════════════════════════════════════════════════════ */
+function senoobar_import_image( $file ) {
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+	require_once ABSPATH . 'wp-admin/includes/media.php';
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+
+	senoobar_allow_webp();
+
+	$id = media_handle_sideload( $file, 0 );
+	return is_wp_error( $id ) ? false : (int) $id;
+}
+
+function senoobar_allow_webp() {
+	if ( has_filter( 'upload_mimes', 'senoobar_add_webp_mime' ) ) {
+		return;
+	}
+	add_filter( 'upload_mimes', 'senoobar_add_webp_mime', 20 );
+}
+
+function senoobar_add_webp_mime( $mimes ) {
+	if ( ! isset( $mimes['webp'] ) ) {
+		$mimes['webp'] = 'image/webp';
+	}
+	return $mimes;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ریدایرکت با پیام
+   ════════════════════════════════════════════════════════════════ */
+function senoobar_import_redirect( $type, $msg ) {
+	set_transient( 'senoobar_bulk_import_notice', array( 'type' => $type, 'msg' => $msg ), 60 );
+	wp_safe_redirect( admin_url( 'edit.php?page=senoobar-bulk-import' ) );
+	exit;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   پردازش ZIP
+   ════════════════════════════════════════════════════════════════ */
+add_action( 'admin_post_senoobar_zip_import', 'senoobar_zip_import_handler' );
+
+function senoobar_zip_import_handler() {
+	if ( ! current_user_can( 'edit_posts' ) ) {
+		wp_die( 'دسترسی ناکافی.' );
+	}
+	check_admin_referer( 'senoobar_zip_import', 'senoobar_zip_nonce' );
+
+	if ( empty( $_FILES['zip_file'] ) || UPLOAD_ERR_OK !== $_FILES['zip_file']['error'] ) {
+		senoobar_import_redirect( 'error', 'هیچ فایل ZIP انتخاب نشده است.' );
+	}
+
+	$tmp = $_FILES['zip_file']['tmp_name'];
+	$zip = new ZipArchive();
+
+	if ( true !== $zip->open( $tmp ) ) {
+		senoobar_import_redirect( 'error', 'فایل ZIP قابل باز کردن نیست.' );
+	}
+
+	$status = isset( $_POST['zip_status'] ) ? sanitize_key( $_POST['zip_status'] ) : 'publish';
+	$cat    = isset( $_POST['zip_cat'] ) && $_POST['zip_cat'] ? (int) $_POST['zip_cat'] : 0;
+
+	$extract_dir = senoobar_temp_extract_dir();
+	$zip->extractTo( $extract_dir );
+	$zip->close();
+
+	$images_map = senoobar_upload_zip_images( $extract_dir );
+
+	$created = 0;
+	$errors  = array();
+
+	$text_files = senoobar_find_text_files( $extract_dir );
+
+	foreach ( $text_files as $rel_path ) {
+		$full    = trailingslashit( $extract_dir ) . $rel_path;
+		$content = @file_get_contents( $full );
+		if ( false === $content ) {
+			continue;
+		}
+
+		$ext = strtolower( pathinfo( $rel_path, PATHINFO_EXTENSION ) );
+		$r = senoobar_create_post_from_file(
+			$content,
+			$ext,
+			array( 'status' => $status, 'category' => $cat ),
+			$images_map
+		);
+		if ( $r[0] ) {
+			$created++;
+		} else {
+			$errors[] = $rel_path . ': ' . $r[1];
+		}
+	}
+
+	senoobar_cleanup_dir( $extract_dir );
+
+	if ( $created > 0 ) {
+		$msg  = sprintf( '✔ %d نوشته با موفقیت اضافه شد.', $created );
+		$msg .= $errors ? ' (خطا در ' . count( $errors ) . ' فایل)' : '';
+		$msg .= $images_map ? ' — 🖼️ ' . count( $images_map ) . ' عکس آپلود شد.' : '';
+		senoobar_import_redirect( 'success', $msg );
+	} else {
+		senoobar_import_redirect( 'error', 'هیچ فایل متنی (txt/md/html) در ZIP پیدا نشد.' );
+	}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   پردازش تک‌فایل
+   ════════════════════════════════════════════════════════════════ */
+add_action( 'admin_post_senoobar_single_import', 'senoobar_single_import_handler' );
+
+function senoobar_single_import_handler() {
+	if ( ! current_user_can( 'edit_posts' ) ) {
+		wp_die( 'دسترسی ناکافی.' );
+	}
+	check_admin_referer( 'senoobar_single_import', 'senoobar_single_nonce' );
+
+	if ( empty( $_FILES['post_file'] ) || UPLOAD_ERR_OK !== $_FILES['post_file']['error'] ) {
+		senoobar_import_redirect( 'error', 'هیچ فایل نوشته‌ای انتخاب نشده است.' );
+	}
+
+	$name = isset( $_FILES['post_file']['name'] ) ? $_FILES['post_file']['name'] : '';
+	$ext  = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
+	if ( ! in_array( $ext, senoobar_bulk_allowed_ext(), true ) ) {
+		senoobar_import_redirect( 'error', 'فرمت فایل پشتیبانی نمی‌شود (مجاز: txt / md / html).' );
+	}
+
+	$content = (string) file_get_contents( $_FILES['post_file']['tmp_name'] );
+
+	$args = array(
+		'title'    => isset( $_POST['post_title'] ) ? sanitize_text_field( wp_unslash( $_POST['post_title'] ) ) : '',
+		'status'   => isset( $_POST['single_status'] ) ? sanitize_key( $_POST['single_status'] ) : 'publish',
+		'excerpt'  => isset( $_POST['post_excerpt'] ) ? sanitize_textarea_field( wp_unslash( $_POST['post_excerpt'] ) ) : '',
+		'category' => isset( $_POST['single_cat'] ) && $_POST['single_cat'] ? (int) $_POST['single_cat'] : 0,
+	);
+
+	if ( ! empty( $_FILES['post_image'] ) && UPLOAD_ERR_OK === $_FILES['post_image']['error'] ) {
+		$image_id = senoobar_import_image( $_FILES['post_image'] );
+		if ( $image_id ) {
+			$args['image_id'] = $image_id;
+		}
+	}
+
+	$r = senoobar_create_post_from_file( $content, $ext, $args, array() );
+
+	if ( $r[0] ) {
+		$link = get_edit_post_link( $r[1], 'raw' );
+		senoobar_import_redirect( 'success', '✔ نوشته ساخته شد. ' . ( $link ? '<a href="' . esc_url( $link ) . '">ویرایش نوشته</a>' : '' ) );
+	} else {
+		senoobar_import_redirect( 'error', 'خطا در ساخت نوشته: ' . $r[1] );
+	}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ابزارهای کمکی
+   ════════════════════════════════════════════════════════════════ */
+function senoobar_temp_extract_dir() {
+	$dir = wp_upload_dir();
+	$tmp = trailingslashit( $dir['basedir'] ) . 'senoobar-bpi-' . uniqid();
+	wp_mkdir_p( $tmp );
+	return $tmp;
+}
+
+function senoobar_cleanup_dir( $dir ) {
+	if ( ! is_dir( $dir ) ) {
+		return;
+	}
+	$it = new RecursiveIteratorIterator(
+		new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS ),
+		RecursiveIteratorIterator::CHILD_FIRST
+	);
+	foreach ( $it as $f ) {
+		$f->isDir() ? rmdir( $f->getPathname() ) : unlink( $f->getPathname() );
+	}
+	rmdir( $dir );
+}
+
+function senoobar_find_text_files( $dir ) {
+	$allowed = array( 'txt', 'md', 'markdown', 'html', 'htm' );
+	$files   = array();
+	$it = new RecursiveIteratorIterator(
+		new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS )
+	);
+	foreach ( $it as $file ) {
+		if ( $file->isFile() ) {
+			$ext = strtolower( pathinfo( $file->getFilename(), PATHINFO_EXTENSION ) );
+			if ( in_array( $ext, $allowed, true ) ) {
+				$files[] = ltrim( str_replace( $dir, '', $file->getPathname() ), '/\\' );
+			}
+		}
+	}
+	sort( $files );
+	return $files;
+}
+
+/* آپلود همه عکس‌های داخل ZIP و برگرداندن نگاشت مسیر-نسبی => attachment_id */
+function senoobar_upload_zip_images( $extract_dir ) {
+	$image_ext = array( 'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg' );
+	$map = array();
+
+	$it = new RecursiveIteratorIterator(
+		new RecursiveDirectoryIterator( $extract_dir, FilesystemIterator::SKIP_DOTS )
+	);
+	foreach ( $it as $file ) {
+		if ( ! $file->isFile() ) {
+			continue;
+		}
+		$ext = strtolower( pathinfo( $file->getFilename(), PATHINFO_EXTENSION ) );
+		if ( ! in_array( $ext, $image_ext, true ) ) {
+			continue;
+		}
+
+		$full = $file->getPathname();
+		$rel  = ltrim( str_replace( $extract_dir, '', $full ), '/\\' );
+
+		$file_array = array(
+			'name'     => $file->getFilename(),
+			'tmp_name' => $full,
+			'type'     => senoobar_image_mime( $ext ),
+			'error'    => 0,
+			'size'     => $file->getSize(),
+		);
+
+		$attach_id = senoobar_import_image( $file_array );
+		if ( $attach_id ) {
+			$map[ $rel ] = $attach_id;
+		}
+	}
+
+	return $map;
+}
+
+function senoobar_image_mime( $ext ) {
+	$m = array(
+		'png'  => 'image/png',
+		'jpg'  => 'image/jpeg',
+		'jpeg' => 'image/jpeg',
+		'gif'  => 'image/gif',
+		'webp' => 'image/webp',
+		'svg'  => 'image/svg+xml',
+	);
+	return isset( $m[ $ext ] ) ? $m[ $ext ] : 'image/jpeg';
+}
