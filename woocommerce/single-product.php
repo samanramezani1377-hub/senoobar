@@ -339,11 +339,11 @@ wp_enqueue_style('senoobar-product-detail', get_template_directory_uri() . '/ass
                     <div class="pd-qa-list">
                         <div class="pd-qa-item">
                             <div class="pd-qa-question"><span class="pd-qa-badge pd-qa-badge--q">پ</span><p>آیا این محصول گارانتی دارد؟</p></div>
-                            <div class="pd-qa-answer"><span class="pd-qa-badge pd-qa-badge--a">ج</span><p>بله، تمام محصولات [نام فروشگاه] دارای گارانتی هستند. برای جزئیات با پشتیبانی تماس بگیرید.</p></div>
+                            <div class="pd-qa-answer"><span class="pd-qa-badge pd-qa-badge--a">ج</span><p>بله، تمام محصولات فروشگاه صنوبر دارای گارانتی هستند. برای جزئیات با پشتیبانی تماس بگیرید.</p></div>
                         </div>
                         <div class="pd-qa-item">
                             <div class="pd-qa-question"><span class="pd-qa-badge pd-qa-badge--q">پ</span><p>مدت زمان تحویل چقدر است؟</p></div>
-                            <div class="pd-qa-answer"><span class="pd-qa-badge pd-qa-badge--a">ج</span><p>محصول ظرف [مدت زمان] کاری تحویل داده می‌شود.</p></div>
+                            <div class="pd-qa-answer"><span class="pd-qa-badge pd-qa-badge--a">ج</span><p>زمان ارسال برای تشک‌ها ۳ الی ۵ و برای سرویس خواب‌ها ۱۰ الی ۱۵ روز کاری می‌باشد.</p></div>
                         </div>
                         <div class="pd-qa-item">
                             <div class="pd-qa-question"><span class="pd-qa-badge pd-qa-badge--q">پ</span><p>آیا امکان سفارش با رنگ دلخواه وجود دارد؟</p></div>
