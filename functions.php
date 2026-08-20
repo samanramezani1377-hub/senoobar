@@ -5,7 +5,7 @@ define('SENOOBAR_URI', get_template_directory_uri());
 
 /**
  * تبدیل ارقام فارسی به انگلیسی و پاک‌سازی برای href="tel:".
- * یک‌جا تعریف می‌شود تا در فوتر و صفحات از تداخل (redeclare) جلوگیری شود.
+ * یک‘جا تعریف می‌شود تا در فوتر و صفحات از تداخل (redeclare) جلوگیری شود.
  */
 if ( ! function_exists( 'senoobar_tel_href' ) ) {
 	function senoobar_tel_href( $num ) {
