@@ -92,8 +92,28 @@
   window.addEventListener('pageshow', function (event) {
     if (event.persisted) {
       refreshCart();
+
+      // The cart PAGE itself can be restored from bfcache with a stale item
+      // list (the server already removed the item, but the restored HTML still
+      // shows it). Reload just the cart page so it always reflects the server.
+      if (isCartPage()) {
+        // Guard against an infinite reload loop: only reload once.
+        if (!window.__senoobarCartReloaded) {
+          window.__senoobarCartReloaded = true;
+          window.location.reload();
+        }
+      }
     }
   });
+
+  // Detect whether the current page is the WooCommerce cart page.
+  function isCartPage() {
+    var b = document.body;
+    if (!b) return false;
+    // WooCommerce adds the class on the <body>; also match the theme's cart root.
+    return /(^|\s)(woocommerce-cart|cart)\b/.test(b.className || '') ||
+           !!document.querySelector('.senoobar-cart, [data-cart-key], .woocommerce-cart-form, form.woocommerce-cart-form');
+  }
 
   // Also refresh once on load so a freshly-cached HTML can never show a stale
   // badge even if the page was served from LiteSpeed cache.
