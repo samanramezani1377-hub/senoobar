@@ -39,12 +39,6 @@ $snb_f_privacy = function_exists('senoobar_legal_page_url') && senoobar_legal_pa
         $snb_f_phone3 = get_theme_mod('senoobar_footer_phone3', '۰۹۱۳۰۲۰۵۳۲۳');
         $snb_f_address = get_theme_mod('senoobar_footer_address', 'اصفهان، شهرک صنعتی دولت‌آباد، خیابان شماره ۱۰ (خیام)، فروشگاه صنوبر');
         $snb_f_hours   = get_theme_mod('senoobar_footer_hours', 'شنبه تا پنجشنبه، ۱۰ صبح تا ۹ شب');
-        // تبدیل ارقام فارسی به انگلیسی برای href="tel:"
-        function senoobar_tel_href( $num ) {
-            $en = str_replace(['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'], ['0','1','2','3','4','5','6','7','8','9'], $num);
-            $en = preg_replace('/[^0-9+]/', '', $en);
-            return $en;
-        }
         ?>
         <div class="footer-col"><h4>اطلاعات تماس</h4><div class="footer-contact"><div><span>📞</span><a href="tel:<?php echo esc_attr( senoobar_tel_href( $snb_f_phone1 ) ); ?>"><?php echo esc_html( $snb_f_phone1 ); ?></a></div><div><span>📲</span><a href="tel:<?php echo esc_attr( senoobar_tel_href( $snb_f_phone2 ) ); ?>"><?php echo esc_html( $snb_f_phone2 ); ?></a></div><div><span>☎️</span><a href="tel:<?php echo esc_attr( senoobar_tel_href( $snb_f_phone3 ) ); ?>"><?php echo esc_html( $snb_f_phone3 ); ?></a></div><div><span>📍</span><span><?php echo esc_html( $snb_f_address ); ?></span></div><div><span>🕐</span><span><?php echo esc_html( $snb_f_hours ); ?></span></div></div></div>
     </div>

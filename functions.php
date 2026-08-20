@@ -1,7 +1,23 @@
 <?php
-define('SENOOBAR_VERSION', '2.12.0');
+define('SENOOBAR_VERSION', '2.13.0');
 define('SENOOBAR_DIR', get_template_directory());
 define('SENOOBAR_URI', get_template_directory_uri());
+
+/**
+ * تبدیل ارقام فارسی به انگلیسی و پاک‌سازی برای href="tel:".
+ * یک‌جا تعریف می‌شود تا در فوتر و صفحات از تداخل (redeclare) جلوگیری شود.
+ */
+if ( ! function_exists( 'senoobar_tel_href' ) ) {
+	function senoobar_tel_href( $num ) {
+		$en = str_replace(
+			['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'],
+			['0','1','2','3','4','5','6','7','8','9'],
+			(string) $num
+		);
+		return preg_replace( '/[^0-9+]/', '', $en );
+	}
+}
+
 
 require_once SENOOBAR_DIR . '/inc/class-senoobar-theme.php';
 require_once SENOOBAR_DIR . '/inc/critical-css.php';

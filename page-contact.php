@@ -12,13 +12,6 @@ get_header();
 $phone1 = get_theme_mod('senoobar_footer_phone1', '۰۹۱۳۰۲۰۵۸۹۸');
 $phone2 = get_theme_mod('senoobar_footer_phone2', '۰۹۱۳۰۲۰۵۸۶۸');
 $phone3 = get_theme_mod('senoobar_footer_phone3', '۰۹۱۳۰۲۰۵۳۲۳');
-
-if ( ! function_exists( 'senoobar_tel_href' ) ) {
-	function senoobar_tel_href( $num ) {
-		$en = str_replace( ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'], ['0','1','2','3','4','5','6','7','8','9'], $num );
-		return preg_replace( '/[^0-9+]/', '', $en );
-	}
-}
 $tel1 = senoobar_tel_href( $phone1 );
 $tel2 = senoobar_tel_href( $phone2 );
 $tel3 = senoobar_tel_href( $phone3 );
