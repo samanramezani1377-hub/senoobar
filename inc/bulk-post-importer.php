@@ -44,150 +44,171 @@ function senoobar_bulk_import_page() {
 		delete_transient( 'senoobar_bulk_import_notice' );
 	}
 	?>
-	<div class="wrap" dir="rtl" style="font-family:Tahoma, Tahoma, sans-serif; max-width: 1200px;">
-		<h1 style="margin-bottom: 20px; font-weight: bold; color: #23282d;">📥 ایمپورت گروهی نوشته‌ها</h1>
+	<div class="wrap" dir="rtl">
+		<h1>📥 ایمپورت گروهی نوشته‌ها</h1>
+
+		<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px 20px;margin-bottom:20px;">
+			<h2 style="margin:0 0 10px;">📖 راهنمای ساخت فایل (برای کپی به هوش مصنوعی)</h2>
+			<p style="margin:0 0 14px;color:#475569;font-size:.9rem;">این متن را کپی کنید و به هر هوش مصنوعی بدهید تا فایل نوشته را دقیقاً با همین ساختار برایتان بسازد.</p>
+
+			<details style="margin-bottom:12px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;">
+				<summary style="cursor:pointer;font-weight:600;color:#0f172a;">🟢 راهنمای فایل تکی (Markdown / TXT / HTML)</summary>
+				<div style="margin-top:10px;">
+					<button type="button" class="button" onclick="senoobar_copy_guide('senoobar-guide-single')">📋 کپی متن راهنما</button>
+					<pre id="senoobar-guide-single" style="direction:ltr;text-align:left;background:#0f172a;color:#e2e8f0;padding:14px;border-radius:8px;overflow:auto;font-size:.82rem;line-height:1.6;white-space:pre-wrap;">فایل باید متنی باشد (.md / .markdown / .txt / .html / .htm).
+
+ساختار فایل:
+• خط اولِ غیرخالی = عنوان نوشته
+  (مثلاً یک تیتر با # یا یک جمله ساده)
+• بقیهٔ فایل = متن اصلی نوشته
+
+قواعد بدنهٔ متن (Markdown پشتیبانی می‌شود):
+- # تا ###### → تیترها
+- - یا * یا + → لیست نامرتب
+- 1. یا 2) → لیست مرتب
+- **متن** → بولد
+- *متن* → ایتالیک
+- [متن](آدرس) → لینک
+- ![توضیح](مسیر-یا-آدرس-عکس "عنوان اختیاری") → تصویر
+
+مثال:
+# خرید کالای خواب باکیفیت
+
+برای یک خواب راحت، **کالای خواب مناسب** بسیار مهم است.
+
+![تشک طبی](https://example.com/mattress.webp)
+
+- جنس: اسفنج طبی
+- گارانتی: ۲ سال
+
+برای اطلاعات بیشتر، [اینجا کلیک کنید](https://example.com).</pre>
+				</div>
+			</details>
+
+			<details style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;">
+				<summary style="cursor:pointer;font-weight:600;color:#0f172a;">📦 راهنمای فایل گروهی (ZIP)</summary>
+				<div style="margin-top:10px;">
+					<button type="button" class="button" onclick="senoobar_copy_guide('senoobar-guide-zip')">📋 کپی متن راهنما</button>
+					<pre id="senoobar-guide-zip" style="direction:ltr;text-align:left;background:#0f172a;color:#e2e8f0;padding:14px;border-radius:8px;overflow:auto;font-size:.82rem;line-height:1.6;white-space:pre-wrap;">یک فایل ZIP شامل چند فایل متنی بسازید (.txt / .md / .markdown / .html / .htm).
+هر فایل داخل ZIP به یک نوشته‌ی جداگانه تبدیل می‌شود.
+
+نکات مهم:
+۱. عنوان هر نوشته = اولین خطِ غیرخالیِ همان فایل.
+۲. تصاویر را هم داخل همان ZIP بگذارید.
+   - در متن با مسیر نسبی به آن‌ها اشاره کنید: ![توضیح](images/photo.webp)
+   - مسیر باید دقیقاً با نام پوشه/فایل داخل ZIP یکی باشد.
+   - پوشه‌ها (مثلاً images/) هم داخل ZIP حفظ می‌شوند.
+۳. فرمت‌های تصویر: WEBP / PNG / JPG / JPEG / GIF / SVG.
+۴. اولین تصویرِ هر مقاله به‌عنوان تصویر شاخص (Featured Image) تنظیم می‌شود.
+
+ساختار پیشنهادی ZIP:
+blog.zip
+├── 01-roye-takht.md
+├── 02-mobl-rahmati.md
+└── images/
+    ├── takht.webp
+    └── mobl.webp
+
+نمونه محتوای 01-roye-takht.md:
+# بهترین تشک روی تخت
+
+![تشک راحتی](images/takht.webp "تشک طبی صنوبر")
+
+یک تشک خوب باید پشتیبان ستون فقرات باشد.</pre>
+				</div>
+			</details>
+		</div>
+
+		<script>
+		function senoobar_copy_guide( id ) {
+			var el = document.getElementById( id );
+			if ( ! el ) return;
+			var range = document.createRange();
+			range.selectNodeContents( el );
+			var sel = window.getSelection();
+			sel.removeAllRanges();
+			sel.addRange( range );
+			try {
+				document.execCommand( 'copy' );
+				alert( '✔ متن راهنما کپی شد!' );
+			} catch ( e ) {
+				alert( 'کپی نشد؛ لطفاً متن را دستی انتخاب و کپی کنید.' );
+			}
+			sel.removeAllRanges();
+		}
+		</script>
 
 		<?php if ( $notice ) : ?>
 			<div class="notice <?php echo esc_attr( $notice['type'] ); ?> is-dismissible"><p><?php echo wp_kses_post( $notice['msg'] ); ?></p></div>
 		<?php endif; ?>
 
-		<!-- بخش راهنمای هوش مصنوعی -->
-		<div style="background: #fff; border-right: 4px solid #0073aa; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.05);">
-			<h2 style="margin-top: 0; color: #0073aa; font-size: 1.2rem;">🤖 راهنمای آماده‌سازی فایل‌ها توسط هوش مصنوعی (AI Prompt)</h2>
-			<p style="color: #555; line-height: 1.6;">اگر می‌خواهید مقالات را با هوش مصنوعی (ChatGPT, Claude و...) بنویسید، دستورالعمل زیر را کپی کنید و به هوش مصنوعی بدهید تا خروجی را دقیقاً مطابق با ساختار استاندارد و بدون نقص برای سایت شما تولید کند.</p>
-			
-			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
-				<!-- دستورالعمل فایل تکی -->
-				<div style="background: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #e5e5e5;">
-					<h3 style="margin-top: 0; font-size: 1rem; color: #333;">📋 دستورالعمل فایل تکی (Single Post)</h3>
-					<p style="color: #666; font-size: 0.85rem; margin-bottom: 12px;">برای زمانی که می‌خواهید یک مقاله جامع به همراه ساختار متنی استاندارد تولید و به صورت تکی آپلود کنید.</p>
-					<textarea id="ai-single-prompt" style="display: none;">لطفاً یک مقاله جامع و تخصصی به زبان فارسی درباره [موضوع مقاله] بنویس. ساختار خروجی باید دقیقاً به فرمت Markdown زیر باشد تا در سیستم درون‌ریزی سایت من دچار خطا نشود:
-
-1. خط اول فایل باید دقیقاً عنوان مقاله باشد و با هشتگ (#) شروع شود. مانند:
-# راهنمای خرید بهترین تشک طبی برای دیسک کمر
-
-2. یک خط خالی بعد از عنوان بگذار.
-3. بدنه اصلی متن را با ساختار استاندارد مارک‌داون (مانند هدینگ‌های ## و ###، لیست‌های نشانه‌دار - یا عددی، ضخیم‌سازی کلمات کلیدی با **برجسته**) بنویس.
-4. در طول متن در صورت نیاز به تصاویر، از آدرس‌های اینترنتی مستقیم (مطلق) استفاده کن. مانند:
-![توضیح تصویر](https://example.com/images/mattress.jpg)</textarea>
-					<button onclick="copyToClipboard('ai-single-prompt', this)" class="button button-secondary" style="width: 100%; font-weight: bold; background: #f0f6fc; color: #0160c9; border-color: #0160c9;">📋 کپی دستورالعمل فایل تکی</button>
-				</div>
-
-				<!-- دستورالعمل فایل گروهی ZIP -->
-				<div style="background: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #e5e5e5;">
-					<h3 style="margin-top: 0; font-size: 1rem; color: #333;">📦 دستورالعمل فایل گروهی (ZIP Bulk)</h3>
-					<p style="color: #666; font-size: 0.85rem; margin-bottom: 12px;">برای زمانی که می‌خواهید هوش مصنوعی چند مقاله متوالی به همراه فایل تصاویر درون‌متنی نسبی برای ساخت فایل ZIP تولید کند.</p>
-					<textarea id="ai-bulk-prompt" style="display: none;">من می‌خواهم [تعداد] مقاله تخصصی به زبان فارسی درباره [موضوعات/حوزه فعالیت] بنویسی که قرار است آن‌ها را به همراه تصاویرشان در یک فایل ZIP فشرده کرده و به‌صورت گروهی آپلود کنم. لطفاً برای تک‌تک مقالات ساختار زیر را دقیقاً رعایت کن:
-
-1. فرمت هر مقاله باید مارک‌داون (.md) باشد.
-2. اولین خط هر فایل متنی باید فقط عنوان مقاله باشد و با هشتگ (#) شروع شود. مانند:
-# اسرار نگهداری و تمیز کردن اصولی مبلمان پارچه‌ای
-
-3. تصاویر درون متن را با مسیرهای نسبی محلی آدرس‌دهی کن تا بتوانم آن‌ها را در پوشه تصویر کنار فایل مقاله قرار دهم. مثلاً:
-![شستشوی مبل](images/clean-sofa.webp)
-
-4. نام تصاویر را انگلیسی، کوتاه و با حروف کوچک بنویس و فرمت مرجح تصاویر را WebP بگذار.
-5. پس از تولید مقالات، من فایل‌های .md را به همراه پوشه images در یک فایل ZIP فشرده خواهم کرد تا اولین تصویر هر مقاله خودکار به عنوان تصویر شاخص آن مقاله ست شود.</textarea>
-					<button onclick="copyToClipboard('ai-bulk-prompt', this)" class="button button-secondary" style="width: 100%; font-weight: bold; background: #f0f6fc; color: #0160c9; border-color: #0160c9;">📋 کپی دستورالعمل فایل گروهی (ZIP)</button>
-				</div>
-			</div>
-		</div>
-
-		<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-			<!-- فرم آپلود ZIP -->
-			<div style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.08); border: 1px solid #ccd0d4;">
-				<h2 style="margin-top:0; color: #23282d; border-bottom: 1px solid #eee; padding-bottom: 12px;">📦 آپلود دسته‌ای (ZIP)</h2>
+		<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px;">
+			<div style="background:#fff;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.08);">
+				<h2 style="margin-top:0;">📦 آپلود دسته‌ای (ZIP)</h2>
 				<p style="color:#555;font-size:.9rem;">یک فایل ZIP شامل چند فایل متنی (txt / md / html) را بارگذاری کنید تا هر فایل به یک نوشته تبدیل شود.</p>
-				<p style="color:#1e3a2f;font-size:.9rem;background:#f0f7f4;padding:12px;border-radius:8px; border-right: 3px solid #46b450; margin: 15px 0;">
-					🖼️ <strong>سیستم عکس هوشمند:</strong> عکس‌های درون متن از ZIP استخراج و آپلود شده و اولین عکس خودکار <strong>تصویر شاخص</strong> می‌شود.
+				<p style="color:#1e3a2f;font-size:.9rem;background:#f0f7f4;padding:10px;border-radius:8px;">
+					🖼️ عکس‌های درون متن (با هر تعداد و موقعیتی) به‌صورت خودکار از ZIP استخراج و به کتابخانه رسانه اضافه می‌شوند؛ اولین عکس، تصویر شاخص می‌شود.
 				</p>
 				<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<?php wp_nonce_field( 'senoobar_zip_import', 'senoobar_zip_nonce' ); ?>
 					<input type="hidden" name="action" value="senoobar_zip_import">
 					<p>
-						<label><strong>انتخاب فایل ZIP:</strong><br>
+						<label><strong>فایل ZIP:</strong><br>
 						<input type="file" name="zip_file" accept=".zip" required style="margin-top:6px;"></label>
 					</p>
 					<p>
-						<label><strong>دسته نوشته‌ها:</strong><br>
-						<?php wp_dropdown_categories( array( 'show_option_all' => '— بدون دسته —', 'hide_empty' => 0, 'name' => 'zip_cat', 'taxonomy' => 'category', 'class' => 'postform' ) ); ?></label>
+						<label><strong>دسته (اختیاری):</strong><br>
+						<?php wp_dropdown_categories( array( 'show_option_all' => '— بدون دسته —', 'hide_empty' => 0, 'name' => 'zip_cat', 'taxonomy' => 'category' ) ); ?></label>
 					</p>
 					<p>
 						<label><strong>وضعیت انتشار:</strong><br>
-						<select name="zip_status" style="margin-top:6px; width: 100%; max-width: 25rem;">
+						<select name="zip_status" style="margin-top:6px;">
 							<option value="publish">منتشر شده</option>
 							<option value="draft">پیش‌نویس</option>
 						</select></label>
 					</p>
-					<button type="submit" class="button button-primary button-large" style="height: 40px; font-weight: bold; background: #0073aa;">شروع ایمپورت گروهی</button>
+					<button type="submit" class="button button-primary button-large">افزودن نوشته‌ها</button>
 				</form>
 			</div>
 
-			<!-- فرم آپلود تکی -->
-			<div style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.08); border: 1px solid #ccd0d4;">
-				<h2 style="margin-top:0; color: #23282d; border-bottom: 1px solid #eee; padding-bottom: 12px;">📄 افزودن تک‌نوشته</h2>
+			<div style="background:#fff;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.08);">
+				<h2 style="margin-top:0;">📄 افزودن تک‌نوشته</h2>
 				<p style="color:#555;font-size:.9rem;">یک فایل متنی (txt / md / html) بارگذاری کنید. عنوان از اولین خط گرفته می‌شود مگر اینکه خودتان عنوان بنویسید.</p>
 				<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<?php wp_nonce_field( 'senoobar_single_import', 'senoobar_single_nonce' ); ?>
 					<input type="hidden" name="action" value="senoobar_single_import">
 					<p>
-						<label><strong>انتخاب فایل نوشته:</strong><br>
+						<label><strong>فایل نوشته:</strong><br>
 						<input type="file" name="post_file" accept=".txt,.md,.html,.htm" required style="margin-top:6px;"></label>
 					</p>
 					<p>
-						<label><strong>عنوان دلخواه (خالی بماند تا از خط اول فایل خوانده شود):</strong><br>
-						<input type="text" name="post_title" class="regular-text" style="margin-top:6px; width: 100%;" dir="rtl"></label>
+						<label><strong>عنوان (اختیاری — خالی بماند تا از فایل خوانده شود):</strong><br>
+						<input type="text" name="post_title" class="regular-text" style="margin-top:6px;" dir="rtl"></label>
 					</p>
 					<p>
-						<label><strong>دسته نوشته:</strong><br>
-						<?php wp_dropdown_categories( array( 'show_option_all' => '— بدون دسته —', 'hide_empty' => 0, 'name' => 'single_cat', 'taxonomy' => 'category', 'class' => 'postform' ) ); ?></label>
+						<label><strong>دسته (اختیاری):</strong><br>
+						<?php wp_dropdown_categories( array( 'show_option_all' => '— بدون دسته —', 'hide_empty' => 0, 'name' => 'single_cat', 'taxonomy' => 'category' ) ); ?></label>
 					</p>
 					<p>
-						<label><strong>خلاصه نوشته:</strong><br>
-						<textarea name="post_excerpt" rows="2" class="large-text" style="margin-top:6px; width: 100%;" dir="rtl"></textarea></label>
+						<label><strong>خلاصه (اختیاری):</strong><br>
+						<textarea name="post_excerpt" rows="2" class="large-text" style="margin-top:6px;" dir="rtl"></textarea></label>
 					</p>
 					<p>
-						<label><strong>تصویر شاخص جداگانه (اختیاری):</strong><br>
+						<label><strong>تصویر شاخص (اختیاری):</strong><br>
 						<input type="file" name="post_image" accept="image/*" style="margin-top:6px;"></label>
 					</p>
 					<p>
 						<label><strong>وضعیت انتشار:</strong><br>
-						<select name="single_status" style="margin-top:6px; width: 100%; max-width: 25rem;">
+						<select name="single_status" style="margin-top:6px;">
 							<option value="publish">منتشر شده</option>
 							<option value="draft">پیش‌نویس</option>
 						</select></label>
 					</p>
-					<button type="submit" class="button button-primary button-large" style="height: 40px; font-weight: bold; background: #0073aa;">ایجاد نوشته</button>
+					<button type="submit" class="button button-primary button-large">افزودن نوشته</button>
 				</form>
 			</div>
 		</div>
 	</div>
-
-	<script>
-	function copyToClipboard(elementId, btn) {
-		var text = document.getElementById(elementId).value;
-		var tempInput = document.createElement("textarea");
-		tempInput.value = text;
-		document.body.appendChild(tempInput);
-		tempInput.select();
-		tempInput.setSelectionRange(0, 99999);
-		document.execCommand("copy");
-		document.body.removeChild(tempInput);
-		
-		var originalText = btn.innerHTML;
-		btn.innerHTML = "✔ کپی شد!";
-		btn.style.background = "#46b450";
-		btn.style.color = "#fff";
-		btn.style.borderColor = "#46b450";
-		
-		setTimeout(function() {
-			btn.innerHTML = originalText;
-			btn.style.background = "#f0f6fc";
-			btn.style.color = "#0160c9";
-			btn.style.borderColor = "#0160c9";
-		}, 2000);
-	}
-	</script>
 	<?php
 }
 
@@ -261,7 +282,7 @@ function senoobar_simple_markdown( $text ) {
 			continue;
 		}
 
-		if ( preg_match( '/^^\d+[.)]\s+(.*)$/', $trim, $m ) ) {
+		if ( preg_match( '/^\d+[.)]\s+(.*)$/', $trim, $m ) ) {
 			if ( $list !== 'ol' ) { $flush_list(); $list = 'ol'; }
 			$list_buf[] = '<li>' . senoobar_md_inline( $m[1] ) . '</li>';
 			continue;
@@ -391,6 +412,11 @@ function senoobar_process_inline_images( $html, $images_map = array() ) {
 
 			if ( preg_match( '/^https?:\/\//i', $src ) ) {
 				$image_count++;
+				// اگر تصویر اول است، آن را به عنوان شاخص در نظر گرفته و تگ آن را از بدنه متن حذف می‌کنیم تا دوبار نشان داده نشود
+				if ( 1 === $image_count ) {
+					// برای لینک‌های مستقیم، تصویر شاخص خودکار ست نمی‌شود مگر اینکه آپلود شود؛ اما برای تمیزی تگ اول را مخفی یا حذف می‌کنیم
+					// در سیستم فایل تکی، تصویر شاخص دستی آپلود می‌شود.
+				}
 				return preg_replace( '/\s+class="senoobar-bpi-img"\s+data-src="[^"]*"/i', '', $full_tag );
 			}
 
@@ -399,10 +425,13 @@ function senoobar_process_inline_images( $html, $images_map = array() ) {
 				$attach_id = (int) $images_map[ $clean_src ];
 				$url = wp_get_attachment_url( $attach_id );
 				if ( $url ) {
+					$image_count++;
 					if ( ! $first_image_id ) {
 						$first_image_id = $attach_id;
+						// چون این اولین تصویر است و به عنوان تصویر شاخص (Featured Image) ست می‌شود،
+						// تگ آن را از درون متن حذف می‌کنیم تا در صفحه نوشته دوبار (یکی شاخص، یکی متن) تکرار نشود.
+						return '';
 					}
-					$image_count++;
 					$clean_tag = preg_replace( '/\s+class="senoobar-bpi-img"\s+data-src="[^"]*"/i', '', $full_tag );
 					$clean_tag = preg_replace( '/\s+src="[^"]*"/i', ' src="' . esc_attr( $url ) . '"', $clean_tag );
 					return $clean_tag;
