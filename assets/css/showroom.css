@@ -1,0 +1,594 @@
+/* ============================================
+   Senoobar — Showroom (نمایشگاه) Styles
+   صفحات «اتاق خواب» و «مبلمان»
+   تجربه‌ی نمایشگاهی: هیرو سینمایی + گالری پیمایشی + لایت‌باکس
+   RTL | Mobile-First | هماهنگ با پالت سبز تیره
+   ============================================ */
+
+/* ══════════════ HERO سینمایی ══════════════ */
+.showroom-hero {
+  position: relative;
+  height: 82vh;
+  min-height: 460px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  color: #fff;
+}
+
+.showroom-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.showroom-hero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.06);
+  animation: showroom-hero-zoom 18s ease-out forwards;
+}
+
+@keyframes showroom-hero-zoom {
+  from { transform: scale(1.12); }
+  to   { transform: scale(1.0); }
+}
+
+.showroom-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(to top, rgba(10, 20, 16, 0.82) 0%, rgba(10, 20, 16, 0.25) 45%, rgba(10, 20, 16, 0.05) 100%);
+}
+
+.showroom-hero__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 40px 0 56px;
+}
+
+.showroom-hero__kicker {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+  padding: 6px 16px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.showroom-hero__title {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1.25;
+  margin-bottom: 12px;
+  max-width: 720px;
+}
+
+.showroom-hero__subtitle {
+  font-size: 1rem;
+  font-weight: 300;
+  opacity: 0.85;
+  max-width: 560px;
+  line-height: 2;
+  margin-bottom: 28px;
+}
+
+.showroom-hero__cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.showroom-hero__cta .btn {
+  backdrop-filter: blur(6px);
+}
+
+.showroom-hero__scroll {
+  position: absolute;
+  z-index: 2;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.6);
+  animation: showroom-bounce 2s infinite;
+}
+
+@keyframes showroom-bounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, 8px); }
+}
+
+@media (min-width: 768px) {
+  .showroom-hero { height: 88vh; }
+  .showroom-hero__title { font-size: 3.3rem; }
+  .showroom-hero__subtitle { font-size: 1.15rem; }
+}
+
+/* ══════════════ نوار آماری / ویژگی‌ها ══════════════ */
+.showroom-facts {
+  background: var(--color-brand);
+  color: #fff;
+  padding: 28px 0;
+}
+
+.showroom-facts__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .showroom-facts__grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.showroom-fact {
+  text-align: center;
+}
+
+.showroom-fact__num {
+  font-size: 1.6rem;
+  font-weight: 900;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.showroom-fact__label {
+  font-size: 0.78rem;
+  opacity: 0.7;
+}
+
+/* ══════════════ بدنه / بخش‌ها ══════════════ */
+.showroom-main {
+  background: var(--color-off-white);
+}
+
+.showroom-section {
+  padding: 56px 0;
+}
+
+.showroom-section--dark {
+  background: var(--color-brand-dark);
+  color: #fff;
+}
+
+.showroom-section__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.showroom-section__title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--color-gray-900);
+}
+
+.showroom-section--dark .showroom-section__title { color: #fff; }
+
+.showroom-section__desc {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  max-width: 480px;
+  line-height: 1.9;
+}
+
+.showroom-section--dark .showroom-section__desc { color: rgba(255,255,255,0.6); }
+
+/* ══════════════ گالری پیمایش افقی (حس نمایشگاه) ══════════════ */
+.showroom-rail-wrap {
+  position: relative;
+}
+
+.showroom-rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 76%;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 8px 4px 24px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.showroom-rail::-webkit-scrollbar { display: none; }
+
+@media (min-width: 640px) {
+  .showroom-rail { grid-auto-columns: 46%; }
+}
+
+@media (min-width: 992px) {
+  .showroom-rail { grid-auto-columns: 32%; }
+}
+
+.showroom-panel {
+  scroll-snap-align: start;
+  position: relative;
+  border-radius: var(--radius-3xl);
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 4 / 5;
+  background: var(--color-gray-200);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.showroom-panel:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-xl);
+}
+
+.showroom-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.showroom-panel:hover img { transform: scale(1.06); }
+
+.showroom-panel__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 20, 16, 0.85) 0%, transparent 55%);
+}
+
+.showroom-panel__content {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  padding: 20px;
+  color: #fff;
+}
+
+.showroom-panel__title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.showroom-panel__caption {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  line-height: 1.7;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.showroom-panel__price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-brand-lighter);
+}
+
+.showroom-panel__zoom {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: all var(--transition);
+}
+
+.showroom-panel:hover .showroom-panel__zoom { opacity: 1; transform: translateY(0); }
+
+/* فلش‌های پیمایش */
+.showroom-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  z-index: 5;
+  transition: var(--transition);
+}
+
+.showroom-arrow:hover { background: var(--color-brand); color: #fff; }
+
+.showroom-arrow--prev { right: -8px; }
+.showroom-arrow--next { left: -8px; }
+
+/* ══════════════ چیدمان «ویترین» (featured) ══════════════ */
+.showroom-featured {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .showroom-featured { grid-template-columns: 2fr 1fr 1fr; grid-auto-rows: 260px; }
+}
+
+.showroom-featured__item {
+  position: relative;
+  border-radius: var(--radius-3xl);
+  overflow: hidden;
+  cursor: pointer;
+  min-height: 220px;
+}
+
+.showroom-featured__item:first-child {
+  grid-row: span 2;
+}
+
+.showroom-featured__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  transition: transform var(--transition-slow);
+}
+
+.showroom-featured__item:hover img { transform: scale(1.05); }
+
+.showroom-featured__item .showroom-featured__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 20, 16, 0.8), transparent 60%);
+}
+
+.showroom-featured__label {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  padding: 18px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* ══════════════ شبکه‌ی کامل محصولات ══════════════ */
+.showroom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .showroom-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+}
+
+@media (min-width: 992px) {
+  .showroom-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+}
+
+.showroom-grid__item {
+  background: var(--color-white);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  border: 1px solid var(--color-gray-100);
+  transition: box-shadow var(--transition), transform var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.showroom-grid__item:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+.showroom-grid__media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.showroom-grid__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.showroom-grid__item:hover .showroom-grid__media img { transform: scale(1.06); }
+
+.showroom-grid__body {
+  padding: 14px;
+  text-align: right;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.showroom-grid__title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  line-height: 1.6;
+}
+
+.showroom-grid__title a { color: inherit; }
+
+.showroom-grid__title a:hover { color: var(--color-brand); }
+
+.showroom-grid__price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-top: auto;
+}
+
+.showroom-grid__link {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-brand);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.showroom-grid__link:hover { text-decoration: underline; }
+
+/* ══════════════ CTA پایانی ══════════════ */
+.showroom-cta {
+  background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-dark) 100%);
+  border-radius: var(--radius-3xl);
+  padding: 48px 28px;
+  color: #fff;
+  text-align: center;
+}
+
+.showroom-cta h2 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.showroom-cta p {
+  opacity: 0.8;
+  margin-bottom: 24px;
+  line-height: 1.9;
+  font-size: 0.95rem;
+}
+
+/* ══════════════ لایت‌باکس ══════════════ */
+.showroom-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(10, 20, 16, 0.95);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.showroom-lightbox.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.showroom-lightbox__inner {
+  max-width: 960px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.showroom-lightbox__media {
+  max-height: 70vh;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+}
+
+.showroom-lightbox__media img {
+  max-height: 70vh;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.showroom-lightbox__title {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.showroom-lightbox__caption {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.9rem;
+  line-height: 1.9;
+  max-width: 640px;
+}
+
+.showroom-lightbox__price {
+  color: var(--color-brand-lighter);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.showroom-lightbox__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.showroom-lightbox__close {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  transition: var(--transition);
+}
+
+.showroom-lightbox__close:hover { background: rgba(255, 255, 255, 0.28); }
+
+/* ══════════════ پیام «محصولی نیست» ══════════════ */
+.showroom-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--color-text-light);
+}
+
+.showroom-empty a {
+  color: var(--color-brand);
+  font-weight: 700;
+}
+
+/* ══════════════ انیمیشن ورود هنگام اسکرول ══════════════ */
+.showroom-animate {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.showroom-animate.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showroom-hero__bg img { animation: none; }
+  .showroom-animate { opacity: 1; transform: none; transition: none; }
+}
