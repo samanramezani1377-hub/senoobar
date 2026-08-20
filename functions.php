@@ -1,5 +1,5 @@
 <?php
-define('SENOOBAR_VERSION', '2.14.0');
+define('SENOOBAR_VERSION', '2.15.0');
 define('SENOOBAR_DIR', get_template_directory());
 define('SENOOBAR_URI', get_template_directory_uri());
 
@@ -35,6 +35,7 @@ require_once SENOOBAR_DIR . '/inc/seo.php';
 require_once SENOOBAR_DIR . '/inc/showroom-pages-setup.php';
 require_once SENOOBAR_DIR . '/inc/ideas-setup.php';
 require_once SENOOBAR_DIR . '/inc/idea-admin.php';
+require_once SENOOBAR_DIR . '/inc/bulk-post-importer.php';
 
 function senoobar_init() {
     Senoobar_Theme::get_instance()->init();
