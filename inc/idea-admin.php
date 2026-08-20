@@ -17,19 +17,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /* ───────────────────────────────────────────────
-   ۱. ساخت صفحه‌ی منوی اختصاصی
+   ۱. یکی‌کردن «افزودن ایده» پیش‌فرض CPT با فرم اختصاصی
+   ───────────────────────────────────────────────
+   به‌جای ساخت یک ساب‌منوی جدا (که باعث دیده‌شدن دو آیتم «افزودن ایده»
+   می‌شد)، آیتم پیش‌فرضِ نوع محتوا را همان فرم اختصاصی می‌کنیم تا
+   فقط یک گزینه‌ی «افزودن ایده» وجود داشته باشد:
+      ۱) با filter روی admin_url، لینک post-new.php?post_type=senoobar_idea
+         به فرم اختصاصی اشاره می‌کند.
+      ۲) با admin_init، باز کردن مستقیم post-new.php هم به فرم redirect می‌شود.
+   باید load-{hook} مربوط به صفحه‌ی فرم هم استایل/اسکریپت را بارگذاری کند.
    ─────────────────────────────────────────────── */
 function senoobar_idea_admin_menu() {
 	$hook = add_submenu_page(
-		'edit.php?post_type=senoobar_idea',   // زیر منوی «گالری ایده‌ها»
+		'edit.php?post_type=senoobar_idea',
 		'افزودن ایده جدید',
 		'افزودن ایده',
 		'edit_posts',
 		'senoobar-add-idea',
 		'senoobar_idea_admin_page'
 	);
-
 	add_action( 'load-' . $hook, 'senoobar_idea_admin_assets' );
+	// حذف آیتم «افرودن ایده» پیش‌فرض وردپرس تا دوتایی نشود
+	remove_submenu_page( 'edit.php?post_type=senoobar_idea', 'post-new.php?post_type=senoobar_idea' );
 }
 add_action( 'admin_menu', 'senoobar_idea_admin_menu' );
 
@@ -45,6 +54,16 @@ function senoobar_idea_admin_url_filter( $url, $path, $blog_id ) {
 	}
 	return $url;
 }
+
+/* باز کردن مستقیم post-new.php?post_type=senoobar_idea → فرم اختصاصی */
+function senoobar_idea_redirect_new_to_form() {
+	global $pagenow;
+	if ( 'post-new.php' === $pagenow && isset( $_GET['post_type'] ) && 'senoobar_idea' === $_GET['post_type'] ) {
+		wp_safe_redirect( admin_url( 'edit.php?post_type=senoobar_idea&page=senoobar-add-idea' ) );
+		exit;
+	}
+}
+add_action( 'admin_init', 'senoobar_idea_redirect_new_to_form' );
 
 /* ───────────────────────────────────────────────
    ۳. بارگذاری استایل/اسکریپت مخصوص فرم
