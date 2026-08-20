@@ -343,7 +343,7 @@ wp_enqueue_style('senoobar-product-detail', get_template_directory_uri() . '/ass
                         </div>
                         <div class="pd-qa-item">
                             <div class="pd-qa-question"><span class="pd-qa-badge pd-qa-badge--q">پ</span><p>مدت زمان تحویل چقدر است؟</p></div>
-                            <div class="pd-qa-answer"><span class="pd-qa-badge pd-qa-badge--a">ج</span><p>زمان ارسال برای تشک‌ها ۳ الی ۵ و برای سرویس خواب‌ها ۱۰ الی ۱۵ روز کاری می‌باشد.</p></div>
+                            <div class="pd-qa-answer"><span class="pd-qa-badge pd-qa-badge--a">ج</span><p>زمان ارسال برای تشک ها 3 الی 5 و برای سرویس خواب ها 10 الی 15 روز کاری میباشد.</p></div>
                         </div>
                         <div class="pd-qa-item">
                             <div class="pd-qa-question"><span class="pd-qa-badge pd-qa-badge--q">پ</span><p>آیا امکان سفارش با رنگ دلخواه وجود دارد؟</p></div>
