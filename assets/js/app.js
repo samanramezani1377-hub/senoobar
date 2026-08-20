@@ -91,18 +91,19 @@
   // normal first paint, so it covers the back-button case reliably.
   window.addEventListener('pageshow', function (event) {
     if (event.persisted) {
-      refreshCart();
-
-      // The cart PAGE itself can be restored from bfcache with a stale item
-      // list (the server already removed the item, but the restored HTML still
-      // shows it). Reload just the cart page so it always reflects the server.
+      // A page restored from bfcache shows the HTML as it was when the user
+      // left it. The cart page in particular can show a stale item list (an
+      // item already removed on the server still appears). Replace the current
+      // history entry with a fresh load so the cart always matches the server.
+      // location.replace() avoids adding a new history entry (no back-loop) and
+      // only fires on a genuine bfcache restore, not on a normal reload.
       if (isCartPage()) {
-        // Guard against an infinite reload loop: only reload once.
-        if (!window.__senoobarCartReloaded) {
-          window.__senoobarCartReloaded = true;
-          window.location.reload();
-        }
+        window.location.replace(window.location.href);
+        return;
       }
+
+      // For non-cart pages, just refresh the header badge count.
+      refreshCart();
     }
   });
 
