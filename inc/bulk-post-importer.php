@@ -410,34 +410,56 @@ function senoobar_process_inline_images( $html, $images_map = array() ) {
 			$full_tag = $m[0];
 			$src      = html_entity_decode( $m[1], ENT_QUOTES, 'UTF-8' );
 
-			if ( preg_match( '/^https?:\/\//i', $src ) ) {
-				$image_count++;
-				// اگر تصویر اول است، آن را به عنوان شاخص در نظر گرفته و تگ آن را از بدنه متن حذف می‌کنیم تا دوبار نشان داده نشود
-				if ( 1 === $image_count ) {
-					// برای لینک‌های مستقیم، تصویر شاخص خودکار ست نمی‌شود مگر اینکه آپلود شود؛ اما برای تمیزی تگ اول را مخفی یا حذف می‌کنیم
-					// در سیستم فایل تکی، تصویر شاخص دستی آپلود می‌شود.
-				}
-				return preg_replace( '/\s+class="senoobar-bpi-img"\s+data-src="[^"]*"/i', '', $full_tag );
-			}
+			$is_absolute = (bool) preg_match( '/^https?:\/\//i', $src );
 
-			$clean_src = ltrim( $src, './\\' );
-			if ( isset( $images_map[ $clean_src ] ) ) {
-				$attach_id = (int) $images_map[ $clean_src ];
-				$url = wp_get_attachment_url( $attach_id );
-				if ( $url ) {
-					$image_count++;
-					if ( ! $first_image_id ) {
-						$first_image_id = $attach_id;
-						// چون این اولین تصویر است و به عنوان تصویر شاخص (Featured Image) ست می‌شود،
-						// تگ آن را از درون متن حذف می‌کنیم تا در صفحه نوشته دوبار (یکی شاخص، یکی متن) تکرار نشود.
-						return '';
+			// Resolve final attachment id + URL for this image.
+			$attach_id = 0;
+			$final_url = '';
+
+			if ( $is_absolute ) {
+				$final_url = $src;
+			} else {
+				$clean_src = ltrim( $src, './\\' );
+				if ( isset( $images_map[ $clean_src ] ) ) {
+					$mapped_id = (int) $images_map[ $clean_src ];
+					$final_url = wp_get_attachment_url( $mapped_id );
+					if ( $final_url ) {
+						$attach_id = $mapped_id;
 					}
-					$clean_tag = preg_replace( '/\s+class="senoobar-bpi-img"\s+data-src="[^"]*"/i', '', $full_tag );
-					$clean_tag = preg_replace( '/\s+src="[^"]*"/i', ' src="' . esc_attr( $url ) . '"', $clean_tag );
-					return $clean_tag;
 				}
 			}
 
+			$image_count++;
+
+			// First valid image becomes the featured image AND its <img> tag is
+			// removed from the body so it isn't shown twice (once as featured,
+			// once inline). For absolute URLs we side-load the image into the
+			// media library first so it can also be set as the featured image.
+			if ( 1 === $image_count ) {
+				if ( $is_absolute ) {
+					$sideloaded = senoobar_import_image_from_url( $src );
+					if ( $sideloaded ) {
+						$first_image_id = $sideloaded;
+					}
+				} elseif ( $attach_id ) {
+					$first_image_id = $attach_id;
+				}
+				// Remove the tag from body regardless.
+				return '';
+			}
+
+			// Non-first image: keep it inline with the correct URL.
+			if ( $is_absolute ) {
+				return $full_tag;
+			}
+
+			if ( $attach_id && $final_url ) {
+				$clean_tag = preg_replace( '/\s+class="senoobar-bpi-img"\s+data-src="[^"]*"/i', '', $full_tag );
+				$clean_tag = preg_replace( '/\s+src="[^"]*"/i', ' src="' . esc_attr( $final_url ) . '"', $clean_tag );
+				return $clean_tag;
+			}
+
+			// Unresolvable relative path — drop the tag.
 			return '';
 		},
 		$html
@@ -462,6 +484,50 @@ function senoobar_import_image( $file ) {
 
 	$id = media_handle_sideload( $file, 0 );
 	return is_wp_error( $id ) ? false : (int) $id;
+}
+
+/**
+ * دانلود عکس از URL خارجی و افزودن به کتابخانه رسانه.
+ * برای تبدیل لینک‌های مطلق (http/https) به تصویر شاخص قابل استفاده است.
+ *
+ * @param string $url آدرس عکس.
+ * @return int|false شناسه پیوست یا false در صورت خطا.
+ */
+function senoobar_import_image_from_url( $url ) {
+	$url = esc_url_raw( $url );
+	if ( '' === $url ) {
+		return false;
+	}
+
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+	require_once ABSPATH . 'wp-admin/includes/media.php';
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+
+	senoobar_allow_webp();
+
+	$tmp = download_url( $url, 30 );
+	if ( is_wp_error( $tmp ) ) {
+		return false;
+	}
+
+	$ext = strtolower( pathinfo( parse_url( $url, PHP_URL_PATH ), PATHINFO_EXTENSION ) );
+	if ( '' === $ext || ! in_array( $ext, array( 'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg' ), true ) ) {
+		$ext = 'jpg';
+	}
+
+	$file_array = array(
+		'name'     => 'senoobar-import-' . uniqid() . '.' . $ext,
+		'tmp_name' => $tmp,
+	);
+
+	$id = media_handle_sideload( $file_array, 0 );
+
+	if ( is_wp_error( $id ) ) {
+		@unlink( $tmp );
+		return false;
+	}
+
+	return (int) $id;
 }
 
 function senoobar_allow_webp() {
