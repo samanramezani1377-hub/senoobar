@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * `slug` نام یکتای صفحه/گزینه‌هاست. `template` فایل قالب، `title` عنوان پیش‌فرض
  * صفحه و `cat_fallback` تصویر نمایشگاهی که وقتی دسته‌ای انتخاب نشده استفاده می‌شود.
  */
-function senoobar_showroom_configs(): array {
+function senoobar_showroom_configs() {
     return [
         'bedroom' => [
             'slug'     => 'bedroom',
@@ -59,7 +59,7 @@ add_filter( 'theme_page_templates', 'senoobar_register_showroom_templates' );
 /* ════════════════════════════════════════════════════════════════
    ۲. ساخت خودکار دو صفحه (فقط یک‌بار)
    ════════════════════════════════════════════════════════════════ */
-function senoobar_ensure_showroom_pages(): void {
+function senoobar_ensure_showroom_pages() {
     if ( get_option( 'senoobar_showroom_pages_created' ) ) {
         return;
     }
@@ -105,7 +105,7 @@ add_action( 'after_setup_theme', 'senoobar_ensure_showroom_pages', 31 );
 /* ════════════════════════════════════════════════════════════════
    ۳. توابع کمکی برای گرفتن آدرس صفحه و دسته‌ی انتخابی
    ════════════════════════════════════════════════════════════════ */
-function senoobar_showroom_page_url( string $key ): string {
+function senoobar_showroom_page_url( $key ) {
     $id = (int) get_option( 'senoobar_showroom_' . $key . '_page_id' );
     if ( $id && 'publish' === get_post_status( $id ) ) {
         return get_permalink( $id );
@@ -117,7 +117,7 @@ function senoobar_showroom_page_url( string $key ): string {
  * دسته‌ی انتخابی برای یک نمایشگاه (term_id یا 0).
  * از گزینه‌ی Customizer خوانده می‌شود؛ اگر ووکامرس نباشد یا دسته حذف شده باشد، 0 برمی‌گردد.
  */
-function senoobar_showroom_category( string $key ): int {
+function senoobar_showroom_category( $key ) {
     if ( ! class_exists( 'WooCommerce' ) ) {
         return 0;
     }
@@ -145,55 +145,20 @@ function senoobar_showroom_category( string $key ): int {
  * خروجی: آرایه‌ای از اسلایدها. هر اسلاید:
  *   [ title, image, link, price, caption ]
  */
-function senoobar_showroom_slides( string $key ): array {
+function senoobar_showroom_slides( $key ) {
     $term_id = senoobar_showroom_category( $key );
 
     if ( $term_id ) {
-        // روش قابل‌اطمینان: WP_Query با tax_query (مستقل از نسخه ووکامرس).
-        $query = new WP_Query( [
-            'post_type'           => 'product',
-            'post_status'         => 'publish',
-            'posts_per_page'      => 24,
-            'ignore_sticky_posts' => true,
-            'fields'              => 'ids',
-            'tax_query'           => [
-                [
-                    'taxonomy' => 'product_cat',
-                    'field'    => 'term_id',
-                    'terms'    => $term_id,
-                    'operator' => 'IN',
-                    'include_children' => true,
-                ],
-            ],
-        ] );
+        $slides = senoobar_showroom_query_products( $term_id );
 
-        if ( $query->have_posts() ) {
-            $slides = [];
-            foreach ( $query->posts as $product_id ) {
-                $p     = wc_get_product( $product_id );
-                if ( ! $p ) {
-                    continue;
-                }
-                $image = wp_get_attachment_image_url( $p->get_image_id(), 'large' );
-                $slides[] = [
-                    'title'   => $p->get_name(),
-                    'image'   => $image ? $image : wc_placeholder_img_src(),
-                    'link'    => get_permalink( $product_id ),
-                    'price'   => $p->get_price_html(),
-                    'caption' => wp_trim_words( wp_strip_all_tags( $p->get_short_description() ?: $p->get_name() ), 18 ),
-                ];
-            }
-            wp_reset_postdata();
-
-            if ( ! empty( $slides ) ) {
-                return $slides;
-            }
+        if ( ! empty( $slides ) ) {
+            return $slides;
         }
     }
 
     // ── Fallback: نمایشگاه استاتیک از تصاویر قالب ──
     $titles = [
-        'bedroom'  => [ 'سرویس خواب لاکچری', 'تشک طبی فنری', 'تخت خواب مدرن', 'ست کامل اتاق خواب' ],
+        'bedroom'   => [ 'سرویس خواب لاکچری', 'تشک طبی فنری', 'تخت خواب مدرن', 'ست کامل اتاق خواب' ],
         'furniture' => [ 'مبل راحتی مدرن', 'سرویس مبلمان کلاسیک', 'میز جلو مبلی', 'مبلمان پذیرایی' ],
     ];
     $imgs = [ 'hero-1.jpg', 'hero-2.jpg', 'featured-sofa.jpg', 'featured-dining.jpg', 'promo-bedroom.jpg', 'cat-bed.jpg', 'cat-mattress.jpg', 'featured-tv-table.jpg' ];
@@ -213,6 +178,68 @@ function senoobar_showroom_slides( string $key ): array {
     return $slides;
 }
 
+/**
+ * کوئری محصولات یک دسته با روش چندلایه (مقاوم در برابر نسخه ووکامرس و نوع داده term_id).
+ */
+function senoobar_showroom_query_products( $term_id ) {
+    $slides = [];
+    $ids    = [];
+
+    // روش ۱: get_posts با tax_query (همیشه در دسترس است).
+    $ids = get_posts( [
+        'post_type'      => 'product',
+        'post_status'    => 'publish',
+        'numberposts'    => 24,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'fields'         => 'ids',
+        'suppress_filters' => false,
+        'tax_query'      => [
+            [
+                'taxonomy'         => 'product_cat',
+                'field'            => 'term_id',
+                'terms'            => (array) $term_id,
+                'include_children' => true,
+            ],
+        ],
+    ] );
+
+    if ( empty( $ids ) ) {
+        // روش ۲: wc_get_products با category (فال‌بک).
+        if ( function_exists( 'wc_get_products' ) ) {
+            $products = wc_get_products( [
+                'status'   => 'publish',
+                'limit'    => 24,
+                'category' => [ $term_id ],
+                'orderby'  => 'date',
+                'order'    => 'DESC',
+            ] );
+            foreach ( $products as $p ) {
+                $ids[] = $p->get_id();
+            }
+        }
+    }
+
+    $ids = array_unique( array_filter( array_map( 'intval', $ids ) ) );
+
+    foreach ( $ids as $pid ) {
+        $p = wc_get_product( $pid );
+        if ( ! $p || 'publish' !== $p->get_status() ) {
+            continue;
+        }
+        $image = wp_get_attachment_image_url( $p->get_image_id(), 'large' );
+        $slides[] = [
+            'title'   => $p->get_name(),
+            'image'   => $image ? $image : wc_placeholder_img_src(),
+            'link'    => get_permalink( $pid ),
+            'price'   => $p->get_price_html(),
+            'caption' => wp_trim_words( wp_strip_all_tags( $p->get_short_description() ?: $p->get_name() ), 18 ),
+        ];
+    }
+
+    return $slides;
+}
+
 /* ════════════════════════════════════════════════════════════════
    ۴. تنظیمات Customizer (سفارشی‌سازی → نمایشگاه‌ها)
    ════════════════════════════════════════════════════════════════ */
@@ -228,7 +255,7 @@ function senoobar_showroom_customizer( $wp_customize ) {
         $label = ( 'bedroom' === $key ) ? 'اتاق خواب رویایی' : 'مبلمان مدرن';
 
         // انتخاب دسته‌بندی ووکامرس (dropdown).
-        $wp_customize->add_setting( 'senoobar_showroom_' . $key . '_cat', [ 'default' => 0 ] );
+        $wp_customize->add_setting( 'senoobar_showroom_' . $key . '_cat', [ 'default' => 0, 'sanitize_callback' => 'absint' ] );
         $wp_customize->add_control( 'senoobar_showroom_' . $key . '_cat', [
             'label'       => 'دسته‌بندی: ' . $label,
             'description' => 'دسته‌ای را انتخاب کنید که محصولاتش در این نمایشگاه چیده شود. اگر خالی بماند، نمایشگاه پیش‌فرض با تصاویر قالب نمایش داده می‌شود.',
@@ -273,7 +300,7 @@ add_action( 'customize_register', 'senoobar_showroom_customizer' );
  * ساخت آرایه‌ی انتخاب‌ها برای dropdown دسته‌بندی.
  * همیشه یک گزینه‌ی «— بدون دسته (نمایشگاه پیش‌فرض) —» با مقدار 0 دارد.
  */
-function senoobar_showroom_cat_choices(): array {
+function senoobar_showroom_cat_choices() {
     $choices = [ '0' => '— بدون دسته (نمایشگاه پیش‌فرض) —' ];
 
     if ( ! class_exists( 'WooCommerce' ) ) {
@@ -299,7 +326,7 @@ function senoobar_showroom_cat_choices(): array {
 /* ════════════════════════════════════════════════════════════════
    ۵. بارگذاری استایل نمایشگاه + JS (فقط در این دو صفحه)
    ════════════════════════════════════════════════════════════════ */
-function senoobar_showroom_assets(): void {
+function senoobar_showroom_assets() {
     if ( ! is_page_template( [ 'template-bedroom.php', 'template-furniture.php' ] ) ) {
         return;
     }
@@ -325,7 +352,7 @@ add_action( 'wp_enqueue_scripts', 'senoobar_showroom_assets', 30 );
 /* ════════════════════════════════════════════════════════════════
    ۶. داده‌ی آماده برای قالب‌ها
    ════════════════════════════════════════════════════════════════ */
-function senoobar_showroom_data( string $key ): array {
+function senoobar_showroom_data( $key ) {
     $cfg = senoobar_showroom_configs()['bedroom'];
     if ( 'furniture' === $key ) {
         $cfg = senoobar_showroom_configs()['furniture'];
