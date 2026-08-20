@@ -74,6 +74,8 @@ if ( '' === $avatar_html ) {
 					<source src="<?php echo esc_url( $video ); ?>">
 				</video>
 				<button type="button" class="idea-feed__sound" id="idea-sound-btn" aria-label="صدا" title="صدا">
+					<span class="idea-feed__sound-label idea-sound-label-on">بی‌صدا کردن</span>
+					<span class="idea-feed__sound-label idea-sound-label-off">صدا دار کردن</span>
 					<svg class="idea-sound-on" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16.5 12a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/><path d="M14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
 					<svg class="idea-sound-off" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16.4 9.2l4.6 4.6M21 9.2l-4.6 4.6"/></svg>
 				</button>

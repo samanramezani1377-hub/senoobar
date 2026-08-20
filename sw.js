@@ -4,7 +4,7 @@
  * No HTML navigation interception -> no network error / redirect issues.
  */
 
-const CACHE_VERSION = 'senoobar-v3.1.0';
+const CACHE_VERSION = 'senoobar-v3.2.0';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 
 // Origin + theme base path are derived at runtime so the worker keeps working
