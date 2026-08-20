@@ -1561,11 +1561,18 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
     -webkit-backdrop-filter: blur(8px);
   }
 
-  .idea-feed__track { padding: 24px 0; }
+  .idea-feed__track {
+    padding: 24px 0;
+    display: flex;
+    justify-content: center;
+  }
 
   .idea-feed__slide {
-    left: 50%;
-    transform: translateX(-50%) translateY(calc(var(--dy, 0) * 100%));
+    inset: 0 auto 0 auto;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    transform: translateY(calc(var(--dy, 0) * 100%));
     width: 480px;
     max-width: 90vw;
     border-radius: 16px;
