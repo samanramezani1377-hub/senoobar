@@ -32,7 +32,21 @@ $snb_f_terms   = function_exists('senoobar_legal_page_url') && senoobar_legal_pa
 $snb_f_privacy = function_exists('senoobar_legal_page_url') && senoobar_legal_page_url('privacy') ? senoobar_legal_page_url('privacy') : home_url('/privacy-policy/');
 ?>
         <div class="footer-col"><h4>دسترسی سریع</h4><ul><li><a href="<?php echo esc_url($snb_f_about); ?>">درباره ما</a></li><li><a href="<?php echo esc_url($snb_f_contact); ?>">تماس با ما</a></li><li><a href="<?php echo esc_url($snb_f_faq); ?>">سوالات متداول</a></li><li><a href="<?php echo esc_url($snb_f_terms); ?>">شرایط و قوانین</a></li><li><a href="<?php echo esc_url($snb_f_privacy); ?>">حریم خصوصی</a></li></ul></div>
-        <div class="footer-col"><h4>اطلاعات تماس</h4><div class="footer-contact"><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone1','۰۹۱۲۳۴۵۶۷۸۹')); ?></span></div><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone2','۰۲۱۸۸۷۷۶۶۵۵')); ?></span></div><div><span>📞</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_phone3','۰۲۱۸۸۷۷۶۶۵۵')); ?></span></div><div><span>📍</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_address','استان، تهران، منطقهٔ نمونه، خیابان صنوبر، پلاک ۱۰ (فعالیت) فروشگاه خواب')); ?></span></div><div><span>🕐</span><span><?php echo esc_html(get_theme_mod('senoobar_footer_hours','شنبه تا پنجشنبه، ۱۰ تا ۲۰ (به وقت)')); ?></span></div></div></div>
+        <?php
+        // شماره‌های تماس با پیش‌فرض صحیح (هماهنگ با page-contact.php)
+        $snb_f_phone1 = get_theme_mod('senoobar_footer_phone1', '۰۹۱۳۰۲۰۵۸۹۸');
+        $snb_f_phone2 = get_theme_mod('senoobar_footer_phone2', '۰۹۱۳۰۲۰۵۸۶۸');
+        $snb_f_phone3 = get_theme_mod('senoobar_footer_phone3', '۰۹۱۳۰۲۰۵۳۲۳');
+        $snb_f_address = get_theme_mod('senoobar_footer_address', 'اصفهان، شهرک صنعتی دولت‌آباد، خیابان شماره ۱۰ (خیام)، فروشگاه صنوبر');
+        $snb_f_hours   = get_theme_mod('senoobar_footer_hours', 'شنبه تا پنجشنبه، ۱۰ صبح تا ۹ شب');
+        // تبدیل ارقام فارسی به انگلیسی برای href="tel:"
+        function senoobar_tel_href( $num ) {
+            $en = str_replace(['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'], ['0','1','2','3','4','5','6','7','8','9'], $num);
+            $en = preg_replace('/[^0-9+]/', '', $en);
+            return $en;
+        }
+        ?>
+        <div class="footer-col"><h4>اطلاعات تماس</h4><div class="footer-contact"><div><span>📞</span><a href="tel:<?php echo esc_attr( senoobar_tel_href( $snb_f_phone1 ) ); ?>"><?php echo esc_html( $snb_f_phone1 ); ?></a></div><div><span>📲</span><a href="tel:<?php echo esc_attr( senoobar_tel_href( $snb_f_phone2 ) ); ?>"><?php echo esc_html( $snb_f_phone2 ); ?></a></div><div><span>☎️</span><a href="tel:<?php echo esc_attr( senoobar_tel_href( $snb_f_phone3 ) ); ?>"><?php echo esc_html( $snb_f_phone3 ); ?></a></div><div><span>📍</span><span><?php echo esc_html( $snb_f_address ); ?></span></div><div><span>🕐</span><span><?php echo esc_html( $snb_f_hours ); ?></span></div></div></div>
     </div>
     <div class="footer-bottom">
         <p>&#169; <?php echo date('Y'); ?> فروشگاه صنوبر — تمامی حقوق برای فروشگاه صنوبر است.</p>

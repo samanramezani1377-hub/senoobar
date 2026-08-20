@@ -1079,6 +1079,19 @@ a.site-branding:hover .logo-text { color: var(--color-brand); }
   line-height: 2.4;
 }
 
+.footer-contact div a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.2s;
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+.footer-contact div a:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
 /* Social icons */
 .footer-social {
   display: flex;

@@ -12,6 +12,16 @@ get_header();
 $phone1 = get_theme_mod('senoobar_footer_phone1', '۰۹۱۳۰۲۰۵۸۹۸');
 $phone2 = get_theme_mod('senoobar_footer_phone2', '۰۹۱۳۰۲۰۵۸۶۸');
 $phone3 = get_theme_mod('senoobar_footer_phone3', '۰۹۱۳۰۲۰۵۳۲۳');
+
+if ( ! function_exists( 'senoobar_tel_href' ) ) {
+	function senoobar_tel_href( $num ) {
+		$en = str_replace( ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'], ['0','1','2','3','4','5','6','7','8','9'], $num );
+		return preg_replace( '/[^0-9+]/', '', $en );
+	}
+}
+$tel1 = senoobar_tel_href( $phone1 );
+$tel2 = senoobar_tel_href( $phone2 );
+$tel3 = senoobar_tel_href( $phone3 );
 $address = get_theme_mod('senoobar_footer_address', 'اصفهان، شهرک صنعتی دولت‌آباد، خیابان شماره ۱۰ (خیام)، فروشگاه صنوبر');
 $hours   = get_theme_mod('senoobar_footer_hours', 'شنبه تا پنجشنبه، ۱۰ صبح تا ۹ شب');
 ?>
@@ -40,17 +50,17 @@ $hours   = get_theme_mod('senoobar_footer_hours', 'شنبه تا پنجشنبه�
                 <div class="contact-card">
                     <div class="contact-card__icon">📞</div>
                     <div class="contact-card__title">خط تماس اصلی</div>
-                    <div class="contact-card__value"><?php echo esc_html( $phone1 ); ?></div>
+                    <div class="contact-card__value"><a href="tel:<?php echo esc_attr( $tel1 ); ?>"><?php echo esc_html( $phone1 ); ?></a></div>
                 </div>
                 <div class="contact-card">
                     <div class="contact-card__icon">📲</div>
                     <div class="contact-card__title">پشتیبانی فروش</div>
-                    <div class="contact-card__value"><?php echo esc_html( $phone2 ); ?></div>
+                    <div class="contact-card__value"><a href="tel:<?php echo esc_attr( $tel2 ); ?>"><?php echo esc_html( $phone2 ); ?></a></div>
                 </div>
                 <div class="contact-card">
                     <div class="contact-card__icon">☎️</div>
                     <div class="contact-card__title">مدیریت فروشگاه</div>
-                    <div class="contact-card__value"><?php echo esc_html( $phone3 ); ?></div>
+                    <div class="contact-card__value"><a href="tel:<?php echo esc_attr( $tel3 ); ?>"><?php echo esc_html( $phone3 ); ?></a></div>
                 </div>
                 <div class="contact-card">
                     <div class="contact-card__icon">🕐</div>
@@ -66,7 +76,7 @@ $hours   = get_theme_mod('senoobar_footer_hours', 'شنبه تا پنجشنبه�
             </div>
 
             <div class="legal-page__cta">
-                <a href="tel:<?php echo esc_attr( str_replace(['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'], ['0','1','2','3','4','5','6','7','8','9'], $phone1) ); ?>" class="btn btn--primary">تماس با پشتیبانی</a>
+                <a href="tel:<?php echo esc_attr( $tel1 ); ?>" class="btn btn--primary">تماس با پشتیبانی</a>
             </div>
         </div>
 
