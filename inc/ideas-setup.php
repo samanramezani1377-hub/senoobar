@@ -55,7 +55,7 @@ function senoobar_register_idea_cpt() {
 		// تا لینک «گالری ایده‌ها» همیشه درست باشد.
 		'has_archive'  => false,
 		'rewrite'      => [ 'slug' => 'idea', 'with_front' => false ],
-		'supports'     => [ 'title', 'editor', 'thumbnail', 'revisions', 'excerpt' ],
+		'supports'     => [ 'title', 'thumbnail', 'revisions' ],
 	] );
 }
 add_action( 'init', 'senoobar_register_idea_cpt' );
@@ -73,90 +73,6 @@ function senoobar_idea_maybe_flush_rewrite() {
 	update_option( 'senoobar_idea_rewrite_flushed_v2', 1 );
 }
 add_action( 'init', 'senoobar_idea_maybe_flush_rewrite', 20 );
-
-/* ════════════════════════════════════════════════════════════════
-   ۲. فیلد «ویدیو» — در ستون کناری (تا ادیتور مثل برگه، تمام‌عرض بماند)
-   ════════════════════════════════════════════════════════════════ */
-function senoobar_idea_add_meta_boxes() {
-	add_meta_box(
-		'senoobar_idea_video',
-		'ویدیو (اختیاری)',
-		'senoobar_idea_video_meta_box',
-		'senoobar_idea',
-		'side',
-		'default'
-	);
-}
-add_action( 'add_meta_boxes', 'senoobar_idea_add_meta_boxes' );
-
-function senoobar_idea_video_meta_box( $post ) {
-	wp_nonce_field( 'senoobar_idea_video_nonce', 'senoobar_idea_video_nonce' );
-	$video = senoobar_idea_video( $post->ID );
-	?>
-	<p style="margin:0 0 8px;">
-		<input type="text" id="senoobar_idea_video" name="senoobar_idea_video"
-			value="<?php echo esc_attr( $video ); ?>"
-			placeholder="آدرس فایل ویدیو (mp4)"
-			style="width:100%;direction:ltr;text-align:left;"
-		/>
-	</p>
-	<p style="margin:0 0 8px;">
-		<button type="button" class="button" id="senoobar_idea_video_upload">انتخاب از کتابخانه</button>
-		<button type="button" class="button" id="senoobar_idea_video_clear">پاک کردن</button>
-	</p>
-	<p class="description" style="margin:0;">اگر ویدیو بگذارید، روی کارت نشان «ویدیو» می‌آید. اگر خالی باشد فقط کاور نمایش داده می‌شود.</p>
-	<script>
-	(function () {
-		var field = document.getElementById('senoobar_idea_video');
-		if (!field) return;
-		var frame;
-		var btnUp = document.getElementById('senoobar_idea_video_upload');
-		var btnCl = document.getElementById('senoobar_idea_video_clear');
-		if (btnUp) btnUp.addEventListener('click', function (e) {
-			e.preventDefault();
-			if (frame) { frame.open(); return; }
-			frame = wp.media({
-				title: 'انتخاب ویدیو',
-				library: { type: 'video' },
-				multiple: false,
-				button: { text: 'انتخاب این ویدیو' }
-			});
-			frame.on('select', function () {
-				var att = frame.state().get('selection').first().toJSON();
-				field.value = att.url;
-			});
-			frame.open();
-		});
-		if (btnCl) btnCl.addEventListener('click', function (e) {
-			e.preventDefault();
-			field.value = '';
-		});
-	})();
-	</script>
-	<?php
-}
-
-function senoobar_idea_save( $post_id ) {
-	if ( ! isset( $_POST['senoobar_idea_video_nonce'] )
-		|| ! wp_verify_nonce( $_POST['senoobar_idea_video_nonce'], 'senoobar_idea_video_nonce' ) ) {
-		return;
-	}
-	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-		return;
-	}
-	if ( isset( $_POST['post_type'] ) && 'senoobar_idea' === $_POST['post_type'] ) {
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return;
-		}
-	}
-	$video = isset( $_POST['senoobar_idea_video'] ) ? sanitize_text_field( wp_unslash( $_POST['senoobar_idea_video'] ) ) : '';
-	if ( '' === $video ) {
-		delete_post_meta( $post_id, '_senoobar_idea_video' );
-	} else {
-		update_post_meta( $post_id, '_senoobar_idea_video', $video );
-	}
-}
-add_action( 'save_post', 'senoobar_idea_save' );
 
 /* ════════════════════════════════════════════════════════════════
    ۳. کمکی‌ها
