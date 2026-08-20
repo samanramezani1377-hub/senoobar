@@ -138,14 +138,22 @@ if ( '' === $avatar_html ) {
 
 			var snd = document.createElement('button');
 			snd.type = 'button';
-			snd.className = 'idea-feed__sound';
-			snd.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16.5 12a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+			snd.className = 'idea-feed__sound is-muted';
+			snd.setAttribute('aria-label', 'صدا دار کردن');
+			snd.innerHTML =
+				'<span class="idea-sound-label idea-sound-label-on">بی\u200cصدا کردن</span>' +
+				'<span class="idea-sound-label idea-sound-label-off">صدا دار کردن</span>' +
+				'<svg class="idea-sound-on" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16.5 12a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>' +
+				'<svg class="idea-sound-off" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16.4 9.2l4.6 4.6M21 9.2l-4.6 4.6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
 			snd.addEventListener('click', function () {
-				if (vid.muted) { vid.muted = false; vid.play().catch(function(){}); }
-				else { vid.muted = true; }
+				if (vid.muted) {
+					vid.muted = false; vid.play().catch(function(){});
+				} else {
+					vid.muted = true;
+				}
 				snd.classList.toggle('is-muted', vid.muted);
+				snd.setAttribute('aria-label', vid.muted ? 'صدا دار کردن' : 'بی\u200cصدا کردن');
 			});
-			snd.classList.add('is-muted');
 			media.appendChild(snd);
 		} else if (item.cover) {
 			var img = document.createElement('img');

@@ -1426,7 +1426,7 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
 
 .idea-feed__ph { color: rgba(255,255,255,0.5); }
 
-/* دکمه صدا */
+/* دکمه صدا — pill با آیکن + متن */
 .idea-feed__sound {
   position: absolute;
   right: 14px;
@@ -1434,11 +1434,10 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   z-index: 16;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 6px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+  height: 40px;
+  padding: 0 16px 0 12px;
+  border-radius: 20px;
   border: none;
   background: rgba(0,0,0,0.55);
   color: #fff;
@@ -1448,8 +1447,27 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   transition: background 0.2s;
 }
 .idea-feed__sound:hover { background: rgba(0,0,0,0.75); }
-.idea-feed__sound svg { width: 22px; height: 22px; }
-.idea-feed__sound.is-muted { opacity: 0.9; }
+.idea-feed__sound svg { width: 22px; height: 22px; flex: 0 0 auto; }
+
+.idea-feed__sound .idea-sound-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* آیکن‌ها */
+.idea-feed__sound .idea-sound-on { display: block; }
+.idea-feed__sound .idea-sound-off { display: none; }
+
+/* متن‌ها */
+.idea-feed__sound .idea-sound-label-on { display: block; }
+.idea-feed__sound .idea-sound-label-off { display: none; }
+
+/* حالت muted (صداست بسته): آیکن بی‌صدا + متن «صدا دار کردن» */
+.idea-feed__sound.is-muted .idea-sound-on { display: none; }
+.idea-feed__sound.is-muted .idea-sound-off { display: block; }
+.idea-feed__sound.is-muted .idea-sound-label-on { display: none; }
+.idea-feed__sound.is-muted .idea-sound-label-off { display: block; }
 
 /* کپشن پایین */
 .idea-feed__caption {
