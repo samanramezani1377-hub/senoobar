@@ -7,101 +7,166 @@
 const CACHE_VERSION = 'senoobar-v4.0.0';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 
+// Origin + theme base path are derived at runtime so the worker keeps working
+// on any domain / theme directory name (the old hardcoded senoobar.ir / -main
+// paths broke the PWA the moment the site or theme slug changed).
 const ORIGIN = self.location.origin;
 
-// Theme asset paths
-const ASSETS_TO_CACHE = [
-	'/',
-	'/wp-content/themes/senoobar/assets/css/main.css',
-	'/wp-content/themes/senoobar/assets/css/critical.css',
-	'/wp-content/themes/senoobar/assets/css/rtl.css',
-	'/wp-content/themes/senoobar/assets/fonts/vazirmatn-arabic.woff2',
-	'/wp-content/themes/senoobar/assets/fonts/vazirmatn-latin.woff2',
-	'/wp-content/themes/senoobar/assets/icons/icon-128.png',
-	'/wp-content/themes/senoobar/assets/icons/icon-152.png'
+// Theme asset base is passed as a `?theme=` query param at registration time
+// (see assets/js/app.js + the senoobarData.themeBase localization), so the
+// worker's precache + notification icon paths are correct on any domain or
+// theme directory name. If the param is missing (bare register('/sw.js')),
+// fall back to deriving the path from the worker's own URL.
+const THEME_BASE = (function () {
+  var p = new URL(self.location.href).searchParams.get('theme');
+  if (p) {
+    // Strip a trailing slash if present.
+    return p.replace(/\/+$/, '');
+  }
+  // Fallback: the worker is served from the theme dir or from /sw.js via a
+  // rewrite; in the latter case we cannot reliably detect the theme slug, so
+  // leave a relative-safe base (origin) and let the runtime push data override.
+  return ORIGIN;
+})();
+
+// Assets to pre-cache on install (all return 200)
+const PRECACHE_URLS = [
+  THEME_BASE + '/assets/css/critical.css',
+  THEME_BASE + '/assets/css/main.css',
+  THEME_BASE + '/assets/js/app.js',
+  THEME_BASE + '/assets/icons/icon-192.png'
 ];
 
-self.addEventListener('install', (event) => {
-	event.waitUntil(
-		caches.open(STATIC_CACHE).then((cache) => {
-			return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
-				console.warn('Pre-caching assets failed, will cache on demand:', err);
-			});
-		}).then(() => self.skipWaiting())
-	);
+// Install: precache static assets individually (one failure won't break the rest)
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(STATIC_CACHE).then(cache => {
+      console.log('[SW] Precaching critical assets');
+      return Promise.all(
+        PRECACHE_URLS.map(url =>
+          cache.add(url).catch(err => {
+            console.warn('[SW] Precache failed for', url, err);
+          })
+        )
+      );
+    }).then(() => self.skipWaiting())
+  );
 });
 
-self.addEventListener('activate', (event) => {
-	event.waitUntil(
-		caches.keys().then((cacheNames) => {
-			return Promise.all(
-				cacheNames.map((cacheName) => {
-					if (cacheName !== STATIC_CACHE) {
-						return caches.delete(cacheName);
-					}
-				})
-			);
-		}).then(() => self.clients.claim())
-	);
+// Activate: remove old caches
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames
+          .filter(name => name.startsWith('senoobar-') && name !== STATIC_CACHE)
+          .map(name => caches.delete(name))
+      );
+    }).then(() => self.clients.claim())
+  );
 });
 
-self.addEventListener('fetch', (event) => {
-	const request = event.request;
+// Fetch: only cache static assets. Never touch HTML/API/navigation.
+self.addEventListener('fetch', event => {
+  const { request } = event;
+  const url = new URL(request.url);
 
-	// Only cache local GET requests
-	if (request.method !== 'GET' || !request.url.startsWith(ORIGIN)) {
-		return;
-	}
+  // Only GET on our own origin
+  if (request.method !== 'GET' || url.origin !== self.location.origin) return;
 
-	const url = new URL(request.url);
+  // Only handle static assets
+  if (url.pathname.match(/\.(css|js|woff2?|png|jpg|jpeg|gif|svg|webp|ico)$/) || url.pathname.includes('/assets/')) {
 
-	// Skip admin pages, checkout, cart and dynamic PHP endpoints
-	if (
-		url.pathname.includes('/wp-admin') ||
-		url.pathname.includes('/wp-login.php') ||
-		url.pathname.includes('/cart') ||
-		url.pathname.includes('/checkout') ||
-		url.pathname.includes('/my-account') ||
-		request.url.includes('wp-json')
-	) {
-		return;
-	}
+    // CSS/JS are versioned by the theme (SENOOBAR_VERSION -> ?ver=), so serve
+    // them NETWORKFIRST to always pick up the latest code. Images/fonts rarely change, so keep cache-first for those to save bandwidth.
+    var isCode = /\.(css|js)$/i.test(url.pathname);
 
-	// Cache-First strategy for assets (CSS, JS, Fonts, Images)
-	const isAsset = 
-		request.destination === 'style' ||
-		request.destination === 'script' ||
-		request.destination === 'font' ||
-		request.destination === 'image' ||
-		url.pathname.endsWith('.css') ||
-		url.pathname.endsWith('.js') ||
-		url.pathname.match(/\.(woff2|woff|ttf|png|jpg|jpeg|gif|svg|webp)$/i);
+    event.respondWith(
+      (isCode ? refreshFromNetwork(request) : serveFromCache(request))
+    );
+    if (isCode) return;
+    return;
+  }
 
-	if (isAsset) {
-		event.respondWith(
-			caches.match(request).then((cachedResponse) => {
-				if (cachedResponse) {
-					// Return cached, but fetch fresh in background to update cache
-					fetch(request).then((networkResponse) => {
-						if (networkResponse.status === 200) {
-							caches.open(STATIC_CACHE).then((cache) => {
-								cache.put(request, networkResponse);
-							});
-						}
-					}).catch(() => {/* ignore network failures in background */});
-					return cachedResponse;
-				}
+  // Network-first: try the network, update the cache, fall back to cache offline.
+  function refreshFromNetwork(request) {
+    return fetch(request).then(function (response) {
+      if (response && response.ok && response.type === 'basic') {
+        var clone = response.clone();
+        caches.open(STATIC_CACHE).then(function (cache) { cache.put(request, clone); }).catch(function () {});
+      }
+      return response;
+    }).catch(function () {
+      return caches.match(request);
+    });
+  }
 
-				return fetch(request).then((networkResponse) => {
-					if (networkResponse.status === 200) {
-						const responseToCache = networkResponse.clone();
-						caches.open(STATIC_CACHE).then((cache) => {
-							cache.put(request, responseToCache);
-						});
-					}
-					return networkResponse;
-				});
-			})
-		);
-	}
+  // Cache-first: return cached copy immediately (for images/fonts).
+  function serveFromCache(request) {
+    return caches.match(request).then(function (cached) {
+      if (cached) return cached;
+      return fetch(request).then(function (response) {
+        if (response && response.ok && response.type === 'basic') {
+          var clone = response.clone();
+          caches.open(STATIC_CACHE).then(function (cache) { cache.put(request, clone); }).catch(function () {});
+        }
+        return response;
+      }).catch(function () { return caches.match(request); });
+    });
+  }
+
+  // Everything else: pass through to network untouched
+  return;
+});
+
+// Push Notification
+self.addEventListener('push', event => {
+  let data = {
+    title: 'فروشد٧ه صنوبر',
+    body: 'جدیدترین م٭صولات را ملاهده کنید!',
+    icon: THEME_BASE + '/assets/icons/icon-192.png',
+    badge: THEME_BASE + '/assets/icons/badge-72.png',
+    data: { url: ORIGIN + '/' }
+  };
+
+  if (event.data) {
+    try { data = { ...data, ...event.data.json() } } catch(e) {}
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: data.icon,
+      badge: data.badge,
+      vibrate: [200, 100, 200],
+      tag: 'senoobar-notification',
+      renotify: true,
+      requireInteraction: false,
+      actions: [
+        { action: 'view', title: 'مشاهده' },
+        { action: 'close', title: 'بستن' }
+      ],
+      data: data.data,
+      dir: 'rtl',
+      lang: 'fa-IR',
+    }).catch(() => {})
+  );
+});
+
+// Notification click
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  var notifData = event.notification.data || {};
+  const url = notifData.url || (ORIGIN + '/');
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      for (const client of clientList) {
+        if (client.url.includes(url) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) return clients.openWindow(url);
+    })
+  );
 });
