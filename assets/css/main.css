@@ -1305,6 +1305,9 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
 .senoobar-idea-single {
   margin: 0;
   background: #000;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: pan-x;
 }
 
 .idea-feed {
@@ -1360,6 +1363,60 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   border-radius: 50%;
   background: var(--color-brand, #b18a5a);
 }
+
+/* آواتار کنار عنوان (مثل عکس پروفایل) */
+.idea-feed__avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #333;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.idea-feed__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.idea-feed__avatar-fallback {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+/* دکمه صدا (ویدیو) */
+.idea-feed__sound {
+  position: absolute;
+  right: 14px;
+  bottom: 90px;
+  z-index: 16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  cursor: pointer;
+}
+
+.idea-feed__sound svg { width: 22px; height: 22px; }
+.idea-feed__sound .idea-sound-on { display: block; }
+.idea-feed__sound .idea-sound-off { display: none; }
+
+/* وقتی muted است، آیکن «بی‌صدا» نمایش داده می‌شود */
+.idea-feed__sound.is-muted .idea-sound-on { display: none; }
+.idea-feed__sound.is-muted .idea-sound-off { display: block; }
 
 /* آواتار لوگو (دایره‌ای، مثل عکس پروفایل) */
 .idea-feed__avatar,
