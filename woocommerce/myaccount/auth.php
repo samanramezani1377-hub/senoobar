@@ -64,8 +64,7 @@ $reg_prefill_phone = isset( $_GET['reg_phone'] ) ? senoobar_normalize_phone( $_G
                 wc_clear_notices();
             endif;
             ?>
-            <form method="post" class="snb-form">
-                <?php wp_nonce_field( 'senoobar_register', 'senoobar_register_nonce' ); ?>
+            <form method="post" class="snb-form" id="snb-register-form" onsubmit="return false;">
                 <?php foreach ( senoobar_register_fields() as $key => $f ) : ?>
                     <div class="snb-field">
                         <label for="reg_<?php echo esc_attr( $key ); ?>">
@@ -79,7 +78,16 @@ $reg_prefill_phone = isset( $_GET['reg_phone'] ) ? senoobar_normalize_phone( $_G
                                <?php echo in_array( $f['type'], [ 'tel', 'password' ], true ) ? 'dir="ltr"' : ''; ?> style="text-align:right">
                     </div>
                 <?php endforeach; ?>
-                <button type="submit" name="senoobar_register" value="1" class="snb-btn snb-btn-primary snb-btn-block">ساخت حساب</button>
+
+                <div class="snb-field" id="snb-reg-code-wrap" style="display:none;">
+                    <label for="reg_code">کد تأیید <span class="snb-req">*</span></label>
+                    <input type="tel" id="reg_code" inputmode="numeric" maxlength="5" placeholder="کد ۵ رقمی ارسال‌شده" dir="ltr" style="text-align:right">
+                </div>
+                <div class="snb-field" id="snb-reg-msg" style="display:none;font-size:13px;"></div>
+
+                <button type="submit" id="snb-reg-send" class="snb-btn snb-btn-primary snb-btn-block">ارسال کد تأیید</button>
+                <button type="submit" id="snb-reg-verify" class="snb-btn snb-btn-primary snb-btn-block" style="display:none;">تأیید و ساخت حساب</button>
+                <a href="#" id="snb-reg-edit-phone" style="display:none;font-size:12px;color:var(--snb-brand,#1e3a2f);text-decoration:underline;margin-top:-4px;text-align:right;">شماره اشتباه است؟ اصلاح شماره</a>
             </form>
         </div>
 
