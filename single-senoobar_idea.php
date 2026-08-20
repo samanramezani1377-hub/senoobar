@@ -1,33 +1,68 @@
 <?php
 /**
- * صفحه‌ی تکی ایده — شبیه اینستاگرام.
+ * صفحه‌ی تکی ایده — تمام‌صفحه، شبیه ریلز/پست اینستاگرام.
  *
- * - در موبایل: نمای تمام‌صفحه و با اسکرول/سوایپ به ایده‌ی بعدی می‌رود.
- * - عنوان، رسانه (ویدیو یا کاور) و محتوا.
+ * - بدون هدر و فوتر تم (فقط <head> و <body> لازم).
+ *   سرویس ورکر/فونت/کریتیکال CSS همچنان از طریق wp_head بارگذاری می‌شوند.
+ * - هر ایده در یک «اسلاید» تمام‌صفحه (100vh) نمایش داده می‌شود.
+ * - دکمه‌های قبل/بعد + صفحه‌کلید + اسکرول (چرخ) + سوایپ برای جابه‌جایی.
+ * - در دسکتاپ: ستون مرکزی باریک شبیه پست اینستاگرام با پس‌زمینه تیره.
+ *
+ * @package Senoobar
  */
-get_header();
 
-while ( have_posts() ) : the_post();
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+while ( have_posts() ) :
+	the_post();
 	$idea  = senoobar_idea_item( get_post() );
 	$nav   = senoobar_idea_nav();
 	$video = $idea['video'];
 	$cover = $idea['cover'];
 endwhile;
+
+$gallery_url = senoobar_ideas_page_url() ?: home_url( '/' );
 ?>
+<!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+	<meta charset="<?php bloginfo( 'charset' ); ?>">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="profile" href="https://gmpg.org/xfn/11">
+	<?php wp_head(); ?>
+</head>
+<body <?php body_class( 'senoobar-idea-single' ); ?>>
+<?php wp_body_open(); ?>
+
 <div id="idea-feed"
 	class="idea-feed"
 	data-next="<?php echo esc_url( $nav['next'] ? $nav['next']['link'] : '' ); ?>"
 	data-prev="<?php echo esc_url( $nav['prev'] ? $nav['prev']['link'] : '' ); ?>"
-	data-video="<?php echo $video ? '1' : '0'; ?>"
->
+	data-gallery="<?php echo esc_url( $gallery_url ); ?>">
 
-	<div class="idea-feed__stage">
+	<!-- نوار بالا: بستن + عنوان -->
+	<header class="idea-feed__topbar">
+		<a class="idea-feed__close" href="<?php echo esc_url( $gallery_url ); ?>" title="بستن" aria-label="بستن">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18 18 6M6 6l12 12"/></svg>
+		</a>
+		<div class="idea-feed__topbar-title">
+			<span class="idea-feed__dot"></span>
+			<span>ایده‌های صنوبر</span>
+		</div>
+		<span class="idea-feed__count">
+			<?php echo esc_html( $nav['prev'] ? '⋯' : '۱' ); ?>
+		</span>
+	</header>
+
+	<!-- اسلاید -->
+	<div class="idea-feed__slide" id="idea-feed-slide">
 		<div class="idea-feed__media">
 			<?php if ( $video ) : ?>
 				<video class="idea-feed__video" controls autoplay muted loop playsinline
 					poster="<?php echo esc_url( $cover ); ?>">
 					<source src="<?php echo esc_url( $video ); ?>">
-					مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
 				</video>
 			<?php elseif ( $cover ) : ?>
 				<img class="idea-feed__img" src="<?php echo esc_url( $cover ); ?>" alt="<?php echo esc_attr( $idea['title'] ); ?>">
@@ -35,29 +70,25 @@ endwhile;
 				<div class="idea-feed__ph">بدون تصویر</div>
 			<?php endif; ?>
 
-			<div class="idea-feed__overlay">
-				<div class="idea-feed__nav idea-feed__nav--prev">
-					<?php if ( $nav['prev'] ) : ?><a href="<?php echo esc_url( $nav['prev']['link'] ); ?>" title="ایده قبلی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a><?php endif; ?>
-				</div>
-				<div class="idea-feed__nav idea-feed__nav--next">
-					<?php if ( $nav['next'] ) : ?><a href="<?php echo esc_url( $nav['next']['link'] ); ?>" title="ایده بعدی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></a><?php endif; ?>
-				</div>
-			</div>
+			<!-- دکمه‌های قبل/بعد (ثابت وسط چپ/راست) -->
+			<?php if ( $nav['prev'] ) : ?>
+			<a class="idea-feed__nav idea-feed__nav--prev" href="<?php echo esc_url( $nav['prev']['link'] ); ?>" title="ایده قبلی" aria-label="ایده قبلی">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+			</a>
+			<?php endif; ?>
+			<?php if ( $nav['next'] ) : ?>
+			<a class="idea-feed__nav idea-feed__nav--next" href="<?php echo esc_url( $nav['next']['link'] ); ?>" title="ایده بعدی" aria-label="ایده بعدی">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+			</a>
+			<?php endif; ?>
 		</div>
 
-		<div class="idea-feed__body">
-			<div class="idea-feed__meta">
-				<span class="idea-feed__dot"></span>
-				<span>ایده دکوراسیون</span>
-			</div>
+		<!-- کپشن روی/زیر رسانه -->
+		<div class="idea-feed__caption">
 			<h1 class="idea-feed__title"><?php echo esc_html( $idea['title'] ); ?></h1>
-			<?php if ( ! empty( $idea['content'] ) ) : ?>
+			<?php if ( ! empty( trim( $idea['content'] ) ) ) : ?>
 				<div class="idea-feed__content"><?php echo wp_kses_post( wpautop( $idea['content'] ) ); ?></div>
 			<?php endif; ?>
-
-			<a class="idea-feed__back" href="<?php echo esc_url( senoobar_ideas_page_url() ?: home_url( '/' ) ); ?>">
-				بازگشت به گالری
-			</a>
 		</div>
 	</div>
 </div>
@@ -73,24 +104,41 @@ endwhile;
 		if (url) window.location.href = url;
 	}
 
-	// ناوبری صفحه‌کلید (راست/چپ)
+	// صفحه‌کلید: راست = بعدی، چپ = قبلی
 	document.addEventListener('keydown', function (e) {
-		if (e.key === 'ArrowLeft')  go(next);  // در RTL راست = بعدی
-		if (e.key === 'ArrowRight') go(prev);
+		var tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+		if (tag === 'input' || tag === 'textarea') return;
+		if (e.key === 'ArrowRight') { e.preventDefault(); go(next); }
+		if (e.key === 'ArrowLeft')  { e.preventDefault(); go(prev); }
+		if (e.key === 'Escape')     { window.location.href = feed.getAttribute('data-gallery'); }
 	});
 
-	// سوایپ لمسی (موبایل) — کشیدن به بالا = ایده بعدی
+	// اسکرول چرخ (دسکتاپ): پایین = بعدی، بالا = قبلی (با throttle)
+	var wheelLock = false;
+	document.addEventListener('wheel', function (e) {
+		if (wheelLock) return;
+		if (Math.abs(e.deltaY) < 25) return;
+		wheelLock = true;
+		setTimeout(function () { wheelLock = false; }, 700);
+		if (e.deltaY > 0) go(next);
+		else go(prev);
+	}, { passive: true });
+
+	// سوایپ لمسی (موبایل): کشیدن بالا = بعدی، پایین = قبلی
 	var y0 = null;
 	document.addEventListener('touchstart', function (e) { y0 = e.touches[0].clientY; }, { passive: true });
 	document.addEventListener('touchend', function (e) {
 		if (y0 === null) return;
 		var dy = e.changedTouches[0].clientY - y0;
 		y0 = null;
-		if (Math.abs(dy) > 80) {
-			if (dy < 0) go(next);      // کشیدن بالا
-			else go(prev);             // کشیدن پایین
+		if (Math.abs(dy) > 70) {
+			if (dy < 0) go(next);
+			else go(prev);
 		}
 	}, { passive: true });
 })();
 </script>
-<?php get_footer();
+
+<?php wp_footer(); ?>
+</body>
+</html>

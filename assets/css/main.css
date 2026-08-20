@@ -1298,57 +1298,111 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
 }
 
 /* صفحه‌ی تکی ایده — شبیه اینستاگرام (تمام‌صفحه در موبایل) */
-.idea-feed {
-  min-height: 100vh;
-  background: #fff;
+/* ────────────────────────────────────────────────
+   صفحه‌ی تکی ایده — تمام‌صفحه (ریلز اینستاگرام)
+   بدون هدر/فوتر تم؛ پس‌زمینه سیاه
+   ──────────────────────────────────────────────── */
+.senoobar-idea-single {
+  margin: 0;
+  background: #000;
 }
 
-.idea-feed__stage {
+.idea-feed {
+  position: fixed;
+  inset: 0;
   display: flex;
   flex-direction: column;
-  max-width: 720px;
-  margin: 0 auto;
+  background: #000;
+  color: #fff;
+  font-family: inherit;
+}
+
+/* نوار بالا (بستن + عنوان) */
+.idea-feed__topbar {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.idea-feed__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #fff;
+  text-decoration: none;
+}
+
+.idea-feed__close:hover { background: rgba(255, 255, 255, 0.12); }
+.idea-feed__close svg { width: 22px; height: 22px; }
+
+.idea-feed__topbar-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.idea-feed__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-brand, #b18a5a);
+}
+
+.idea-feed__count {
+  margin-inline-start: auto;
+  opacity: 0.6;
+  font-size: 0.8rem;
+}
+
+/* اسلاید (رسانه) */
+.idea-feed__slide {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .idea-feed__media {
   position: relative;
-  background: #000;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 4 / 5; /* نسبت پرتره، شبیه پست اینستاگرام */
-  max-height: 75vh;
-  width: 100%;
-  overflow: hidden;
 }
 
 .idea-feed__img,
 .idea-feed__video {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* کل تصویر/ویدیو دیده شود، مثل ریلز */
   display: block;
 }
 
 .idea-feed__ph {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 1rem;
 }
 
-.idea-feed__overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
+/* دکمه‌های قبل/بعد — ثابت وسط چپ/راست */
 .idea-feed__nav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  pointer-events: auto;
-}
-
-.idea-feed__nav a {
+  z-index: 15;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1358,63 +1412,78 @@ body:not(.woocommerce-shop):not(.woocommerce-taxonomy) .products-grid ul.product
   background: rgba(0, 0, 0, 0.45);
   color: #fff;
   text-decoration: none;
+  transition: background 0.2s, opacity 0.2s;
 }
 
-.idea-feed__nav a:hover { background: rgba(0, 0, 0, 0.7); }
-.idea-feed__nav svg { width: 22px; height: 22px; }
+.idea-feed__nav:hover { background: rgba(0, 0, 0, 0.7); }
+.idea-feed__nav svg { width: 24px; height: 24px; }
 
 .idea-feed__nav--prev { left: 12px; }
 .idea-feed__nav--next { right: 12px; }
 
-.idea-feed__body {
-  padding: 16px 18px 32px;
-}
-
-.idea-feed__meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--color-gray-500);
-  font-size: 0.8rem;
-}
-
-.idea-feed__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-brand);
+/* کپشن پایین (گرادیان مثل ریلز) */
+.idea-feed__caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  padding: 48px 16px 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+  pointer-events: none;
 }
 
 .idea-feed__title {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  margin: 10px 0 6px;
+  margin: 0 0 6px;
   line-height: 1.6;
 }
 
 .idea-feed__content {
-  line-height: 2.2;
-  font-size: 0.92rem;
-  color: var(--color-text);
+  font-size: 0.9rem;
+  line-height: 2;
+  opacity: 0.92;
+  max-width: 60ch;
 }
 
-.idea-feed__back {
-  display: inline-block;
-  margin-top: 18px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-brand);
-  text-decoration: none;
-}
+.idea-feed__content p { margin: 0 0 6px; }
 
-/* در دسکتاپ عرض از پیش محدود است؛ در موبایل تمام‌عرض */
-@media (max-width: 767px) {
-  .idea-feed__media {
-    max-height: none;
-    height: 60vh;
+/* ── دسکتاپ (لپ‌تاپ): ستون باریک وسط صفحه، مثل دیدن پست اینستاگرام ── */
+@media (min-width: 768px) {
+  .idea-feed {
+    /* بک‌دراپ تیره اطراف ستون مرکزی */
+    background: rgba(0, 0, 0, 0.92);
+    padding: 24px 0;
   }
+
+  .idea-feed__topbar {
+    position: absolute;
+    left: 50%;
+    right: auto;
+    top: 24px;
+    transform: translateX(-50%);
+    width: 480px;
+    max-width: 90vw;
+    border-radius: 14px;
+  }
+
+  .idea-feed__slide {
+    width: 480px;
+    max-width: 90vw;
+    height: 100%;
+    margin: 0 auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  .idea-feed__nav--prev { left: calc(50% - 260px); }
+  .idea-feed__nav--next { right: calc(50% - 260px); }
 }
 
+/* ============================================
+   NEWSLETTER
 /* ============================================
    NEWSLETTER
    ============================================ */
