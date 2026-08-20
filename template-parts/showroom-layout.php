@@ -135,7 +135,7 @@ $featured = array_slice( $slides, 0, 3 );
                     </div>
                     <div class="showroom-rail-wrap showroom-animate">
                         <button type="button" class="showroom-arrow showroom-arrow--prev" aria-label="قبلی">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                         </button>
                         <div class="showroom-rail">
                             <?php foreach ( $slides as $slide ) : ?>
@@ -164,7 +164,7 @@ $featured = array_slice( $slides, 0, 3 );
                             <?php endforeach; ?>
                         </div>
                         <button type="button" class="showroom-arrow showroom-arrow--next" aria-label="بعدی">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
                         </button>
                     </div>
                 </div>

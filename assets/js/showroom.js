@@ -30,7 +30,7 @@
     els.forEach(function (el) { io.observe(el); });
   }
 
-  // ── فلش‌های پیمایش گالری افقی ──
+  // ── فلش‌های پیمایش گالری افقی (سازگار با RTL) ──
   function initRailNav() {
     document.querySelectorAll('.showroom-rail-wrap').forEach(function (wrap) {
       var rail = wrap.querySelector('.showroom-rail');
@@ -38,13 +38,23 @@
       var next = wrap.querySelector('.showroom-arrow--next');
       if (!rail || (!prev && !next)) return;
 
+      var isRTL = getComputedStyle(rail).direction === 'rtl';
+
       var step = function () {
         var panel = rail.querySelector('.showroom-panel');
         return panel ? panel.getBoundingClientRect().width + 16 : 320;
       };
 
-      if (next) next.addEventListener('click', function () { rail.scrollBy({ left: step(), behavior: 'smooth' }); });
-      if (prev) prev.addEventListener('click', function () { rail.scrollBy({ left: -step(), behavior: 'smooth' }); });
+      // در RTL مقدار scrollLeft منفی تا صفر حرکت می‌کند؛ برای سازگاری
+      // از مقادیر مطلق scrollLeft استفاده می‌کنیم تا جهت همیشه درست بماند.
+      if (next) next.addEventListener('click', function () {
+        var d = isRTL ? -1 : 1;
+        rail.scrollBy({ left: d * step(), behavior: 'smooth' });
+      });
+      if (prev) prev.addEventListener('click', function () {
+        var d = isRTL ? 1 : -1;
+        rail.scrollBy({ left: d * step(), behavior: 'smooth' });
+      });
     });
   }
 
