@@ -122,8 +122,17 @@ function senoobar_showroom_category( string $key ): int {
         return 0;
     }
     $term_id = (int) get_theme_mod( 'senoobar_showroom_' . $key . '_cat', 0 );
-    if ( $term_id && term_exists( $term_id, 'product_cat' ) ) {
+    if ( $term_id && term_exists( (int) $term_id, 'product_cat' ) ) {
         return $term_id;
+    }
+
+    // اگر به هر دلیلی term_id درست نبود، شاید slug ذخیره شده باشد.
+    $raw = get_theme_mod( 'senoobar_showroom_' . $key . '_cat', 0 );
+    if ( $raw && ! is_numeric( $raw ) ) {
+        $term = get_term_by( 'slug', $raw, 'product_cat' );
+        if ( $term && ! is_wp_error( $term ) ) {
+            return (int) $term->term_id;
+        }
     }
     return 0;
 }
@@ -138,34 +147,47 @@ function senoobar_showroom_category( string $key ): int {
  */
 function senoobar_showroom_slides( string $key ): array {
     $term_id = senoobar_showroom_category( $key );
-    $cfg     = senoobar_showroom_configs()['bedroom'];
-    if ( 'furniture' === $key ) {
-        $cfg = senoobar_showroom_configs()['furniture'];
-    }
 
     if ( $term_id ) {
-        $products = wc_get_products( [
-            'status'   => 'publish',
-            'limit'    => 24,
-            'category' => [ $term_id ],
-            'orderby'  => 'date',
-            'order'    => 'DESC',
+        // روش قابل‌اطمینان: WP_Query با tax_query (مستقل از نسخه ووکامرس).
+        $query = new WP_Query( [
+            'post_type'           => 'product',
+            'post_status'         => 'publish',
+            'posts_per_page'      => 24,
+            'ignore_sticky_posts' => true,
+            'fields'              => 'ids',
+            'tax_query'           => [
+                [
+                    'taxonomy' => 'product_cat',
+                    'field'    => 'term_id',
+                    'terms'    => $term_id,
+                    'operator' => 'IN',
+                    'include_children' => true,
+                ],
+            ],
         ] );
 
-        $slides = [];
-        foreach ( $products as $p ) {
-            $image = wp_get_attachment_image_url( $p->get_image_id(), 'large' );
-            $slides[] = [
-                'title'   => $p->get_name(),
-                'image'   => $image ? $image : wc_placeholder_img_src(),
-                'link'    => get_permalink( $p->get_id() ),
-                'price'   => $p->get_price_html(),
-                'caption' => wp_trim_words( wp_strip_all_tags( $p->get_short_description() ?: $p->get_name() ), 18 ),
-            ];
-        }
+        if ( $query->have_posts() ) {
+            $slides = [];
+            foreach ( $query->posts as $product_id ) {
+                $p     = wc_get_product( $product_id );
+                if ( ! $p ) {
+                    continue;
+                }
+                $image = wp_get_attachment_image_url( $p->get_image_id(), 'large' );
+                $slides[] = [
+                    'title'   => $p->get_name(),
+                    'image'   => $image ? $image : wc_placeholder_img_src(),
+                    'link'    => get_permalink( $product_id ),
+                    'price'   => $p->get_price_html(),
+                    'caption' => wp_trim_words( wp_strip_all_tags( $p->get_short_description() ?: $p->get_name() ), 18 ),
+                ];
+            }
+            wp_reset_postdata();
 
-        if ( ! empty( $slides ) ) {
-            return $slides;
+            if ( ! empty( $slides ) ) {
+                return $slides;
+            }
         }
     }
 
