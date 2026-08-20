@@ -73,7 +73,7 @@ $featured = array_slice( $slides, 0, 3 );
                 <div class="showroom-fact"><span class="showroom-fact__num"><?php echo esc_html( $count > 0 ? $count . '+' : '۵۰' ); ?></span><span class="showroom-fact__label">طرح متنوع</span></div>
                 <div class="showroom-fact"><span class="showroom-fact__num">۱۰۰٪</span><span class="showroom-fact__label">ضمانت اصالت کالا</span></div>
                 <div class="showroom-fact"><span class="showroom-fact__num">۷ روز</span><span class="showroom-fact__label">ضمانت بازگشت</span></div>
-                <div class="showroom-fact"><span class="showroom-fact__num">سراسری</span><span class="showroom-fact__label">ارسال رایگان</span></div>
+                <div class="showroom-fact"><span class="showroom-fact__num">سراسر کشور</span><span class="showroom-fact__label">ارسال سریع</span></div>
             </div>
         </div>
     </section>
