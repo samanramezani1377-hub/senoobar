@@ -36,7 +36,7 @@ $show_password = isset( $_GET['tab'] ) && $_GET['tab'] === 'password';
                     </div>
                     <div class="snb-field snb-field-full">
                         <label>شماره موبایل</label>
-                        <input type="tel" name="mobile" value="<?php echo esc_attr( $mobile ); ?>" dir="ltr" style="text-align:right">
+                        <input type="tel" name="mobile" value="<?php echo esc_attr( $mobile ); ?>" dir="ltr" readonly class="snb-input-readonly">
                     </div>
                     <div class="snb-field snb-field-full">
                         <label>ایمیل</label>
