@@ -123,7 +123,7 @@ if ( '' === $avatar_html ) {
 		var media = document.createElement('div');
 		media.className = 'idea-feed__media';
 
-		if (item.video) {
+		if (item.video || item.video_mp4) {
 			var vid = document.createElement('video');
 			vid.className = 'idea-feed__video';
 			// صفت‌های لازم برای autoplay بی‌صدا در iOS/Safari
@@ -136,10 +136,20 @@ if ( '' === $avatar_html ) {
 			vid.defaultMuted = true;
 			vid.muted = true;
 			if (item.cover) vid.setAttribute('poster', item.cover);
-			var src = document.createElement('source');
-			src.src = item.video;
-			src.type = 'video/mp4';
-			vid.appendChild(src);
+			// نسخه‌ی WebM (سبک) — برای مرورگرهای مدرن (اندروید/دسکتاپ)
+			if (item.video) {
+				var srcWebm = document.createElement('source');
+				srcWebm.src = item.video;
+				srcWebm.type = 'video/webm';
+				vid.appendChild(srcWebm);
+			}
+			// نسخه‌ی MP4/H.264 — fallback برای iOS/Safari
+			if (item.video_mp4) {
+				var srcMp4 = document.createElement('source');
+				srcMp4.src = item.video_mp4;
+				srcMp4.type = 'video/mp4';
+				vid.appendChild(srcMp4);
+			}
 			media.appendChild(vid);
 			slide._video = vid; // برای مدیریت پخش در پایین
 

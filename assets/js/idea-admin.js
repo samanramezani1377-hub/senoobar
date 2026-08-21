@@ -12,7 +12,7 @@
 			var btn      = $(this);
 			var fieldId  = btn.data('field');       // نام input مخفی
 			var type     = btn.data('type');        // image | video
-			var preview  = '#' + fieldId.replace('senoobar_idea_', '') + '_preview';
+			var preview  = '#' + btn.closest('.senoobar-idea-media').find('.senoobar-idea-media__preview').attr('id');
 			var isVideo  = (type === 'video');
 
 			var frame = wp.media({

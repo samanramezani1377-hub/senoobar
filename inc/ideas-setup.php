@@ -82,6 +82,14 @@ function senoobar_idea_video( $post_id ) {
 	return is_string( $video ) ? trim( $video ) : '';
 }
 
+/**
+ * ویدیوی MP4/H.264 (نسخه‌ی سازگار با iOS — به‌عنوان fallback برای Safari).
+ */
+function senoobar_idea_video_mp4( $post_id ) {
+	$video = get_post_meta( $post_id, '_senoobar_idea_video_mp4', true );
+	return is_string( $video ) ? trim( $video ) : '';
+}
+
 function senoobar_idea_cover( $post_id, $size = 'large' ) {
 	$cover_id = get_post_thumbnail_id( $post_id );
 	if ( $cover_id ) {
@@ -106,9 +114,10 @@ function senoobar_idea_item( $post ) {
 	return [
 		'id'     => (int) $post->ID,
 		'title'  => get_the_title( $post ),
-		'cover'  => senoobar_idea_cover( $post->ID ),
-		'video'  => senoobar_idea_video( $post->ID ),
-		'link'   => get_permalink( $post ),
+		'cover'      => senoobar_idea_cover( $post->ID ),
+		'video'      => senoobar_idea_video( $post->ID ),
+		'video_mp4'  => senoobar_idea_video_mp4( $post->ID ),
+		'link'       => get_permalink( $post ),
 		'content'=> get_the_content( null, false, $post ),
 	];
 }

@@ -104,6 +104,7 @@ function senoobar_idea_handle_submit() {
 	$desc       = isset( $_POST['senoobar_idea_desc'] ) ? wp_kses_post( wp_unslash( $_POST['senoobar_idea_desc'] ) ) : '';
 	$cover_id   = isset( $_POST['senoobar_idea_cover'] ) ? absint( $_POST['senoobar_idea_cover'] ) : 0;
 	$video      = isset( $_POST['senoobar_idea_video'] ) ? esc_url_raw( wp_unslash( $_POST['senoobar_idea_video'] ) ) : '';
+	$video_mp4  = isset( $_POST['senoobar_idea_video_mp4'] ) ? esc_url_raw( wp_unslash( $_POST['senoobar_idea_video_mp4'] ) ) : '';
 
 	if ( '' === $title ) {
 		wp_die( 'عنوان ایده الزامی است.' );
@@ -134,11 +135,18 @@ function senoobar_idea_handle_submit() {
 		delete_post_thumbnail( $new_id );
 	}
 
-	// ویدیو
+	// ویدیو (WebM — نسخه‌ی سبک برای مرورگرهای مدرن)
 	if ( '' === $video ) {
 		delete_post_meta( $new_id, '_senoobar_idea_video' );
 	} else {
 		update_post_meta( $new_id, '_senoobar_idea_video', $video );
+	}
+
+	// ویدیوی MP4/H.264 (نسخه‌ی سازگار با iOS/Safari)
+	if ( '' === $video_mp4 ) {
+		delete_post_meta( $new_id, '_senoobar_idea_video_mp4' );
+	} else {
+		update_post_meta( $new_id, '_senoobar_idea_video_mp4', $video_mp4 );
 	}
 
 	$redirect = add_query_arg(
@@ -160,7 +168,8 @@ function senoobar_idea_admin_page() {
 	$title    = $post ? get_the_title( $post ) : '';
 	$desc     = $post ? $post->post_content : '';
 	$cover_id = $post ? get_post_thumbnail_id( $post ) : 0;
-	$video    = $post ? senoobar_idea_video( $post->ID ) : '';
+	$video     = $post ? senoobar_idea_video( $post->ID ) : '';
+	$video_mp4 = $post ? senoobar_idea_video_mp4( $post->ID ) : '';
 
 	$saved = isset( $_GET['senoobar_idea_saved'] ) ? absint( $_GET['senoobar_idea_saved'] ) : 0;
 	?>
@@ -208,9 +217,9 @@ function senoobar_idea_admin_page() {
 					</div>
 				</div>
 
-				<!-- ویدیو -->
+				<!-- ویدیو (WebM — نسخه‌ی سبک برای مرورگرهای مدرن) -->
 				<div class="senoobar-idea-field">
-					<label>ویدیو (اختیاری)</label>
+					<label>ویدیو WebM (سبک — برای اندروید و دسکتاپ)</label>
 					<div class="senoobar-idea-media" data-type="video">
 						<div class="senoobar-idea-media__preview" id="senoobar_video_preview">
 							<?php if ( $video ) : ?>
@@ -221,10 +230,31 @@ function senoobar_idea_admin_page() {
 						</div>
 						<input type="hidden" name="senoobar_idea_video" id="senoobar_idea_video" value="<?php echo esc_attr( $video ); ?>">
 						<p class="senoobar-idea-media__actions">
-							<button type="button" class="button senoobar-media-btn" data-field="senoobar_idea_video" data-type="video">انتخاب / آپلود ویدیو</button>
-							<button type="button" class="button senoobar-media-clear" data-field="senoobar_idea_video" data-preview="senoobar_video_preview">حذف ویدیو</button>
+							<button type="button" class="button senoobar-media-btn" data-field="senoobar_idea_video" data-type="video">انتخاب / آپلود WebM</button>
+							<button type="button" class="button senoobar-media-clear" data-field="senoobar_idea_video" data-preview="senoobar_video_preview">حذف WebM</button>
 						</p>
 					</div>
+					<p class="description">فرمت پیشنهادی: WebM (VP9) — حجم کمتر و کیفیت بالا.</p>
+				</div>
+
+				<!-- ویدیو MP4 (نسخه‌ی سازگار با iOS/Safari) -->
+				<div class="senoobar-idea-field">
+					<label>ویدیو MP4 (برای آیفون/iOS — به‌عنوان fallback)</label>
+					<div class="senoobar-idea-media" data-type="video">
+						<div class="senoobar-idea-media__preview" id="senoobar_video_mp4_preview">
+							<?php if ( $video_mp4 ) : ?>
+								<video src="<?php echo esc_url( $video_mp4 ); ?>" controls muted></video>
+							<?php else : ?>
+								<span class="senoobar-idea-media__empty">ویدیویی انتخاب نشده</span>
+							<?php endif; ?>
+						</div>
+						<input type="hidden" name="senoobar_idea_video_mp4" id="senoobar_idea_video_mp4" value="<?php echo esc_attr( $video_mp4 ); ?>">
+						<p class="senoobar-idea-media__actions">
+							<button type="button" class="button senoobar-media-btn" data-field="senoobar_idea_video_mp4" data-type="video">انتخاب / آپلود MP4</button>
+							<button type="button" class="button senoobar-media-clear" data-field="senoobar_idea_video_mp4" data-preview="senoobar_video_mp4_preview">حذف MP4</button>
+						</p>
+					</div>
+					<p class="description">فرمت پیشنهادی: MP4 (H.264) — برای پشتیبانی کامل از آیفون و Safari.</p>
 				</div>
 
 			</div>
