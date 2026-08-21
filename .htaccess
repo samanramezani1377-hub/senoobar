@@ -59,14 +59,12 @@
 # ===== Security: Disable XML-RPC & block WordPress info leaks =====
 # Block xmlrpc.php (not used — the site uses WP REST API / wp-json)
 <Files xmlrpc.php>
-    Order Deny,Allow
-    Deny from all
+    Require all denied
 </Files>
 
 # Block access to readme.html, license.txt, and other WP info-disclosure files
-<FilesMatch "^(readme\.html|license\.txt|wp-config-sample\.php)$">
-    Order Deny,Allow
-    Deny from all
+<FilesMatch "^(readme\.html|license\.txt|wp-config-sample\.php|wp-config\.php~)$">
+    Require all denied
 </FilesMatch>
 # ===== END Security =====
 
