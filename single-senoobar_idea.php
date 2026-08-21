@@ -126,15 +126,22 @@ if ( '' === $avatar_html ) {
 		if (item.video) {
 			var vid = document.createElement('video');
 			vid.className = 'idea-feed__video';
+			// صفت‌های لازم برای autoplay بی‌صدا در iOS/Safari
 			vid.setAttribute('autoplay', '');
 			vid.setAttribute('loop', '');
 			vid.setAttribute('playsinline', '');
+			vid.setAttribute('webkit-playsinline', '');
+			vid.setAttribute('muted', '');
+			vid.setAttribute('preload', 'metadata');
+			vid.defaultMuted = true;
 			vid.muted = true;
 			if (item.cover) vid.setAttribute('poster', item.cover);
 			var src = document.createElement('source');
 			src.src = item.video;
+			src.type = 'video/mp4';
 			vid.appendChild(src);
 			media.appendChild(vid);
+			slide._video = vid; // برای مدیریت پخش در پایین
 
 			var snd = document.createElement('button');
 			snd.type = 'button';
