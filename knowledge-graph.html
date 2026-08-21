@@ -251,7 +251,6 @@ const nodes = [
   { id: 'woocommerce/myaccount/senoobar-account.php', type: 'woo-template', label: 'senoobar-account.php' },
   { id: 'woocommerce/myaccount/dashboard.php', type: 'woo-template', label: 'myaccount/dashboard.php' },
   { id: 'woocommerce/myaccount/orders.php', type: 'woo-template', label: 'myaccount/orders.php' },
-  { id: 'woocommerce/myaccount/orders.php', type: 'woo-template', label: 'myaccount/orders.php' },
   { id: 'woocommerce/myaccount/view-order.php', type: 'woo-template', label: 'myaccount/view-order.php' },
   { id: 'woocommerce/myaccount/addresses.php', type: 'woo-template', label: 'myaccount/addresses.php' },
   { id: 'woocommerce/myaccount/profile.php', type: 'woo-template', label: 'myaccount/profile.php' },
@@ -322,6 +321,8 @@ const edges = [
   { s:'functions.php', t:'inc/wishlist.php', l:'require_once' },
   { s:'functions.php', t:'inc/otp-login.php', l:'require_once' },
   { s:'functions.php', t:'inc/otp-register.php', l:'require_once' },
+  { s:'functions.php', t:'inc/otp-reset.php', l:'require_once' },
+  { s:'inc/otp-reset.php', t:'woocommerce/myaccount/auth.php', l:'wp_footer JS (senoobar_reset_footer_js) + AJAX' },
   { s:'functions.php', t:'inc/seo.php', l:'require_once' },
   { s:'functions.php', t:'inc/showroom-pages-setup.php', l:'require_once' },
   { s:'functions.php', t:'inc/ideas-setup.php', l:'require_once' },
@@ -351,6 +352,8 @@ const edges = [
   { s:'inc/class-senoobar-theme.php', t:'assets/js/shop-filters.js', l:'wp_enqueue_script [app]' },
   { s:'inc/class-senoobar-theme.php', t:'assets/js/product-buy-box.js', l:'wp_enqueue_script [app]' },
   { s:'inc/class-senoobar-theme.php', t:'assets/js/newsletter.js', l:'wp_enqueue_script [app]' },
+  { s:'inc/showroom-pages-setup.php', t:'assets/js/showroom.js', l:'wp_enqueue_script' },
+  { s:'inc/idea-admin.php', t:'assets/js/idea-admin.js', l:'wp_enqueue_script (admin)' },
   // theme class → fonts/images
   { s:'inc/class-senoobar-theme.php', t:'assets/fonts/vazirmatn-arabic.woff2', l:'@font-face (critical.css)' },
   { s:'inc/class-senoobar-theme.php', t:'assets/fonts/vazirmatn-latin.woff2', l:'@font-face (critical.css)' },
@@ -360,6 +363,7 @@ const edges = [
   // theme class → service files
   { s:'inc/class-senoobar-theme.php', t:'sw.js', l:'include (sw rewrite)' },
   { s:'inc/class-senoobar-theme.php', t:'manifest.php', l:'include (manifest rewrite)' },
+  { s:'header.php', t:'manifest.json', l:'<link rel="manifest">' },
   { s:'inc/class-senoobar-theme.php', t:'llms.php', l:'include (llms rewrite)' },
 
   // header.php / footer.php used by all templates
@@ -436,6 +440,20 @@ const edges = [
 
   // single-senoobar_idea → bloginfo
   { s:'single-senoobar_idea.php', t:'header.php', l:'bloginfo / implicit' },
+
+  // template-parts → image assets (fallback img src)
+  { s:'template-parts/hero.php', t:'assets/images/hero-2.jpg', l:'fallback img (default hero_img2)' },
+  { s:'template-parts/featured-products.php', t:'assets/images/featured-dining.jpg', l:'fallback img' },
+  { s:'template-parts/featured-products.php', t:'assets/images/featured-sofa.jpg', l:'fallback img' },
+  { s:'template-parts/featured-products.php', t:'assets/images/featured-tv-table.jpg', l:'fallback img' },
+  { s:'template-parts/promo-banners.php', t:'assets/images/promo-bedroom.jpg', l:'fallback img' },
+  { s:'template-parts/story.php', t:'assets/images/story.jpg', l:'fallback img' },
+  { s:'template-parts/blog-section.php', t:'assets/images/blog-2.jpg', l:'fallback img' },
+  { s:'template-parts/inspiration.php', t:'assets/images/inspiration-living.jpg', l:'fallback img' },
+  { s:'template-parts/categories-grid.php', t:'assets/images/cat-bed.jpg', l:'fallback img' },
+  { s:'template-parts/categories-grid.php', t:'assets/images/cat-mattress.jpg', l:'fallback img' },
+  { s:'template-parts/categories-grid.php', t:'assets/images/cat-table.jpg', l:'fallback img' },
+  { s:'template-parts/categories-grid.php', t:'assets/images/cat-wardrobe.jpg', l:'fallback img' },
 ];
 
 // Build node map
