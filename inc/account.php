@@ -165,17 +165,46 @@ add_action( 'template_redirect', function () {
     exit;
 } );
 
-/* ── 4. Sync mobile -> billing on save ── */
-add_action( 'woocommerce_save_account_details', function ( $user_id ) {
-    if ( isset( $_POST['mobile'] ) && $_POST['mobile'] !== '' ) {
-        $phone = senoobar_normalize_phone( $_POST['mobile'] );
-        update_user_meta( $user_id, 'mobile', $phone );
-        update_user_meta( $user_id, 'billing_phone', $phone );
-        if ( empty( $_POST['account_email'] ) ) {
-            update_user_meta( $user_id, 'billing_email', senoobar_phone_email( $phone ) );
+/* ── 4. Save account details (first/last name + email) ── */
+// The mobile number is NOT user-editable anymore, so we keep the stored value
+// untouched. First/last name and email are saved explicitly here so the custom
+// profile form works regardless of WooCommerce's form-handler quirks.
+add_action( 'template_redirect', function () {
+    if ( ! isset( $_POST['save_account_details'] ) || ! is_user_logged_in() ) {
+        return;
+    }
+    if ( ! wp_verify_nonce( $_POST['save-account-details-nonce'] ?? '', 'save_account_details' ) ) {
+        return;
+    }
+    $user_id = get_current_user_id();
+
+    if ( isset( $_POST['account_first_name'] ) ) {
+        $fn = sanitize_text_field( wp_unslash( $_POST['account_first_name'] ) );
+        wp_update_user( [ 'ID' => $user_id, 'first_name' => $fn ] );
+        update_user_meta( $user_id, 'billing_first_name', $fn );
+    }
+    if ( isset( $_POST['account_last_name'] ) ) {
+        $ln = sanitize_text_field( wp_unslash( $_POST['account_last_name'] ) );
+        wp_update_user( [ 'ID' => $user_id, 'last_name' => $ln ] );
+        update_user_meta( $user_id, 'billing_last_name', $ln );
+    }
+
+    // Refresh display name from first + last.
+    $u     = get_userdata( $user_id );
+    $first = $u->first_name;
+    $last  = $u->last_name;
+    $dn    = trim( $first . ' ' . $last );
+    if ( $dn !== '' && $dn !== $u->user_login ) {
+        wp_update_user( [ 'ID' => $user_id, 'display_name' => $dn ] );
+    }
+
+    if ( isset( $_POST['account_email'] ) ) {
+        $em = sanitize_email( wp_unslash( $_POST['account_email'] ) );
+        if ( is_email( $em ) ) {
+            wp_update_user( [ 'ID' => $user_id, 'user_email' => $em ] );
         }
     }
-}, 10, 1 );
+}, 5 );
 
 /* ── 5. Save address from custom form ── */
 add_action( 'template_redirect', function () {
