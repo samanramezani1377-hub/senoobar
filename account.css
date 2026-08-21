@@ -149,6 +149,20 @@
 .snb-btn-outline { background: #fff; color: var(--snb-brand); border: 1.5px solid var(--snb-brand); }
 .snb-btn-outline:hover { background: #eef4f0; color: var(--snb-brand); }
 .snb-btn-outline:disabled { opacity: 0.55; cursor: not-allowed; background: #fff; }
+
+/* ── Faded readonly field (non-editable phone) ── */
+.snb-field input.snb-input-readonly {
+    background: #f1f3f2;
+    color: #9aa3a0;
+    border-color: #e2e6e4;
+    cursor: not-allowed;
+    opacity: 0.9;
+}
+.snb-field input.snb-input-readonly:focus {
+    border-color: #e2e6e4;
+    box-shadow: none;
+}
+
 @media (max-width:991px) {
     .snb-account-layout { grid-template-columns: 1fr; gap: 20px; }
     .snb-stats-grid { grid-template-columns: repeat(2, 1fr); }
