@@ -266,3 +266,18 @@ if ( senoobar_seo_plugin_active() ) {
 
 // جلوگیری از چاپ تایتل پیش‌فرض وردپرس.
 add_filter( 'pre_get_document_title', 'senoobar_get_document_title', 998 );
+
+/* -------------------------------------------------------------------------
+ * رفع تداخل تگ <title>: وقتی افزونه‌ی سئو (Yoast) فعال نیست، موتور سئوی
+ * خودمان <title> اختصاصی چاپ می‌کند (senoobar_render_seo_meta). در این حالت
+ * باید خروجی پیش‌فرض title-tag وردپرس را غیرفعال کنیم تا دو <title> چاپ نشود.
+ * وقتی Yoast فعال است، title-tag دست نخورده می‌ماند (Yoast خودش مدیریت می‌کند).
+ * ---------------------------------------------------------------------- */
+function senoobar_reconcile_title_tag() {
+    if ( senoobar_seo_plugin_active() ) {
+        return; // Yoast مسئول title است؛ title-tag را رها کنید.
+    }
+    // موتور سئوی ما <title> را چاپ می‌کند، پس خروجی پیش‌فرض وردپرس حذف شود.
+    remove_action( 'wp_head', '_wp_render_title_tag', 1 );
+}
+add_action( 'after_setup_theme', 'senoobar_reconcile_title_tag', 20 );
