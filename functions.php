@@ -32,7 +32,6 @@ require_once SENOOBAR_DIR . '/inc/account.php';
 require_once SENOOBAR_DIR . '/inc/wishlist.php';
 require_once SENOOBAR_DIR . '/inc/otp-login.php';
 require_once SENOOBAR_DIR . '/inc/otp-register.php';
-require_once SENOOBAR_DIR . '/inc/otp-reset.php';
 require_once SENOOBAR_DIR . '/inc/seo.php';
 require_once SENOOBAR_DIR . '/inc/showroom-pages-setup.php';
 require_once SENOOBAR_DIR . '/inc/ideas-setup.php';
