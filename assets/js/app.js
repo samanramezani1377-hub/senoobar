@@ -52,11 +52,14 @@
 })();
 
 
-// Refresh cart counter on back/forward navigation.
-// When the browser restores a page from the back/forward cache (bfcache), PHP
-// still holds the stale cart count. We re-fetch the real count from the server
-// on 'pageshow' (covers both bfcache restores and regular loads) so the header
-// and bottom-nav badges always reflect the live cart.
+// Refresh cart counter badge.
+// - On a normal load: refresh as soon as the DOM is ready (not on 'load'),
+//   so a freshly-cached HTML page (e.g. served from LiteSpeed cache) never
+//   shows a stale count, without waiting for every image/asset to finish.
+// - On a back/forward-cache (bfcache) restore: 'pageshow' with
+//   event.persisted fires instead (DOMContentLoaded does not fire again),
+//   and for the cart page specifically we do a full reload since the
+//   restored HTML can show items already removed on the server.
 (function () {
   function applyCount(count) {
     var n = parseInt(count, 10);
@@ -87,24 +90,38 @@
       .catch(function () { /* non-fatal */ });
   }
 
-  // 'pageshow' fires on bfcache restore (event.persisted === true) as well as
-  // normal first paint, so it covers the back-button case reliably.
-  window.addEventListener('pageshow', function (event) {
-    if (event.persisted) {
-      // A page restored from bfcache shows the HTML as it was when the user
-      // left it. The cart page in particular can show a stale item list (an
-      // item already removed on the server still appears). Replace the current
-      // history entry with a fresh load so the cart always matches the server.
-      // location.replace() avoids adding a new history entry (no back-loop) and
-      // only fires on a genuine bfcache restore, not on a normal reload.
-      if (isCartPage()) {
-        window.location.replace(window.location.href);
-        return;
-      }
+  // Refresh the badge as soon as the DOM is ready, instead of waiting for
+  // 'load' (i.e. every image/asset finished). Firing on 'load' meant this
+  // request always went out at the exact moment everything else finished,
+  // which (a) tacked extra time onto "Fully Loaded" readings in performance
+  // tools, and (b) looked like a bot pattern to some hosting-level bot
+  // protections, since it was a POST with zero prior user interaction fired
+  // at a very predictable, automatic instant.
+  if (document.readyState !== 'loading') {
+    refreshCart();
+  } else {
+    document.addEventListener('DOMContentLoaded', refreshCart);
+  }
 
-      // For non-cart pages, just refresh the header badge count.
-      refreshCart();
+  // 'pageshow' with event.persisted fires specifically on a bfcache restore
+  // (DOMContentLoaded does NOT fire again in that case, so this is the only
+  // place a bfcache restore needs handling).
+  window.addEventListener('pageshow', function (event) {
+    if (!event.persisted) return;
+
+    // A page restored from bfcache shows the HTML as it was when the user
+    // left it. The cart page in particular can show a stale item list (an
+    // item already removed on the server still appears). Replace the current
+    // history entry with a fresh load so the cart always matches the server.
+    // location.replace() avoids adding a new history entry (no back-loop) and
+    // only fires on a genuine bfcache restore, not on a normal reload.
+    if (isCartPage()) {
+      window.location.replace(window.location.href);
+      return;
     }
+
+    // For non-cart pages, just refresh the header badge count.
+    refreshCart();
   });
 
   // Detect whether the current page is the WooCommerce cart page.
@@ -115,10 +132,4 @@
     return /(^|\s)(woocommerce-cart|cart)\b/.test(b.className || '') ||
            !!document.querySelector('.senoobar-cart, [data-cart-key], .woocommerce-cart-form, form.woocommerce-cart-form');
   }
-
-  // Also refresh once on load so a freshly-cached HTML can never show a stale
-  // badge even if the page was served from LiteSpeed cache.
-  window.addEventListener('load', function () {
-    refreshCart();
-  });
 })();

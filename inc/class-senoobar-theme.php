@@ -174,7 +174,12 @@ final class Senoobar_Theme {
 
         // Defer theme JS
         add_filter('script_loader_tag', function ($t, $h) {
-            if (in_array($h, ['senoobar-app', 'senoobar-push'])) {
+            $senoobar_handles = [
+                'senoobar-app', 'senoobar-push', 'senoobar-wishlist', 'senoobar-cart',
+                'senoobar-checkout', 'senoobar-shop-filters', 'senoobar-product-buy-box',
+                'senoobar-newsletter',
+            ];
+            if (in_array($h, $senoobar_handles, true)) {
                 return str_replace(' src', ' defer src', $t);
             }
             return $t;
@@ -195,6 +200,26 @@ final class Senoobar_Theme {
             }
             echo '<link rel="preload" as="image" href="' . esc_url($src) . '" fetchpriority="high">';
         }, 1);
+
+        // Load main.css without blocking first paint. critical.css already
+        // inlines everything needed above-the-fold (inc/critical-css.php), so
+        // main.css can finish downloading in the background: the classic
+        // media="print" -> onload swap trick loads it at low priority and
+        // switches it to screen media once ready, with a <noscript> fallback
+        // for the rare visitor with JS disabled.
+        add_filter('style_loader_tag', function ($html, $handle) {
+            if ($handle !== 'senoobar-main') {
+                return $html;
+            }
+            $async_html = preg_replace(
+                "#media=(['\"])all\\1#",
+                'media="print" onload="this.media=\'all\'"',
+                $html,
+                1
+            );
+            $noscript = '<noscript>' . $html . '</noscript>';
+            return $async_html . $noscript;
+        }, 10, 2);
     }
 
     // ─── Customizer ───────────────────────────────
